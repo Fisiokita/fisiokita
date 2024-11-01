@@ -1,0 +1,69 @@
+git add .
+git commit -m "Update: Modifikasi konten dan desain"
+git push origin main
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e0f7fa; /* Mengubah warna latar belakang */
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+section {
+    padding: 20px;
+    margin: 10px;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #333;
+}
+
+.foto-diri {
+    width: 300px;  /* Lebar gambar */
+    height: 400px; /* Tinggi gambar */
+    object-fit: cover; /* Memastikan gambar tidak terdistorsi */
+    border-radius: 10px; /* Menambahkan sud ut melengkung */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Menambahkan bayangan */
+}
+
+.download-cv {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.download-cv:hover {
+    background-color: #3e8e41;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Efek hover untuk tautan */
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

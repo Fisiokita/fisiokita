@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Chat - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-white text-black min-h-screen flex flex-col">
+  <header class="px-4 py-3 bg-[#4B6CC1] text-white">
+    <h1 class="text-lg font-semibold">Panel Chat Fisioterapis</h1>
+  </header>
+
+  <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
+    <div class="mb-4">
+      <label for="pasienSelect" class="block font-semibold mb-1">Pilih Pasien:</label>
+      <select id="pasienSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
+        <option value="">-- Pilih Pasien --</option>
+      </select>
+    </div>
+
+    <div id="chatBox" class="border border-gray-300 rounded-lg p-4 h-[50vh] overflow-y-auto mb-4 bg-gray-50">
+      <!-- Chat akan muncul di sini -->
+    </div>
+
+    <form id="chatForm" class="flex gap-2">
+      <input type="text" id="inputPesan" class="flex-grow border px-3 py-2 rounded text-sm" placeholder="Balas pesan..." required />
+      <button type="submit" class="bg-[#2563EB] text-white px-4 py-2 rounded hover:bg-[#1e4bb8] text-sm">Kirim</button>
+    </form>
+  </main>
+
+  <footer class="text-xs text-center text-gray-500 py-4">
+    © 2025 FisioSehat Admin Chat Panel
+  </footer>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.firebasestorage.app",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85",
+      measurementId: "G-R4KK61V979"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const pasienSelect = document.getElementById("pasienSelect");
+    const chatBox = document.getElementById("chatBox");
+    const chatForm = document.getElementById("chatForm");
+    const inputPesan = document.getElementById("inputPesan");
+
+    let currentPasien = "";
+
+    // Ambil daftar pasien unik dari collection chat
+    db.collection("chats").onSnapshot(snapshot => {
+      const pasienList = new Set();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        pasienList.add(data.dari);
+      });
+
+      pasienSelect.innerHTML = `<option value="">-- Pilih Pasien --</option>`;
+      pasienList.forEach(nama => {
+        const opt = document.createElement("option");
+        opt.value = nama;
+        opt.textContent = nama;
+        pasienSelect.appendChild(opt);
+      });
+    });
+
+    // Saat pasien dipilih → tampilkan chat-nya
+    pasienSelect.addEventListener("change", () => {
+      currentPasien = pasienSelect.value;
+      tampilkanChat();
+    });
+
+    function tampilkanChat() {
+      if (!currentPasien) return;
+
+      db.collection("chats")
+        .where("dari", "in", [currentPasien, "Admin"])
+        .orderBy("waktu")
+        .onSnapshot(snapshot => {
+          chatBox.innerHTML = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const bubble = document.createElement("div");
+            const dariSiapa = data.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black";
+
+            bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${dariSiapa}`;
+            bubble.textContent = `${data.pesan}`;
+            chatBox.appendChild(bubble);
+          });
+          chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    // Kirim balasan dari admin
+    chatForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!currentPasien) return alert("Pilih pasien dulu.");
+      const pesan = inputPesan.value.trim();
+      if (pesan === "") return;
+
+      db.collection("chats").add({
+        dari: "Admin",
+        kepada: currentPasien,
+        pesan: pesan,
+        waktu: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      inputPesan.value = "";
+    });
+  </script>
+</body>
+</html>

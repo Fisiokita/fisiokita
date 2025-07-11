@@ -29,11 +29,11 @@
   </main>
 
   <footer class="text-white text-xs text-center pb-4">
+    <p>ID Sesi: <span id="sessionIdView"></span></p>
     <p>Chat langsung dengan fisioterapis</p>
   </footer>
 
   <script>
-    // Konfigurasi Firebase kamu
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -44,7 +44,6 @@
       measurementId: "G-R4KK61V979"
     };
 
-    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -52,12 +51,19 @@
     const chatForm = document.getElementById("chatForm");
     const inputPesan = document.getElementById("inputPesan");
 
-    // Dapatkan nama pasien dari URL
     const params = new URLSearchParams(window.location.search);
     const pasien = params.get("pasien") || "Pasien";
     const fisioterapis = params.get("nama") || "Fisioterapis";
 
-    // Submit pesan
+    // Buat session ID unik jika belum ada
+    let sessionId = localStorage.getItem("chatSessionId");
+    if (!sessionId) {
+      sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
+      localStorage.setItem("chatSessionId", sessionId);
+    }
+    document.getElementById("sessionIdView").textContent = sessionId;
+
+    // Kirim pesan
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
@@ -67,14 +73,16 @@
         dari: pasien,
         kepada: fisioterapis,
         pesan: pesan,
+        sessionId: sessionId,
         waktu: firebase.firestore.FieldValue.serverTimestamp()
       });
 
       inputPesan.value = "";
     });
 
-    // Listener real-time pesan
+    // Listener pesan real-time (hanya yang satu sesi)
     db.collection("chats")
+      .where("sessionId", "==", sessionId)
       .orderBy("waktu")
       .onSnapshot(snapshot => {
         chatBox.innerHTML = "";

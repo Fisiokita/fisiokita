@@ -2,85 +2,75 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin Dashboard - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800">
+<body class="bg-gray-100 text-gray-800">
 
-  <!-- Login Page -->
-  <div id="loginPage" class="flex flex-col items-center justify-center min-h-screen px-4">
-    <div class="bg-white rounded-lg shadow p-6 max-w-sm w-full">
-      <h1 class="text-xl font-semibold text-center mb-4">Login Admin</h1>
-      <form id="loginForm" class="space-y-4">
-        <input type="email" id="email" class="w-full border px-3 py-2 rounded" placeholder="Email Admin" required />
-        <input type="password" id="password" class="w-full border px-3 py-2 rounded" placeholder="Password" required />
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
-      </form>
-      <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
+<!-- Login Page -->
+<div id="loginPage" class="flex flex-col items-center justify-center min-h-screen px-4">
+  <div class="bg-white p-6 rounded-lg shadow w-full max-w-sm">
+    <h1 class="text-xl font-semibold text-center mb-4">Login Admin</h1>
+    <form id="loginForm" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
+      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
+    </form>
+    <p id="loginError" class="text-red-600 text-sm text-center mt-3 hidden"></p>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardPage" class="hidden min-h-screen">
+  <header class="bg-[#4B6CC1] text-white p-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold">Dashboard Admin FisioSehat</h1>
+    <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-4">
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h2 class="text-lg font-semibold">Sesi Aktif</h2>
+        <p id="jumlahAktif" class="text-2xl font-bold text-blue-600">0</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow text-center">
+        <h2 class="text-lg font-semibold">Sesi Selesai</h2>
+        <p id="jumlahSelesai" class="text-2xl font-bold text-green-600">0</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Dashboard Page (Hidden until login) -->
-  <div id="dashboardPage" class="hidden">
-    <header class="bg-[#4B6CC1] text-white p-4 flex justify-between items-center">
-      <h1 class="text-lg font-semibold">Dashboard Admin FisioSehat</h1>
-      <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
-    </header>
+    <div class="flex gap-4 mb-4">
+      <button class="tabBtn bg-blue-600 text-white px-4 py-2 rounded" data-tab="aktif">💬 Chat Aktif</button>
+      <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="riwayat">📁 Riwayat Chat</button>
+    </div>
 
-    <main class="max-w-4xl mx-auto py-6 px-4">
-      <!-- Notifikasi Jumlah Sesi -->
-      <div class="grid grid-cols-2 gap-4 mb-6 text-center">
-        <div class="bg-white p-4 rounded shadow">
-          <h2 class="text-lg font-semibold">Sesi Aktif</h2>
-          <p id="jumlahAktif" class="text-2xl font-bold text-blue-600">0</p>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h2 class="text-lg font-semibold">Sesi Selesai</h2>
-          <p id="jumlahSelesai" class="text-2xl font-bold text-green-600">0</p>
-        </div>
-      </div>
+    <div id="tab-aktif" class="tabContent">
+      <label class="font-medium">Pilih Sesi Aktif:</label>
+      <select id="sessionSelect" class="w-full border px-3 py-2 rounded mb-2">
+        <option value="">-- Pilih Sesi --</option>
+      </select>
+      <div id="chatBoxAktif" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto mb-2"></div>
+      <form id="chatFormAktif" class="flex gap-2">
+        <input type="text" id="inputPesanAktif" class="flex-grow border px-3 py-2 rounded" placeholder="Balas pesan..." />
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
+      </form>
+    </div>
 
-      <!-- Tab Navigasi -->
-      <div class="flex gap-4 mb-4">
-        <button class="tabBtn bg-blue-600 text-white px-4 py-2 rounded" data-tab="aktif">💬 Chat Aktif</button>
-        <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="riwayat">📁 Riwayat Chat</button>
-      </div>
+    <div id="tab-riwayat" class="tabContent hidden">
+      <label class="font-medium">Pilih Sesi Selesai:</label>
+      <select id="riwayatSelect" class="w-full border px-3 py-2 rounded mb-2">
+        <option value="">-- Pilih Sesi --</option>
+      </select>
+      <div id="chatBoxRiwayat" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto"></div>
+    </div>
+  </main>
+</div>
 
-      <!-- Chat Aktif -->
-      <div id="tab-aktif" class="tabContent">
-        <div class="mb-2">
-          <label class="font-medium">Pilih Sesi Aktif:</label>
-          <select id="sessionSelect" class="w-full border px-3 py-2 rounded mt-1">
-            <option value="">-- Pilih Sesi --</option>
-          </select>
-        </div>
-        <div id="chatBoxAktif" class="border rounded p-4 h-[40vh] overflow-y-auto bg-white my-4"></div>
-        <form id="chatFormAktif" class="flex gap-2">
-          <input type="text" id="inputPesanAktif" class="flex-grow border px-3 py-2 rounded" placeholder="Balas pesan..." />
-          <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
-        </form>
-      </div>
-
-      <!-- Riwayat Chat -->
-      <div id="tab-riwayat" class="tabContent hidden">
-        <div class="mb-2">
-          <label class="font-medium">Pilih Sesi Selesai:</label>
-          <select id="riwayatSelect" class="w-full border px-3 py-2 rounded mt-1">
-            <option value="">-- Pilih Sesi --</option>
-          </select>
-        </div>
-        <div id="chatBoxRiwayat" class="border rounded p-4 h-[40vh] overflow-y-auto bg-white mt-4"></div>
-      </div>
-    </main>
-  </div>
-
-<!-- JavaScript lanjutan menyusul... -->
-  <script>
-  // Konfigurasi Firebase
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -93,38 +83,12 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // Elemen
   const loginPage = document.getElementById("loginPage");
   const dashboardPage = document.getElementById("dashboardPage");
   const loginForm = document.getElementById("loginForm");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
   const loginError = document.getElementById("loginError");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // Login
-  loginForm.addEventListener("submit", e => {
-    e.preventDefault();
-    auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value)
-      .then(() => {
-        loginPage.classList.add("hidden");
-        dashboardPage.classList.remove("hidden");
-      })
-      .catch(err => {
-        loginError.textContent = err.message;
-        loginError.classList.remove("hidden");
-      });
-  });
-
-  // Logout
-  logoutBtn.addEventListener("click", () => {
-    auth.signOut().then(() => {
-      dashboardPage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
-    });
-  });
-
-  // Pantau status login
   auth.onAuthStateChanged(user => {
     if (user) {
       loginPage.classList.add("hidden");
@@ -136,48 +100,39 @@
     }
   });
 
-  // Navigasi tab
-  const tabButtons = document.querySelectorAll(".tabBtn");
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email, pass)
+      .catch(err => {
+        loginError.textContent = err.message;
+        loginError.classList.remove("hidden");
+      });
+  });
+
+  logoutBtn.addEventListener("click", () => auth.signOut());
+
+  const tabBtns = document.querySelectorAll(".tabBtn");
   const tabContents = document.querySelectorAll(".tabContent");
-  tabButtons.forEach(btn => {
+  tabBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       const tab = btn.dataset.tab;
-      tabButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+      tabBtns.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
       btn.classList.add("bg-blue-600", "text-white");
-      tabContents.forEach(tc => tc.classList.add("hidden"));
+      tabContents.forEach(t => t.classList.add("hidden"));
       document.getElementById("tab-" + tab).classList.remove("hidden");
     });
   });
 
-  // Inisialisasi Dashboard
+  // Dashboard logic
   function inisialisasiDashboard() {
-    tampilkanJumlahSesi();
-    tampilkanSesiAktif();
-    tampilkanSesiSelesai();
-  }
-
-  // Jumlah sesi
-  function tampilkanJumlahSesi() {
     db.collection("sessions").where("selesai", "!=", true).onSnapshot(snap => {
       document.getElementById("jumlahAktif").textContent = snap.size;
-    });
-    db.collection("sessions").where("selesai", "==", true).onSnapshot(snap => {
-      document.getElementById("jumlahSelesai").textContent = snap.size;
-    });
-  }
-
-  // Tampilkan sesi aktif
-  const sessionSelect = document.getElementById("sessionSelect");
-  const chatBoxAktif = document.getElementById("chatBoxAktif");
-  const chatFormAktif = document.getElementById("chatFormAktif");
-  const inputPesanAktif = document.getElementById("inputPesanAktif");
-  let sesiAktifTerpilih = "";
-
-  function tampilkanSesiAktif() {
-    db.collection("sessions").where("selesai", "!=", true).onSnapshot(snapshot => {
+      const sessionSelect = document.getElementById("sessionSelect");
       const selected = sessionSelect.value;
       sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-      snapshot.forEach(doc => {
+      snap.forEach(doc => {
         const opt = document.createElement("option");
         opt.value = doc.id;
         opt.textContent = doc.id;
@@ -185,46 +140,54 @@
       });
       if (selected) sessionSelect.value = selected;
     });
+
+    db.collection("sessions").where("selesai", "==", true).onSnapshot(snap => {
+      document.getElementById("jumlahSelesai").textContent = snap.size;
+      const riwayatSelect = document.getElementById("riwayatSelect");
+      riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+      snap.forEach(doc => {
+        const opt = document.createElement("option");
+        opt.value = doc.id;
+        opt.textContent = doc.id;
+        riwayatSelect.appendChild(opt);
+      });
+    });
   }
 
-  sessionSelect.addEventListener("change", () => {
-    sesiAktifTerpilih = sessionSelect.value;
-    tampilkanChatAktif();
-  });
+  // Chat Aktif
+  const sessionSelect = document.getElementById("sessionSelect");
+  const chatBoxAktif = document.getElementById("chatBoxAktif");
+  const inputPesanAktif = document.getElementById("inputPesanAktif");
 
-  function tampilkanChatAktif() {
-    if (!sesiAktifTerpilih) return;
-    db.collection("chats")
-      .where("sessionId", "==", sesiAktifTerpilih)
-      .orderBy("waktu", "asc")
-      .onSnapshot(snapshot => {
+  sessionSelect.addEventListener("change", () => {
+    const id = sessionSelect.value;
+    if (!id) return;
+    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
+      .onSnapshot(snap => {
         chatBoxAktif.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const waktu = data.waktu?.toDate?.();
-          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
-          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
-          const bubble = document.createElement("div");
-          const isAdmin = data.dari === "Admin";
-          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
-            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
-          }`;
-          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>`;
-          chatBoxAktif.appendChild(bubble);
+        snap.forEach(doc => {
+          const d = doc.data(), t = d.waktu?.toDate();
+          const jam = t?.getHours().toString().padStart(2, "0") ?? "--";
+          const menit = t?.getMinutes().toString().padStart(2, "0") ?? "--";
+          const div = document.createElement("div");
+          div.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${d.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"}`;
+          div.innerHTML = `<div>${d.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxAktif.appendChild(div);
         });
         chatBoxAktif.scrollTop = chatBoxAktif.scrollHeight;
       });
-  }
+  });
 
-  chatFormAktif.addEventListener("submit", function(e) {
+  document.getElementById("chatFormAktif").addEventListener("submit", e => {
     e.preventDefault();
+    const id = sessionSelect.value;
     const pesan = inputPesanAktif.value.trim();
-    if (!pesan || !sesiAktifTerpilih) return;
+    if (!id || !pesan) return;
     db.collection("chats").add({
       dari: "Admin",
-      kepada: sesiAktifTerpilih,
+      kepada: id,
       pesan: pesan,
-      sessionId: sesiAktifTerpilih,
+      sessionId: id,
       waktu: firebase.firestore.Timestamp.now()
     });
     inputPesanAktif.value = "";
@@ -234,43 +197,25 @@
   const riwayatSelect = document.getElementById("riwayatSelect");
   const chatBoxRiwayat = document.getElementById("chatBoxRiwayat");
 
-  function tampilkanSesiSelesai() {
-    db.collection("sessions").where("selesai", "==", true).orderBy("waktuBerakhir", "desc")
-      .onSnapshot(snapshot => {
-        riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-        snapshot.forEach(doc => {
-          const opt = document.createElement("option");
-          opt.value = doc.id;
-          opt.textContent = doc.id;
-          riwayatSelect.appendChild(opt);
-        });
-      });
-  }
-
   riwayatSelect.addEventListener("change", () => {
     const id = riwayatSelect.value;
     if (!id) return;
-    db.collection("chats")
-      .where("sessionId", "==", id)
-      .orderBy("waktu", "asc")
-      .onSnapshot(snapshot => {
+    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
+      .onSnapshot(snap => {
         chatBoxRiwayat.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const waktu = data.waktu?.toDate?.();
-          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
-          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
-          const bubble = document.createElement("div");
-          const isAdmin = data.dari === "Admin";
-          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
-            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
-          }`;
-          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>`;
-          chatBoxRiwayat.appendChild(bubble);
+        snap.forEach(doc => {
+          const d = doc.data(), t = d.waktu?.toDate();
+          const jam = t?.getHours().toString().padStart(2, "0") ?? "--";
+          const menit = t?.getMinutes().toString().padStart(2, "0") ?? "--";
+          const div = document.createElement("div");
+          div.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${d.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"}`;
+          div.innerHTML = `<div>${d.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxRiwayat.appendChild(div);
         });
         chatBoxRiwayat.scrollTop = chatBoxRiwayat.scrollHeight;
       });
   });
 </script>
+
 </body>
 </html>

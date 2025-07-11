@@ -26,6 +26,13 @@
       <input type="text" id="inputPesan" class="flex-grow rounded px-3 py-2 text-sm text-black" placeholder="Ketik pesan..." required />
       <button type="submit" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8]">Kirim</button>
     </form>
+
+    <div class="text-center mt-4">
+      <button id="akhiriChatBtn"
+        class="text-xs underline text-red-200 hover:text-white transition">
+        Akhiri Chat
+      </button>
+    </div>
   </main>
 
   <footer class="text-white text-xs text-center pb-4">
@@ -34,7 +41,6 @@
   </footer>
 
   <script>
-    // Konfigurasi Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -56,7 +62,6 @@
     const pasien = params.get("pasien") || "Pasien";
     const fisioterapis = params.get("nama") || "Fisioterapis";
 
-    // Session ID: stabil, disimpan di localStorage
     let sessionId = localStorage.getItem("chatSessionId");
     if (!sessionId) {
       sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
@@ -64,36 +69,32 @@
     }
     document.getElementById("sessionIdView").textContent = sessionId;
 
-    // Submit pesan
+    // Kirim pesan
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
-      if (pesan === "") return;
+      if (!pesan) return;
 
       db.collection("chats").add({
         dari: pasien,
         kepada: fisioterapis,
         pesan: pesan,
         sessionId: sessionId,
-        waktu: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      .then(() => console.log("Pesan dikirim."))
-      .catch(err => console.error("Gagal mengirim pesan:", err));
+        waktu: firebase.firestore.Timestamp.now()
+      });
 
       inputPesan.value = "";
     });
 
-    // Tampilkan chat berdasarkan sessionId
+    // Tampilkan chat real-time
     db.collection("chats")
       .where("sessionId", "==", sessionId)
-      .orderBy("waktu")
+      .orderBy("waktu", "asc")
       .onSnapshot(snapshot => {
         chatBox.innerHTML = "";
-
         if (snapshot.empty) {
           chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Belum ada pesan.</p>`;
         }
-
         snapshot.forEach(doc => {
           const data = doc.data();
           const bubble = document.createElement("div");
@@ -103,12 +104,19 @@
           bubble.textContent = data.pesan;
           chatBox.appendChild(bubble);
         });
-
         chatBox.scrollTop = chatBox.scrollHeight;
       }, err => {
-        console.error("Gagal mengambil chat:", err);
+        console.error("Gagal menampilkan chat:", err.message);
         chatBox.innerHTML = `<p class="text-center text-sm text-red-300">Gagal menampilkan chat.</p>`;
       });
+
+    // Tombol akhiri chat
+    document.getElementById("akhiriChatBtn").addEventListener("click", () => {
+      if (confirm("Yakin ingin mengakhiri chat ini?")) {
+        localStorage.removeItem("chatSessionId");
+        window.location.href = "index.html";
+      }
+    });
   </script>
 </body>
 </html>

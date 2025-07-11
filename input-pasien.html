@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data Pasien - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="konsultasi-online.html">
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioSehat</span>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold text-center mb-4">Data Pasien</h1>
+    <p class="text-sm text-center mb-4">Konsultasi dengan: <span id="namaFisio" class="font-semibold"></span></p>
+
+    <form id="formPasien" class="bg-white rounded-lg p-6 text-black shadow-md space-y-4">
+      <div>
+        <label class="block text-sm font-semibold mb-1">Nama Lengkap</label>
+        <input type="text" id="nama" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Email / Nomor HP</label>
+        <input type="text" id="kontak" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Keluhan</label>
+        <textarea id="keluhan" required rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"></textarea>
+      </div>
+
+      <button type="submit"
+              class="w-full bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
+        Mulai Konsultasi
+      </button>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
+    <div class="flex items-center gap-2">
+      <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
+      <span>FisioSehat</span>
+    </div>
+    <p>Masukkan data Anda sebelum memulai konsultasi.</p>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
+    document.getElementById("namaFisio").textContent = namaFisio;
+
+    document.getElementById("formPasien").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const namaPasien = document.getElementById("nama").value;
+      const kontak = document.getElementById("kontak").value;
+      const keluhan = document.getElementById("keluhan").value;
+
+      const query = new URLSearchParams({
+        nama: namaFisio,
+        pasien: namaPasien,
+        kontak,
+        keluhan
+      }).toString();
+
+      window.location.href = `chat.html?${query}`;
+    });
+  </script>
+</body>
+</html>

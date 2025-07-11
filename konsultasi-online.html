@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Konsultasi Online - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col relative">
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="konsultasi-jenis.html">
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioSehat</span>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
+
+    <div class="space-y-6">
+      <!-- Terapis 1 - Tersedia -->
+      <article class="bg-white rounded-lg p-6 text-black shadow-md">
+        <h3 class="font-semibold text-base mb-1">Dr. Ahmad Santoso</h3>
+        <p class="text-xs text-green-600 font-semibold mb-2">✅ Tersedia</p>
+        <p class="text-xs mb-3">Spesialis ortopedi. Siap menangani konsultasi online.</p>
+        <a href="input-pasien.html?nama=Dr.%20Ahmad%20Santoso"
+           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+          Konsultasi Sekarang
+        </a>
+      </article>
+
+      <!-- Terapis 2 - Tidak Tersedia -->
+      <article class="bg-white rounded-lg p-6 text-black shadow-md">
+        <h3 class="font-semibold text-base mb-1">Dr. Sari Wijaya</h3>
+        <p class="text-xs text-red-600 font-semibold mb-2">❌ Sedang Konsultasi</p>
+        <p class="text-xs mb-3">Spesialis neurologi. Saat ini sedang menangani pasien.</p>
+        <button onclick="showQueuePopup('Dr. Sari Wijaya')"
+                class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
+          Masuk Antrian
+        </button>
+      </article>
+    </div>
+  </main>
+
+  <!-- Popup Antrian -->
+  <div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
+      <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
+      <p class="text-sm mb-4">Fisioterapis sedang menangani pasien lain.<br />Anda telah masuk ke dalam antrian.</p>
+      <button onclick="closePopup()"
+              class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
+        Oke, Mengerti
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
+    <div class="flex items-center gap-2">
+      <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
+      <span>FisioSehat</span>
+    </div>
+    <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
+  </footer>
+
+  <script>
+    function showQueuePopup(nama) {
+      document.getElementById("queuePopup").classList.remove("hidden");
+    }
+
+    function closePopup() {
+      document.getElementById("queuePopup").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>

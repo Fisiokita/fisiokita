@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riwayat Chat - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-100 text-black min-h-screen flex flex-col">
+  <header class="bg-[#4B6CC1] text-white px-4 py-3">
+    <h1 class="text-lg font-semibold">Riwayat Chat Pasien</h1>
+  </header>
+
+  <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
+    <div class="mb-4">
+      <label for="riwayatSelect" class="block font-semibold mb-1">Pilih Sesi Selesai:</label>
+      <select id="riwayatSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
+        <option value="">-- Pilih Sesi --</option>
+      </select>
+    </div>
+
+    <div id="chatBox" class="border border-gray-300 rounded-lg p-4 h-[50vh] overflow-y-auto bg-white shadow">
+      <p class="text-center text-sm text-gray-400">Pilih sesi untuk melihat isi chat.</p>
+    </div>
+  </main>
+
+  <footer class="text-xs text-center text-gray-500 py-4">
+    © 2025 FisioSehat - Riwayat Chat
+  </footer>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const riwayatSelect = document.getElementById("riwayatSelect");
+    const chatBox = document.getElementById("chatBox");
+    let currentSesi = "";
+
+    // Ambil daftar sesi yang sudah selesai
+    db.collection("sessions")
+      .where("selesai", "==", true)
+      .orderBy("waktuBerakhir", "desc")
+      .onSnapshot(snapshot => {
+        riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+        snapshot.forEach(doc => {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.id;
+          riwayatSelect.appendChild(opt);
+        });
+      });
+
+    // Saat memilih sesi
+    riwayatSelect.addEventListener("change", () => {
+      currentSesi = riwayatSelect.value;
+      if (!currentSesi) return;
+
+      db.collection("chats")
+        .where("sessionId", "==", currentSesi)
+        .orderBy("waktu", "asc")
+        .onSnapshot(snapshot => {
+          chatBox.innerHTML = "";
+          if (snapshot.empty) {
+            chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Tidak ada pesan dalam sesi ini.</p>`;
+          }
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const waktu = data.waktu?.toDate?.();
+            const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
+            const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
+
+            const bubble = document.createElement("div");
+            const isAdmin = data.dari === "Admin";
+
+            bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+              isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+            }`;
+            bubble.innerHTML = `
+              <div>${data.pesan}</div>
+              <div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>
+            `;
+            chatBox.appendChild(bubble);
+          });
+          chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    });
+  </script>
+</body>
+</html>

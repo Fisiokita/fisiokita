@@ -18,14 +18,14 @@
 
   <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
     <div class="mb-4">
-      <label for="sessionSelect" class="block font-semibold mb-1">Pilih Sesi Chat:</label>
+      <label for="sessionSelect" class="block font-semibold mb-1">Pilih Sesi Aktif:</label>
       <select id="sessionSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
         <option value="">-- Pilih Sesi --</option>
       </select>
     </div>
 
     <div id="chatBox" class="border border-gray-300 rounded-lg p-4 h-[50vh] overflow-y-auto mb-4 bg-gray-50">
-      <!-- Chat akan muncul di sini -->
+      <p class="text-center text-sm text-gray-400">Pilih sesi untuk melihat pesan.</p>
     </div>
 
     <form id="chatForm" class="flex gap-2">
@@ -45,8 +45,7 @@
       projectId: "fisiosehat-af9f1",
       storageBucket: "fisiosehat-af9f1.firebasestorage.app",
       messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85",
-      measurementId: "G-R4KK61V979"
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -59,26 +58,23 @@
 
     let currentSession = "";
 
-    db.collection("chats").onSnapshot(snapshot => {
-      const sesiUnik = new Set();
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        if (data.sessionId) {
-          sesiUnik.add(data.sessionId);
-        }
+    // 🔄 Ambil daftar sesi yang BELUM selesai
+    db.collection("sessions")
+      .where("selesai", "!=", true)
+      .onSnapshot(snapshot => {
+        const selected = sessionSelect.value;
+        sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+        snapshot.forEach(doc => {
+          const sessionId = doc.id;
+          const opt = document.createElement("option");
+          opt.value = sessionId;
+          opt.textContent = sessionId;
+          sessionSelect.appendChild(opt);
+        });
+        if (selected) sessionSelect.value = selected;
       });
 
-      const selected = sessionSelect.value;
-      sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-      sesiUnik.forEach(sessionId => {
-        const opt = document.createElement("option");
-        opt.value = sessionId;
-        opt.textContent = sessionId;
-        sessionSelect.appendChild(opt);
-      });
-      if (selected) sessionSelect.value = selected;
-    });
-
+    // 🔁 Tampilkan chat saat sesi dipilih
     sessionSelect.addEventListener("change", () => {
       currentSession = sessionSelect.value;
       tampilkanChat();
@@ -89,9 +85,12 @@
 
       db.collection("chats")
         .where("sessionId", "==", currentSession)
-        .orderBy("waktu")
+        .orderBy("waktu", "asc")
         .onSnapshot(snapshot => {
           chatBox.innerHTML = "";
+          if (snapshot.empty) {
+            chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Belum ada pesan.</p>`;
+          }
           snapshot.forEach(doc => {
             const data = doc.data();
             const isAdmin = data.dari === "Admin";
@@ -99,25 +98,26 @@
             bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
               isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
             }`;
-            bubble.textContent = `${data.pesan}`;
+            bubble.textContent = data.pesan;
             chatBox.appendChild(bubble);
           });
           chatBox.scrollTop = chatBox.scrollHeight;
         });
     }
 
+    // 💬 Kirim pesan admin
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!currentSession) return alert("Pilih sesi chat terlebih dahulu.");
       const pesan = inputPesan.value.trim();
-      if (pesan === "") return;
+      if (!pesan) return;
 
       db.collection("chats").add({
         dari: "Admin",
         kepada: currentSession,
         pesan: pesan,
         sessionId: currentSession,
-        waktu: firebase.firestore.FieldValue.serverTimestamp()
+        waktu: firebase.firestore.Timestamp.now()
       });
 
       inputPesan.value = "";

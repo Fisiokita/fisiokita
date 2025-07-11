@@ -22,13 +22,13 @@
     <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
     <p class="text-sm text-center mb-6" id="lokasi"></p>
 
-    <div class="space-y-6">
+    <div id="daftar-terapis" class="space-y-6 hidden">
       <!-- Terapis 1 -->
       <article class="bg-white rounded-lg p-6 text-black shadow-md">
         <h3 class="font-semibold text-base mb-1">Dr. Ahmad Santoso</h3>
         <p class="text-xs text-[#4B6CC1] font-semibold mb-2">Spesialis Ortopedi</p>
         <p class="text-xs mb-2">Jadwal: Senin - Rabu, 08.00 - 12.00</p>
-        <p class="text-xs mb-4">Lokasi praktik: Puskesmas Sukajadi</p>
+        <p class="text-xs mb-4">Lokasi praktik: Puskesmas Padang Barat</p>
         <a href="form-jadwal.html?nama=Dr.%20Ahmad%20Santoso"
            class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
           Jadwalkan Konsultasi
@@ -40,13 +40,15 @@
         <h3 class="font-semibold text-base mb-1">Dr. Budi Hartono</h3>
         <p class="text-xs text-[#4B6CC1] font-semibold mb-2">Spesialis Pediatri</p>
         <p class="text-xs mb-2">Jadwal: Kamis - Sabtu, 13.00 - 16.00</p>
-        <p class="text-xs mb-4">Lokasi praktik: Klinik Sehat Medika</p>
+        <p class="text-xs mb-4">Lokasi praktik: Klinik Sehat Padang</p>
         <a href="form-jadwal.html?nama=Dr.%20Budi%20Hartono"
            class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
           Jadwalkan Konsultasi
         </a>
       </article>
     </div>
+
+    <p id="tidak-ada" class="text-center text-sm text-white hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
   </main>
 
   <footer class="text-white text-xs max-w-md mx-auto pb-6 mt-8 text-center">
@@ -60,6 +62,13 @@
     const kec = params.get("kec") || "-";
 
     document.getElementById("lokasi").textContent = `${kec}, ${kab}, ${prov}`;
+
+    // Tampilkan hanya jika lokasi di Kota Padang
+    if (prov === "Sumatera Barat" && kab === "Kota Padang") {
+      document.getElementById("daftar-terapis").classList.remove("hidden");
+    } else {
+      document.getElementById("tidak-ada").classList.remove("hidden");
+    }
   </script>
 </body>
 </html>

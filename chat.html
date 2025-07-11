@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Obrolan Konsultasi - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .chat-bubble {
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      margin-bottom: 0.5rem;
+      display: inline-block;
+      max-width: 80%;
+    }
+  </style>
+</head>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="index.html">
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioSehat</span>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow px-6 pt-4 pb-24 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold text-center mb-2">Obrolan Konsultasi</h1>
+    <p class="text-center text-sm mb-4">Dengan: <span id="fisioterapisName" class="font-semibold"></span></p>
+
+    <div id="chatArea" class="bg-white text-black rounded-lg p-4 h-64 overflow-y-auto shadow-inner mb-4">
+      <div id="queueMessage" class="text-sm text-center text-gray-500 hidden mb-4">
+        ⏳ Fisioterapis sedang menangani pasien lain. Anda berada dalam antrian...
+      </div>
+
+      <div id="chatContent">
+        <!-- Simulasi Chat -->
+        <div class="chat-bubble bg-blue-100 text-black self-start">Halo, saya ingin konsultasi terkait nyeri lutut.</div>
+        <div class="chat-bubble bg-[#4B6CC1] text-white self-end text-right">Baik, silakan dijelaskan lebih lanjut, kami bantu analisa.</div>
+      </div>
+    </div>
+
+    <form class="flex gap-2">
+      <input type="text" placeholder="Ketik pesan..." class="flex-grow rounded-md px-3 py-2 text-sm text-black" disabled />
+      <button class="bg-[#2563EB] px-4 py-2 rounded-md text-white text-sm" disabled>Kirim</button>
+    </form>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-4">
+    <p class="text-center">FisioSehat - Konsultasi Fisioterapi Online</p>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const namaFisio = params.get("nama") || "-";
+    const namaPasien = params.get("pasien") || "-";
+    const keluhan = params.get("keluhan") || "-";
+    const kontak = params.get("kontak") || "";
+
+    document.getElementById("fisioterapisName").textContent = namaFisio;
+
+    // Simulasi: jika nama fisioterapis mengandung "Sari", anggap sedang konsultasi
+    if (namaFisio.toLowerCase().includes("sari")) {
+      document.getElementById("queueMessage").classList.remove("hidden");
+      document.getElementById("chatContent").innerHTML = "<p class='text-sm text-gray-600'>Silakan menunggu giliran konsultasi Anda...</p>";
+    }
+  </script>
+</body>
+</html>

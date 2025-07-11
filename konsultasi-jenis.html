@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pilih Jenis Konsultasi - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="index.html">
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="FisioSehat Logo" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioSehat</span>
+  </header>
+
+  <main class="flex-grow px-6 pt-8 pb-12 max-w-md mx-auto w-full text-center">
+    <h1 class="text-xl font-semibold mb-6">Pilih Jenis Konsultasi</h1>
+
+    <div class="space-y-6">
+      <!-- Online -->
+      <a href="konsultasi-online.html"
+         class="block bg-[#2563EB] text-white font-semibold text-sm rounded-lg px-6 py-4 hover:bg-[#1e4bb8] transition shadow-md">
+        💻 Konsultasi Online
+        <p class="text-xs font-normal mt-1">Chat langsung dengan fisioterapis dari rumah</p>
+      </a>
+
+      <!-- Offline -->
+      <a href="konsultasi-offline.html"
+         class="block bg-white text-[#2563EB] font-semibold text-sm rounded-lg px-6 py-4 hover:bg-gray-100 transition shadow-md">
+        🚗 Konsultasi Langsung (Offline)
+        <p class="text-xs font-normal text-[#333] mt-1">Fisioterapis datang ke lokasi Anda</p>
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer Navigasi -->
+  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
+    <div class="flex items-center gap-2">
+      <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
+      <span>FisioSehat</span>
+    </div>
+    <div>
+      <h3 class="font-semibold mb-1">Navigasi</h3>
+      <ul class="space-y-1">
+        <li><a href="index.html" class="hover:underline text-white">🏠 Beranda</a></li>
+        <li><a href="konsultasi-jenis.html" class="hover:underline text-white">🩺 Konsultasi</a></li>
+        <li><a href="edukasi.html" class="hover:underline text-white">📚 Edukasi</a></li>
+      </ul>
+    </div>
+    <p class="text-center text-[10px] opacity-70">© 2025 FisioSehat. Semua hak dilindungi undang-undang.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fisioterapis di Daerah Anda - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="konsultasi-offline.html">
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioSehat</span>
+  </header>
+
+  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
+    <p class="text-sm text-center mb-6" id="lokasi"></p>
+
+    <div class="space-y-6">
+      <!-- Terapis 1 -->
+      <article class="bg-white rounded-lg p-6 text-black shadow-md">
+        <h3 class="font-semibold text-base mb-1">Dr. Ahmad Santoso</h3>
+        <p class="text-xs text-[#4B6CC1] font-semibold mb-2">Spesialis Ortopedi</p>
+        <p class="text-xs mb-2">Jadwal: Senin - Rabu, 08.00 - 12.00</p>
+        <p class="text-xs mb-4">Lokasi praktik: Puskesmas Sukajadi</p>
+        <a href="form-jadwal.html?nama=Dr.%20Ahmad%20Santoso"
+           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+          Jadwalkan Konsultasi
+        </a>
+      </article>
+
+      <!-- Terapis 2 -->
+      <article class="bg-white rounded-lg p-6 text-black shadow-md">
+        <h3 class="font-semibold text-base mb-1">Dr. Budi Hartono</h3>
+        <p class="text-xs text-[#4B6CC1] font-semibold mb-2">Spesialis Pediatri</p>
+        <p class="text-xs mb-2">Jadwal: Kamis - Sabtu, 13.00 - 16.00</p>
+        <p class="text-xs mb-4">Lokasi praktik: Klinik Sehat Medika</p>
+        <a href="form-jadwal.html?nama=Dr.%20Budi%20Hartono"
+           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+          Jadwalkan Konsultasi
+        </a>
+      </article>
+    </div>
+  </main>
+
+  <footer class="text-white text-xs max-w-md mx-auto pb-6 mt-8 text-center">
+    <p>© 2025 FisioSehat. Semua hak dilindungi undang-undang.</p>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const prov = params.get("prov") || "-";
+    const kab = params.get("kab") || "-";
+    const kec = params.get("kec") || "-";
+
+    document.getElementById("lokasi").textContent = `${kec}, ${kab}, ${prov}`;
+  </script>
+</body>
+</html>

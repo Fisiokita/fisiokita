@@ -59,7 +59,6 @@
 
     let currentSession = "";
 
-    // Ambil daftar sesi unik
     db.collection("chats").onSnapshot(snapshot => {
       const sesiUnik = new Set();
       snapshot.forEach(doc => {
@@ -69,6 +68,7 @@
         }
       });
 
+      const selected = sessionSelect.value;
       sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
       sesiUnik.forEach(sessionId => {
         const opt = document.createElement("option");
@@ -76,9 +76,9 @@
         opt.textContent = sessionId;
         sessionSelect.appendChild(opt);
       });
+      if (selected) sessionSelect.value = selected;
     });
 
-    // Saat memilih sesi → tampilkan chat
     sessionSelect.addEventListener("change", () => {
       currentSession = sessionSelect.value;
       tampilkanChat();
@@ -94,8 +94,8 @@
           chatBox.innerHTML = "";
           snapshot.forEach(doc => {
             const data = doc.data();
-            const bubble = document.createElement("div");
             const isAdmin = data.dari === "Admin";
+            const bubble = document.createElement("div");
             bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
               isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
             }`;
@@ -106,7 +106,6 @@
         });
     }
 
-    // Kirim balasan admin
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!currentSession) return alert("Pilih sesi chat terlebih dahulu.");

@@ -19,7 +19,7 @@
 
   <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
     <div class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner" id="chatBox">
-      <!-- Pesan tampil di sini -->
+      <p class="text-center text-sm text-gray-400">Memuat chat...</p>
     </div>
 
     <form id="chatForm" class="flex gap-2">
@@ -34,6 +34,7 @@
   </footer>
 
   <script>
+    // Konfigurasi Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -55,6 +56,7 @@
     const pasien = params.get("pasien") || "Pasien";
     const fisioterapis = params.get("nama") || "Fisioterapis";
 
+    // Session ID: stabil, disimpan di localStorage
     let sessionId = localStorage.getItem("chatSessionId");
     if (!sessionId) {
       sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
@@ -62,6 +64,7 @@
     }
     document.getElementById("sessionIdView").textContent = sessionId;
 
+    // Submit pesan
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
@@ -73,26 +76,38 @@
         pesan: pesan,
         sessionId: sessionId,
         waktu: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      })
+      .then(() => console.log("Pesan dikirim."))
+      .catch(err => console.error("Gagal mengirim pesan:", err));
 
       inputPesan.value = "";
     });
 
+    // Tampilkan chat berdasarkan sessionId
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu")
       .onSnapshot(snapshot => {
         chatBox.innerHTML = "";
+
+        if (snapshot.empty) {
+          chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Belum ada pesan.</p>`;
+        }
+
         snapshot.forEach(doc => {
           const data = doc.data();
           const bubble = document.createElement("div");
           bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
             data.dari === pasien ? "bg-[#2563EB] text-white ml-auto" : "bg-gray-200 text-black"
           }`;
-          bubble.textContent = `${data.pesan}`;
+          bubble.textContent = data.pesan;
           chatBox.appendChild(bubble);
         });
+
         chatBox.scrollTop = chatBox.scrollHeight;
+      }, err => {
+        console.error("Gagal mengambil chat:", err);
+        chatBox.innerHTML = `<p class="text-center text-sm text-red-300">Gagal menampilkan chat.</p>`;
       });
   </script>
 </body>

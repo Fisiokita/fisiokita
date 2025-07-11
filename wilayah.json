@@ -1,0 +1,14 @@
+{
+  "Jawa Barat": {
+    "Kota Bandung": ["Sukajadi", "Cicendo", "Lengkong"],
+    "Kota Bekasi": ["Bekasi Timur", "Bekasi Utara", "Medansatria"]
+  },
+  "DKI Jakarta": {
+    "Jakarta Selatan": ["Kebayoran Baru", "Tebet", "Pasar Minggu"],
+    "Jakarta Barat": ["Grogol", "Palmerah", "Kebon Jeruk"]
+  },
+  "Jawa Tengah": {
+    "Kota Semarang": ["Tembalang", "Candisari", "Pedurungan"],
+    "Kota Surakarta": ["Laweyan", "Jebres", "Banjarsari"]
+  }
+}

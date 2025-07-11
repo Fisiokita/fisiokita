@@ -46,20 +46,32 @@
       localStorage.setItem("chatSessionId", sessionId);
     }
 
+    // Kirim pesan
     document.getElementById("chatForm").addEventListener("submit", e => {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
       if (!pesan) return;
+
+      const waktuSekarang = firebase.firestore.Timestamp.now();
+
       db.collection("chats").add({
         dari: pasien,
         kepada: fisioterapis,
         pesan: pesan,
         sessionId: sessionId,
-        waktu: firebase.firestore.Timestamp.now()
+        waktu: waktuSekarang
+      }).then(() => {
+        // Pastikan sesi disimpan di sessions
+        db.collection("sessions").doc(sessionId).set({
+          selesai: false,
+          dibuat: waktuSekarang
+        }, { merge: true });
       });
+
       inputPesan.value = "";
     });
 
+    // Tampilkan pesan real-time
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu", "asc")
@@ -80,12 +92,14 @@
         chatBox.scrollTop = chatBox.scrollHeight;
       });
 
+    // Akhiri Chat
     document.getElementById("akhiriChatBtn").addEventListener("click", () => {
       if (confirm("Yakin ingin mengakhiri chat ini?")) {
         db.collection("sessions").doc(sessionId).set({
           selesai: true,
           waktuBerakhir: firebase.firestore.Timestamp.now()
-        });
+        }, { merge: true });
+
         localStorage.removeItem("chatSessionId");
         window.location.href = "index.html";
       }

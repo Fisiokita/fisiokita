@@ -2,74 +2,94 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Obrolan Konsultasi - FisioSehat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Konsultasi - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    .chat-bubble {
-      padding: 0.5rem 1rem;
-      border-radius: 1rem;
-      margin-bottom: 0.5rem;
-      display: inline-block;
-      max-width: 80%;
-    }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3">
-    <a href="index.html">
-      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
-    </a>
-    <span class="font-semibold text-lg">FisioSehat</span>
+<body class="bg-[#4B6CC1] text-white flex flex-col min-h-screen">
+  <header class="px-4 py-3 flex items-center gap-2">
+    <a href="index.html"><img src="https://placehold.co/24x24/png?text=Logo" class="w-6 h-6" /></a>
+    <h1 class="text-lg font-semibold">FisioSehat</h1>
   </header>
 
-  <!-- Main -->
-  <main class="flex-grow px-6 pt-4 pb-24 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-2">Obrolan Konsultasi</h1>
-    <p class="text-center text-sm mb-4">Dengan: <span id="fisioterapisName" class="font-semibold"></span></p>
-
-    <div id="chatArea" class="bg-white text-black rounded-lg p-4 h-64 overflow-y-auto shadow-inner mb-4">
-      <div id="queueMessage" class="text-sm text-center text-gray-500 hidden mb-4">
-        ⏳ Fisioterapis sedang menangani pasien lain. Anda berada dalam antrian...
-      </div>
-
-      <div id="chatContent">
-        <!-- Simulasi Chat -->
-        <div class="chat-bubble bg-blue-100 text-black self-start">Halo, saya ingin konsultasi terkait nyeri lutut.</div>
-        <div class="chat-bubble bg-[#4B6CC1] text-white self-end text-right">Baik, silakan dijelaskan lebih lanjut, kami bantu analisa.</div>
-      </div>
+  <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
+    <div class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner" id="chatBox">
+      <!-- Pesan muncul di sini -->
     </div>
 
-    <form class="flex gap-2">
-      <input type="text" placeholder="Ketik pesan..." class="flex-grow rounded-md px-3 py-2 text-sm text-black" disabled />
-      <button class="bg-[#2563EB] px-4 py-2 rounded-md text-white text-sm" disabled>Kirim</button>
+    <form id="chatForm" class="flex gap-2">
+      <input type="text" id="inputPesan" class="flex-grow rounded px-3 py-2 text-sm text-black" placeholder="Ketik pesan..." required />
+      <button type="submit" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8]">Kirim</button>
     </form>
   </main>
 
-  <!-- Footer -->
-  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-4">
-    <p class="text-center">FisioSehat - Konsultasi Fisioterapi Online</p>
+  <footer class="text-white text-xs text-center pb-4">
+    <p>Chat langsung dengan fisioterapis</p>
   </footer>
 
   <script>
+    // Konfigurasi Firebase kamu
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.firebasestorage.app",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85",
+      measurementId: "G-R4KK61V979"
+    };
+
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const chatBox = document.getElementById("chatBox");
+    const chatForm = document.getElementById("chatForm");
+    const inputPesan = document.getElementById("inputPesan");
+
+    // Dapatkan nama pasien dari URL
     const params = new URLSearchParams(window.location.search);
-    const namaFisio = params.get("nama") || "-";
-    const namaPasien = params.get("pasien") || "-";
-    const keluhan = params.get("keluhan") || "-";
-    const kontak = params.get("kontak") || "";
+    const pasien = params.get("pasien") || "Pasien";
+    const fisioterapis = params.get("nama") || "Fisioterapis";
 
-    document.getElementById("fisioterapisName").textContent = namaFisio;
+    // Submit pesan
+    chatForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const pesan = inputPesan.value.trim();
+      if (pesan === "") return;
 
-    // Simulasi: jika nama fisioterapis mengandung "Sari", anggap sedang konsultasi
-    if (namaFisio.toLowerCase().includes("sari")) {
-      document.getElementById("queueMessage").classList.remove("hidden");
-      document.getElementById("chatContent").innerHTML = "<p class='text-sm text-gray-600'>Silakan menunggu giliran konsultasi Anda...</p>";
-    }
+      db.collection("chats").add({
+        dari: pasien,
+        kepada: fisioterapis,
+        pesan: pesan,
+        waktu: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      inputPesan.value = "";
+    });
+
+    // Listener real-time pesan
+    db.collection("chats")
+      .orderBy("waktu")
+      .onSnapshot(snapshot => {
+        chatBox.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const bubble = document.createElement("div");
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            data.dari === pasien ? "bg-[#2563EB] text-white ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.textContent = `${data.pesan}`;
+          chatBox.appendChild(bubble);
+        });
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
   </script>
 </body>
 </html>

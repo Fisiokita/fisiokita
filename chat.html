@@ -19,7 +19,7 @@
 
   <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
     <div class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner" id="chatBox">
-      <!-- Pesan muncul di sini -->
+      <!-- Pesan tampil di sini -->
     </div>
 
     <form id="chatForm" class="flex gap-2">
@@ -55,7 +55,6 @@
     const pasien = params.get("pasien") || "Pasien";
     const fisioterapis = params.get("nama") || "Fisioterapis";
 
-    // Buat session ID unik jika belum ada
     let sessionId = localStorage.getItem("chatSessionId");
     if (!sessionId) {
       sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
@@ -63,7 +62,6 @@
     }
     document.getElementById("sessionIdView").textContent = sessionId;
 
-    // Kirim pesan
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
@@ -80,7 +78,6 @@
       inputPesan.value = "";
     });
 
-    // Listener pesan real-time (hanya yang satu sesi)
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu")
@@ -95,7 +92,6 @@
           bubble.textContent = `${data.pesan}`;
           chatBox.appendChild(bubble);
         });
-
         chatBox.scrollTop = chatBox.scrollHeight;
       });
   </script>

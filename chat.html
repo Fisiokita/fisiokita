@@ -7,54 +7,33 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
 <body class="bg-[#4B6CC1] text-white flex flex-col min-h-screen">
-  <header class="px-4 py-3 flex items-center gap-2">
-    <a href="index.html"><img src="https://placehold.co/24x24/png?text=Logo" class="w-6 h-6" /></a>
-    <h1 class="text-lg font-semibold">FisioSehat</h1>
-  </header>
-
   <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
-    <div class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner" id="chatBox">
-      <p class="text-center text-sm text-gray-400">Memuat chat...</p>
-    </div>
-
+    <h1 class="text-xl font-semibold mb-2">FisioSehat Chat</h1>
+    <div id="chatBox" class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4"></div>
     <form id="chatForm" class="flex gap-2">
-      <input type="text" id="inputPesan" class="flex-grow rounded px-3 py-2 text-sm text-black" placeholder="Ketik pesan..." required />
-      <button type="submit" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8]">Kirim</button>
+      <input type="text" id="inputPesan" class="flex-grow px-3 py-2 text-sm text-black rounded" placeholder="Ketik pesan..." required />
+      <button type="submit" class="bg-[#2563EB] text-white px-4 py-2 rounded text-sm">Kirim</button>
     </form>
-
     <div class="text-center mt-4">
-      <button id="akhiriChatBtn" class="text-xs underline text-red-200 hover:text-white transition">
-        Akhiri Chat
-      </button>
+      <button id="akhiriChatBtn" class="text-xs underline text-red-200 hover:text-white">Akhiri Chat</button>
     </div>
   </main>
 
-  <footer class="text-white text-xs text-center pb-4">
-    <p>ID Sesi: <span id="sessionIdView"></span></p>
-    <p>Chat langsung dengan fisioterapis</p>
-  </footer>
-
   <script>
-    // Konfigurasi Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.firebasestorage.app",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
       messagingSenderId: "800971487968",
       appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const chatBox = document.getElementById("chatBox");
-    const chatForm = document.getElementById("chatForm");
     const inputPesan = document.getElementById("inputPesan");
 
     const params = new URLSearchParams(window.location.search);
@@ -66,56 +45,47 @@
       sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
       localStorage.setItem("chatSessionId", sessionId);
     }
-    document.getElementById("sessionIdView").textContent = sessionId;
 
-    // ✅ Kirim pesan dengan Timestamp.now()
-    chatForm.addEventListener("submit", function (e) {
+    document.getElementById("chatForm").addEventListener("submit", e => {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
       if (!pesan) return;
-
       db.collection("chats").add({
         dari: pasien,
         kepada: fisioterapis,
         pesan: pesan,
         sessionId: sessionId,
-        waktu: firebase.firestore.Timestamp.now() // ✅ waktu langsung, terurut
-      }).then(() => {
-        console.log("✅ Pesan dikirim");
-      }).catch(err => {
-        console.error("❌ Gagal kirim pesan:", err.message);
+        waktu: firebase.firestore.Timestamp.now()
       });
-
       inputPesan.value = "";
     });
 
-    // ✅ Tampilkan pesan terurut berdasarkan waktu
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu", "asc")
       .onSnapshot(snapshot => {
         chatBox.innerHTML = "";
-        if (snapshot.empty) {
-          chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Belum ada pesan.</p>`;
-        }
         snapshot.forEach(doc => {
           const data = doc.data();
+          const waktu = data.waktu?.toDate?.();
+          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
+          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
           const bubble = document.createElement("div");
           bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
             data.dari === pasien ? "bg-[#2563EB] text-white ml-auto" : "bg-gray-200 text-black"
           }`;
-          bubble.textContent = data.pesan;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
           chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
-      }, err => {
-        console.error("❌ Gagal menampilkan chat:", err.message);
-        chatBox.innerHTML = `<p class="text-center text-sm text-red-300">Gagal menampilkan chat.<br>${err.message}</p>`;
       });
 
-    // ✅ Akhiri Chat
     document.getElementById("akhiriChatBtn").addEventListener("click", () => {
       if (confirm("Yakin ingin mengakhiri chat ini?")) {
+        db.collection("sessions").doc(sessionId).set({
+          selesai: true,
+          waktuBerakhir: firebase.firestore.Timestamp.now()
+        });
         localStorage.removeItem("chatSessionId");
         window.location.href = "index.html";
       }

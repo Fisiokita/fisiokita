@@ -2,28 +2,275 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard Admin - FisioSehat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-[#F3F4F6] text-gray-800 min-h-screen flex flex-col items-center justify-center px-4">
+<body class="bg-gray-100 min-h-screen text-gray-800">
 
-  <div class="w-full max-w-md text-center">
-    <h1 class="text-2xl font-bold mb-6 text-[#4B6CC1]">Dashboard Admin FisioSehat</h1>
-
-    <div class="grid gap-4">
-      <a href="admin-chat.html" class="block w-full bg-[#2563EB] text-white py-3 rounded-lg font-medium hover:bg-[#1e4bb8] transition">
-        💬 Chat Aktif
-      </a>
-      <a href="riwayat-chat.html" class="block w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-300 transition">
-        📁 Riwayat Chat
-      </a>
+  <!-- Login Page -->
+  <div id="loginPage" class="flex flex-col items-center justify-center min-h-screen px-4">
+    <div class="bg-white rounded-lg shadow p-6 max-w-sm w-full">
+      <h1 class="text-xl font-semibold text-center mb-4">Login Admin</h1>
+      <form id="loginForm" class="space-y-4">
+        <input type="email" id="email" class="w-full border px-3 py-2 rounded" placeholder="Email Admin" required />
+        <input type="password" id="password" class="w-full border px-3 py-2 rounded" placeholder="Password" required />
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
+      </form>
+      <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
     </div>
   </div>
 
-  <footer class="mt-10 text-xs text-gray-400 text-center">
-    &copy; 2025 FisioSehat Admin
-  </footer>
+  <!-- Dashboard Page (Hidden until login) -->
+  <div id="dashboardPage" class="hidden">
+    <header class="bg-[#4B6CC1] text-white p-4 flex justify-between items-center">
+      <h1 class="text-lg font-semibold">Dashboard Admin FisioSehat</h1>
+      <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
+    </header>
 
+    <main class="max-w-4xl mx-auto py-6 px-4">
+      <!-- Notifikasi Jumlah Sesi -->
+      <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+        <div class="bg-white p-4 rounded shadow">
+          <h2 class="text-lg font-semibold">Sesi Aktif</h2>
+          <p id="jumlahAktif" class="text-2xl font-bold text-blue-600">0</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h2 class="text-lg font-semibold">Sesi Selesai</h2>
+          <p id="jumlahSelesai" class="text-2xl font-bold text-green-600">0</p>
+        </div>
+      </div>
+
+      <!-- Tab Navigasi -->
+      <div class="flex gap-4 mb-4">
+        <button class="tabBtn bg-blue-600 text-white px-4 py-2 rounded" data-tab="aktif">💬 Chat Aktif</button>
+        <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="riwayat">📁 Riwayat Chat</button>
+      </div>
+
+      <!-- Chat Aktif -->
+      <div id="tab-aktif" class="tabContent">
+        <div class="mb-2">
+          <label class="font-medium">Pilih Sesi Aktif:</label>
+          <select id="sessionSelect" class="w-full border px-3 py-2 rounded mt-1">
+            <option value="">-- Pilih Sesi --</option>
+          </select>
+        </div>
+        <div id="chatBoxAktif" class="border rounded p-4 h-[40vh] overflow-y-auto bg-white my-4"></div>
+        <form id="chatFormAktif" class="flex gap-2">
+          <input type="text" id="inputPesanAktif" class="flex-grow border px-3 py-2 rounded" placeholder="Balas pesan..." />
+          <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
+        </form>
+      </div>
+
+      <!-- Riwayat Chat -->
+      <div id="tab-riwayat" class="tabContent hidden">
+        <div class="mb-2">
+          <label class="font-medium">Pilih Sesi Selesai:</label>
+          <select id="riwayatSelect" class="w-full border px-3 py-2 rounded mt-1">
+            <option value="">-- Pilih Sesi --</option>
+          </select>
+        </div>
+        <div id="chatBoxRiwayat" class="border rounded p-4 h-[40vh] overflow-y-auto bg-white mt-4"></div>
+      </div>
+    </main>
+  </div>
+
+<!-- JavaScript lanjutan menyusul... -->
+  <script>
+  // Konfigurasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1",
+    storageBucket: "fisiosehat-af9f1.appspot.com",
+    messagingSenderId: "800971487968",
+    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // Elemen
+  const loginPage = document.getElementById("loginPage");
+  const dashboardPage = document.getElementById("dashboardPage");
+  const loginForm = document.getElementById("loginForm");
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const loginError = document.getElementById("loginError");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  // Login
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    auth.signInWithEmailAndPassword(emailInput.value, passwordInput.value)
+      .then(() => {
+        loginPage.classList.add("hidden");
+        dashboardPage.classList.remove("hidden");
+      })
+      .catch(err => {
+        loginError.textContent = err.message;
+        loginError.classList.remove("hidden");
+      });
+  });
+
+  // Logout
+  logoutBtn.addEventListener("click", () => {
+    auth.signOut().then(() => {
+      dashboardPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+    });
+  });
+
+  // Pantau status login
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      loginPage.classList.add("hidden");
+      dashboardPage.classList.remove("hidden");
+      inisialisasiDashboard();
+    } else {
+      dashboardPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+    }
+  });
+
+  // Navigasi tab
+  const tabButtons = document.querySelectorAll(".tabBtn");
+  const tabContents = document.querySelectorAll(".tabContent");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tab = btn.dataset.tab;
+      tabButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+      btn.classList.add("bg-blue-600", "text-white");
+      tabContents.forEach(tc => tc.classList.add("hidden"));
+      document.getElementById("tab-" + tab).classList.remove("hidden");
+    });
+  });
+
+  // Inisialisasi Dashboard
+  function inisialisasiDashboard() {
+    tampilkanJumlahSesi();
+    tampilkanSesiAktif();
+    tampilkanSesiSelesai();
+  }
+
+  // Jumlah sesi
+  function tampilkanJumlahSesi() {
+    db.collection("sessions").where("selesai", "!=", true).onSnapshot(snap => {
+      document.getElementById("jumlahAktif").textContent = snap.size;
+    });
+    db.collection("sessions").where("selesai", "==", true).onSnapshot(snap => {
+      document.getElementById("jumlahSelesai").textContent = snap.size;
+    });
+  }
+
+  // Tampilkan sesi aktif
+  const sessionSelect = document.getElementById("sessionSelect");
+  const chatBoxAktif = document.getElementById("chatBoxAktif");
+  const chatFormAktif = document.getElementById("chatFormAktif");
+  const inputPesanAktif = document.getElementById("inputPesanAktif");
+  let sesiAktifTerpilih = "";
+
+  function tampilkanSesiAktif() {
+    db.collection("sessions").where("selesai", "!=", true).onSnapshot(snapshot => {
+      const selected = sessionSelect.value;
+      sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+      snapshot.forEach(doc => {
+        const opt = document.createElement("option");
+        opt.value = doc.id;
+        opt.textContent = doc.id;
+        sessionSelect.appendChild(opt);
+      });
+      if (selected) sessionSelect.value = selected;
+    });
+  }
+
+  sessionSelect.addEventListener("change", () => {
+    sesiAktifTerpilih = sessionSelect.value;
+    tampilkanChatAktif();
+  });
+
+  function tampilkanChatAktif() {
+    if (!sesiAktifTerpilih) return;
+    db.collection("chats")
+      .where("sessionId", "==", sesiAktifTerpilih)
+      .orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBoxAktif.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate?.();
+          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
+          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
+          const bubble = document.createElement("div");
+          const isAdmin = data.dari === "Admin";
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxAktif.appendChild(bubble);
+        });
+        chatBoxAktif.scrollTop = chatBoxAktif.scrollHeight;
+      });
+  }
+
+  chatFormAktif.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const pesan = inputPesanAktif.value.trim();
+    if (!pesan || !sesiAktifTerpilih) return;
+    db.collection("chats").add({
+      dari: "Admin",
+      kepada: sesiAktifTerpilih,
+      pesan: pesan,
+      sessionId: sesiAktifTerpilih,
+      waktu: firebase.firestore.Timestamp.now()
+    });
+    inputPesanAktif.value = "";
+  });
+
+  // Riwayat Chat
+  const riwayatSelect = document.getElementById("riwayatSelect");
+  const chatBoxRiwayat = document.getElementById("chatBoxRiwayat");
+
+  function tampilkanSesiSelesai() {
+    db.collection("sessions").where("selesai", "==", true).orderBy("waktuBerakhir", "desc")
+      .onSnapshot(snapshot => {
+        riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+        snapshot.forEach(doc => {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.id;
+          riwayatSelect.appendChild(opt);
+        });
+      });
+  }
+
+  riwayatSelect.addEventListener("change", () => {
+    const id = riwayatSelect.value;
+    if (!id) return;
+    db.collection("chats")
+      .where("sessionId", "==", id)
+      .orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBoxRiwayat.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate?.();
+          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
+          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
+          const bubble = document.createElement("div");
+          const isAdmin = data.dari === "Admin";
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxRiwayat.appendChild(bubble);
+        });
+        chatBoxRiwayat.scrollTop = chatBoxRiwayat.scrollHeight;
+      });
+  });
+</script>
 </body>
 </html>

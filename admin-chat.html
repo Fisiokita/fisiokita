@@ -18,9 +18,9 @@
 
   <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
     <div class="mb-4">
-      <label for="pasienSelect" class="block font-semibold mb-1">Pilih Pasien:</label>
-      <select id="pasienSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
-        <option value="">-- Pilih Pasien --</option>
+      <label for="sessionSelect" class="block font-semibold mb-1">Pilih Sesi Chat:</label>
+      <select id="sessionSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
+        <option value="">-- Pilih Sesi --</option>
       </select>
     </div>
 
@@ -39,7 +39,6 @@
   </footer>
 
   <script>
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -53,50 +52,53 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const pasienSelect = document.getElementById("pasienSelect");
+    const sessionSelect = document.getElementById("sessionSelect");
     const chatBox = document.getElementById("chatBox");
     const chatForm = document.getElementById("chatForm");
     const inputPesan = document.getElementById("inputPesan");
 
-    let currentPasien = "";
+    let currentSession = "";
 
-    // Ambil daftar pasien unik dari collection chat
+    // Ambil daftar sesi unik
     db.collection("chats").onSnapshot(snapshot => {
-      const pasienList = new Set();
+      const sesiUnik = new Set();
       snapshot.forEach(doc => {
         const data = doc.data();
-        pasienList.add(data.dari);
+        if (data.sessionId) {
+          sesiUnik.add(data.sessionId);
+        }
       });
 
-      pasienSelect.innerHTML = `<option value="">-- Pilih Pasien --</option>`;
-      pasienList.forEach(nama => {
+      sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+      sesiUnik.forEach(sessionId => {
         const opt = document.createElement("option");
-        opt.value = nama;
-        opt.textContent = nama;
-        pasienSelect.appendChild(opt);
+        opt.value = sessionId;
+        opt.textContent = sessionId;
+        sessionSelect.appendChild(opt);
       });
     });
 
-    // Saat pasien dipilih → tampilkan chat-nya
-    pasienSelect.addEventListener("change", () => {
-      currentPasien = pasienSelect.value;
+    // Saat memilih sesi → tampilkan chat
+    sessionSelect.addEventListener("change", () => {
+      currentSession = sessionSelect.value;
       tampilkanChat();
     });
 
     function tampilkanChat() {
-      if (!currentPasien) return;
+      if (!currentSession) return;
 
       db.collection("chats")
-        .where("dari", "in", [currentPasien, "Admin"])
+        .where("sessionId", "==", currentSession)
         .orderBy("waktu")
         .onSnapshot(snapshot => {
           chatBox.innerHTML = "";
           snapshot.forEach(doc => {
             const data = doc.data();
             const bubble = document.createElement("div");
-            const dariSiapa = data.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black";
-
-            bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${dariSiapa}`;
+            const isAdmin = data.dari === "Admin";
+            bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+              isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+            }`;
             bubble.textContent = `${data.pesan}`;
             chatBox.appendChild(bubble);
           });
@@ -104,17 +106,18 @@
         });
     }
 
-    // Kirim balasan dari admin
+    // Kirim balasan admin
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      if (!currentPasien) return alert("Pilih pasien dulu.");
+      if (!currentSession) return alert("Pilih sesi chat terlebih dahulu.");
       const pesan = inputPesan.value.trim();
       if (pesan === "") return;
 
       db.collection("chats").add({
         dari: "Admin",
-        kepada: currentPasien,
+        kepada: currentSession,
         pesan: pesan,
+        sessionId: currentSession,
         waktu: firebase.firestore.FieldValue.serverTimestamp()
       });
 

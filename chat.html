@@ -2,41 +2,24 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Chat - FisioSehat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Konsultasi - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="px-4 py-3 bg-[#4B6CC1] text-white">
-    <h1 class="text-lg font-semibold">Panel Chat Fisioterapis</h1>
-  </header>
-
-  <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
-    <div class="mb-4">
-      <label for="sessionSelect" class="block font-semibold mb-1">Pilih Sesi Aktif:</label>
-      <select id="sessionSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
-        <option value="">-- Pilih Sesi --</option>
-      </select>
-    </div>
-
-    <div id="chatBox" class="border border-gray-300 rounded-lg p-4 h-[50vh] overflow-y-auto mb-4 bg-gray-50">
-      <p class="text-center text-sm text-gray-400">Pilih sesi untuk melihat pesan.</p>
-    </div>
-
+<body class="bg-[#4B6CC1] text-white flex flex-col min-h-screen">
+  <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold mb-2">FisioSehat Chat</h1>
+    <div id="chatBox" class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4"></div>
     <form id="chatForm" class="flex gap-2">
-      <input type="text" id="inputPesan" class="flex-grow border px-3 py-2 rounded text-sm" placeholder="Balas pesan..." required />
-      <button type="submit" class="bg-[#2563EB] text-white px-4 py-2 rounded hover:bg-[#1e4bb8] text-sm">Kirim</button>
+      <input type="text" id="inputPesan" class="flex-grow px-3 py-2 text-sm text-black rounded" placeholder="Ketik pesan..." required />
+      <button type="submit" class="bg-[#2563EB] text-white px-4 py-2 rounded text-sm">Kirim</button>
     </form>
+    <div class="text-center mt-4">
+      <button id="akhiriChatBtn" class="text-xs underline text-red-200 hover:text-white">Akhiri Chat</button>
+    </div>
   </main>
-
-  <footer class="text-xs text-center text-gray-500 py-4">
-    © 2025 FisioSehat Admin Chat Panel
-  </footer>
 
   <script>
     const firebaseConfig = {
@@ -47,88 +30,65 @@
       messagingSenderId: "800971487968",
       appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const sessionSelect = document.getElementById("sessionSelect");
     const chatBox = document.getElementById("chatBox");
-    const chatForm = document.getElementById("chatForm");
     const inputPesan = document.getElementById("inputPesan");
 
-    let currentSession = "";
+    const params = new URLSearchParams(window.location.search);
+    const pasien = params.get("pasien") || "Pasien";
+    const fisioterapis = params.get("nama") || "Fisioterapis";
 
-    // Ambil sesi aktif (yang belum selesai)
-    db.collection("sessions")
-      .where("selesai", "!=", true)
-      .onSnapshot(snapshot => {
-        const selected = sessionSelect.value;
-        sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-        snapshot.forEach(doc => {
-          const sessionId = doc.id;
-          const opt = document.createElement("option");
-          opt.value = sessionId;
-          opt.textContent = sessionId;
-          sessionSelect.appendChild(opt);
-        });
-        if (selected) sessionSelect.value = selected;
-      });
-
-    // Saat pilih sesi
-    sessionSelect.addEventListener("change", () => {
-      currentSession = sessionSelect.value;
-      tampilkanChat();
-    });
-
-    // Tampilkan isi chat sesuai sesi
-    function tampilkanChat() {
-      if (!currentSession) return;
-
-      db.collection("chats")
-        .where("sessionId", "==", currentSession)
-        .orderBy("waktu", "asc")
-        .onSnapshot(snapshot => {
-          chatBox.innerHTML = "";
-          if (snapshot.empty) {
-            chatBox.innerHTML = `<p class="text-center text-sm text-gray-400">Belum ada pesan.</p>`;
-          }
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const waktu = data.waktu?.toDate?.();
-            const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
-            const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
-
-            const bubble = document.createElement("div");
-            const isAdmin = data.dari === "Admin";
-            bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
-              isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
-            }`;
-            bubble.innerHTML = `
-              <div>${data.pesan}</div>
-              <div class="text-[10px] text-gray-500 text-right mt-1">${jam}:${menit}</div>
-            `;
-            chatBox.appendChild(bubble);
-          });
-          chatBox.scrollTop = chatBox.scrollHeight;
-        });
+    let sessionId = localStorage.getItem("chatSessionId");
+    if (!sessionId) {
+      sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
+      localStorage.setItem("chatSessionId", sessionId);
     }
 
-    // Kirim pesan dari admin
-    chatForm.addEventListener("submit", function (e) {
+    document.getElementById("chatForm").addEventListener("submit", e => {
       e.preventDefault();
-      if (!currentSession) return alert("Pilih sesi chat terlebih dahulu.");
       const pesan = inputPesan.value.trim();
       if (!pesan) return;
-
       db.collection("chats").add({
-        dari: "Admin",
-        kepada: currentSession,
+        dari: pasien,
+        kepada: fisioterapis,
         pesan: pesan,
-        sessionId: currentSession,
+        sessionId: sessionId,
         waktu: firebase.firestore.Timestamp.now()
       });
-
       inputPesan.value = "";
+    });
+
+    db.collection("chats")
+      .where("sessionId", "==", sessionId)
+      .orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBox.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate?.();
+          const jam = waktu ? waktu.getHours().toString().padStart(2, "0") : "--";
+          const menit = waktu ? waktu.getMinutes().toString().padStart(2, "0") : "--";
+          const bubble = document.createElement("div");
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            data.dari === pasien ? "bg-[#2563EB] text-white ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
+          chatBox.appendChild(bubble);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+
+    document.getElementById("akhiriChatBtn").addEventListener("click", () => {
+      if (confirm("Yakin ingin mengakhiri chat ini?")) {
+        db.collection("sessions").doc(sessionId).set({
+          selesai: true,
+          waktuBerakhir: firebase.firestore.Timestamp.now()
+        });
+        localStorage.removeItem("chatSessionId");
+        window.location.href = "index.html";
+      }
     });
   </script>
 </body>

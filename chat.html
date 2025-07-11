@@ -3,52 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Konsultasi - FisioSehat</title>
+  <title>Chat Konsultasi</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#4B6CC1] text-white flex flex-col min-h-screen">
-  <header class="px-4 py-3 flex items-center gap-2">
-    <a href="index.html"><img src="https://placehold.co/24x24/png?text=Logo" class="w-6 h-6" /></a>
-    <h1 class="text-lg font-semibold">FisioSehat</h1>
-  </header>
+<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <main class="flex-grow px-4 py-6 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold mb-4 text-center">Chat Fisioterapis</h1>
+    <p class="text-xs text-center mb-2">Session: <span id="sessionIdView"></span></p>
 
-  <main class="flex-grow px-4 py-4 max-w-md mx-auto w-full">
-    <div class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner" id="chatBox">
+    <div id="chatBox" class="bg-white text-black rounded-lg p-4 h-[60vh] overflow-y-auto mb-4 shadow-inner">
       <p class="text-center text-sm text-gray-400">Memuat chat...</p>
     </div>
 
     <form id="chatForm" class="flex gap-2">
-      <input type="text" id="inputPesan" class="flex-grow rounded px-3 py-2 text-sm text-black" placeholder="Ketik pesan..." required />
-      <button type="submit" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8]">Kirim</button>
+      <input type="text" id="inputPesan" class="flex-grow px-3 py-2 rounded text-black" placeholder="Ketik pesan..." required />
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
     </form>
 
     <div class="text-center mt-4">
-      <button id="akhiriChatBtn"
-        class="text-xs underline text-red-200 hover:text-white transition">
+      <button id="akhiriChatBtn" class="text-xs underline text-red-200 hover:text-white transition">
         Akhiri Chat
       </button>
     </div>
   </main>
 
-  <footer class="text-white text-xs text-center pb-4">
-    <p>ID Sesi: <span id="sessionIdView"></span></p>
-    <p>Chat langsung dengan fisioterapis</p>
-  </footer>
-
   <script>
+    // === Firebase config ===
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1",
       storageBucket: "fisiosehat-af9f1.firebasestorage.app",
       messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85",
-      measurementId: "G-R4KK61V979"
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -69,7 +58,7 @@
     }
     document.getElementById("sessionIdView").textContent = sessionId;
 
-    // Kirim pesan
+    // === Kirim Pesan ===
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const pesan = inputPesan.value.trim();
@@ -81,12 +70,14 @@
         pesan: pesan,
         sessionId: sessionId,
         waktu: firebase.firestore.Timestamp.now()
-      });
+      })
+      .then(() => console.log("✅ Pesan terkirim"))
+      .catch(err => console.error("❌ Gagal kirim:", err.message));
 
       inputPesan.value = "";
     });
 
-    // Tampilkan chat real-time
+    // === Tampilkan Pesan ===
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu", "asc")
@@ -98,21 +89,21 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           const bubble = document.createElement("div");
-          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
-            data.dari === pasien ? "bg-[#2563EB] text-white ml-auto" : "bg-gray-200 text-black"
+          bubble.className = `mb-2 px-4 py-2 rounded max-w-[75%] text-sm ${
+            data.dari === pasien ? "bg-blue-600 text-white ml-auto" : "bg-gray-200 text-black"
           }`;
           bubble.textContent = data.pesan;
           chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
       }, err => {
-        console.error("Gagal menampilkan chat:", err.message);
-        chatBox.innerHTML = `<p class="text-center text-sm text-red-300">Gagal menampilkan chat.</p>`;
+        console.error("❌ Gagal snapshot:", err.message);
+        chatBox.innerHTML = `<p class="text-center text-sm text-red-300">Gagal menampilkan chat.<br>${err.message}</p>`;
       });
 
-    // Tombol akhiri chat
+    // === Tombol Akhiri Chat ===
     document.getElementById("akhiriChatBtn").addEventListener("click", () => {
-      if (confirm("Yakin ingin mengakhiri chat ini?")) {
+      if (confirm("Yakin mengakhiri sesi chat ini?")) {
         localStorage.removeItem("chatSessionId");
         window.location.href = "index.html";
       }

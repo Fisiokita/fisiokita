@@ -7,9 +7,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-[#e6d3c7] text-gray-800 min-h-screen flex flex-col">
 
@@ -26,7 +26,7 @@
       <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
     </div>
 
-    !-- Pilih Status -->
+    <!-- Pilih Status -->
     <div class="bg-white p-4 rounded shadow mb-4">
       <label class="block font-medium mb-1">Status Online:</label>
       <select id="statusSelect" class="w-full border px-3 py-2 rounded">
@@ -35,30 +35,31 @@
       </select>
     </div>
 
+    <!-- Menu Admin -->
     <div class="space-y-4">
-      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-        <div class="flex items-center justify-between">
+      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">💬 Chat Aktif</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-        <div class="flex items-center justify-between">
+      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">📁 Riwayat Konsultasi</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-        <div class="flex items-center justify-between">
+      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">🗓️ Jadwal Terapis</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-        <div class="flex items-center justify-between">
+      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">🏠 Permintaan Home Visit</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
@@ -66,7 +67,7 @@
     </div>
   </main>
 
-  <!-- Firebase Auth -->
+  <!-- Firebase Auth & Firestore -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -78,27 +79,37 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentEmail = "";
 
     auth.onAuthStateChanged(user => {
       if (user) {
+        currentEmail = user.email;
         document.getElementById("terapisEmail").textContent = user.email;
+        // Load status online dari Firestore
+        db.collection("terapis").doc(currentEmail).get().then(doc => {
+          if (doc.exists && doc.data().status) {
+            document.getElementById("statusSelect").value = doc.data().status;
+          }
+        });
       } else {
         window.location.href = "login.html";
       }
     });
 
+    // Ganti status online
+    document.getElementById("statusSelect").addEventListener("change", (e) => {
+      if (!currentEmail) return;
+      db.collection("terapis").doc(currentEmail).set({
+        status: e.target.value
+      }, { merge: true });
+    });
+
+    // Logout
     document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => {
-        window.location.href = "login.html";
-      });
-      // Status Online
-  statusSelect.addEventListener("change", () => {
-    db.collection("terapis").doc(currentEmail).set({ status: statusSelect.value }, { merge: true });
-  });
+      auth.signOut().then(() => window.location.href = "login.html");
     });
   </script>
-
-  <!-- Font Awesome -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

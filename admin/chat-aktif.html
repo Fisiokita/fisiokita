@@ -113,6 +113,9 @@
       .where("sessionId", "==", sessionId)
       .orderBy("waktu", "asc")
       .onSnapshot(snapshot => {
+  console.log("Total sesi ditemukan:", snapshot.size); // debug
+  ...
+});
         chatBox.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();

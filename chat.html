@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Konsultasi Chat - FisioSehat</title>
+  <title>Chat Fisioterapis - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -52,7 +52,7 @@
   const chatBox = document.getElementById("chatBox");
   const inputPesan = document.getElementById("inputPesan");
 
-  // Simpan sesi jika belum ada
+  // Buat sesi jika belum ada
   const sesiRef = db.collection("sessions").doc(sessionId);
   sesiRef.get().then(doc => {
     if (!doc.exists) {
@@ -64,7 +64,7 @@
     }
   });
 
-  // Simpan keluhan awal sebagai pesan pertama jika belum ada chat
+  // Kirim keluhan awal sebagai pesan pertama jika chat kosong
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .get()
@@ -80,12 +80,11 @@
       }
     });
 
-  // Kirim pesan
+  // Kirim pesan baru
   document.getElementById("chatForm").addEventListener("submit", e => {
     e.preventDefault();
     const pesan = inputPesan.value.trim();
     if (!pesan) return;
-
     db.collection("chats").add({
       dari: pasien,
       kepada: emailTerapis,
@@ -93,11 +92,10 @@
       sessionId: sessionId,
       waktu: firebase.firestore.Timestamp.now()
     });
-
     inputPesan.value = "";
   });
 
-  // Tampilkan chat real-time
+  // Tampilkan pesan realtime
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .orderBy("waktu", "asc")
@@ -106,17 +104,20 @@
       snapshot.forEach(doc => {
         const data = doc.data();
         const waktu = data.waktu?.toDate();
-        const jam = waktu?.getHours().toString().padStart(2, "0") ?? "--";
-        const menit = waktu?.getMinutes().toString().padStart(2, "0") ?? "--";
+        const jam = waktu?.getHours().toString().padStart(2, "0");
+        const menit = waktu?.getMinutes().toString().padStart(2, "0");
         const isSaya = data.dari === pasien;
 
         const bubble = document.createElement("div");
-        bubble.className = `w-fit max-w-[75%] text-sm px-4 py-2 rounded-xl shadow whitespace-pre-line break-words ${
-          isSaya ? "bg-green-200 ml-auto text-black" : "bg-white text-black"
+        bubble.className = `inline-block text-sm px-3 py-1.5 rounded-2xl max-w-[75%] w-fit whitespace-pre-line break-words shadow ${
+          isSaya
+            ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white ml-auto"
+            : "bg-white text-black"
         }`;
+
         bubble.innerHTML = `
           <div>${data.pesan}</div>
-          <div class="text-[10px] text-right mt-1 text-gray-500">${jam}:${menit}</div>
+          <div class="text-[10px] text-right mt-1 ${isSaya ? 'text-white/80' : 'text-gray-500'}">${jam}:${menit}</div>
         `;
         chatBox.appendChild(bubble);
       });

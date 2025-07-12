@@ -1,75 +1,342 @@
-<!-- /fisiokita/admin-dashboard.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - FisioKita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Terapis - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="/js/firebase-config.js"></script>
-  <script defer src="/js/admin.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <div class="flex h-screen">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-white border-r p-4">
-      <h1 class="text-xl font-bold text-blue-600 mb-6">FisioKita Admin</h1>
-      <nav class="flex flex-col gap-2">
-        <button class="nav-link text-left" data-target="chat-aktif">📨 Chat Aktif</button>
-        <button class="nav-link text-left" data-target="riwayat-chat">📁 Riwayat Konsultasi</button>
-        <button class="nav-link text-left" data-target="ubah-jadwal">🗓️ Ubah Jadwal</button>
-        <button class="nav-link text-left" data-target="status-terapis">🟢 Status Konsultasi</button>
-        <button class="nav-link text-left" data-target="permintaan-offline">🏠 Permintaan Offline</button>
-        <button id="logoutBtn" class="text-red-600 mt-8">🚪 Logout</button>
-      </nav>
-    </aside>
-
-    <!-- Konten Utama -->
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
-
-      <!-- Konten Chat Aktif -->
-      <section id="chat-aktif" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Chat Aktif</h2>
-        <div id="chatAktifList" class="space-y-2"></div>
-      </section>
-
-      <!-- Konten Riwayat Chat -->
-      <section id="riwayat-chat" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Riwayat Konsultasi</h2>
-        <div id="riwayatList" class="space-y-2"></div>
-      </section>
-
-      <!-- Konten Ubah Jadwal -->
-      <section id="ubah-jadwal" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Ubah Jadwal Konsultasi</h2>
-        <form id="formJadwal" class="space-y-4">
-          <div>
-            <label class="block">Hari:</label>
-            <input type="text" id="jadwalHari" class="border rounded px-3 py-2 w-full" placeholder="Contoh: Senin - Jumat" />
-          </div>
-          <div>
-            <label class="block">Jam:</label>
-            <input type="text" id="jadwalJam" class="border rounded px-3 py-2 w-full" placeholder="Contoh: 09.00 - 17.00" />
-          </div>
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan Jadwal</button>
-        </form>
-      </section>
-
-      <!-- Konten Status Tersedia -->
-      <section id="status-terapis" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Status Konsultasi</h2>
-        <button id="btnToggleStatus" class="px-4 py-2 bg-green-500 text-white rounded">Ubah ke Tidak Tersedia</button>
-        <p class="mt-2 text-sm text-gray-600">Status saat ini: <span id="statusLabel" class="font-semibold">Memuat...</span></p>
-      </section>
-
-      <!-- Konten Permintaan Konsultasi Offline -->
-      <section id="permintaan-offline" class="hidden">
-        <h2 class="text-2xl font-semibold mb-4">Permintaan Konsultasi Offline</h2>
-        <div id="offlineRequestsList" class="space-y-2"></div>
-      </section>
-
-    </main>
+<!-- Login -->
+<div id="loginPage" class="min-h-screen flex items-center justify-center px-4">
+  <div class="bg-white p-6 rounded shadow max-w-sm w-full">
+    <h1 class="text-xl font-semibold text-center mb-4">Login Terapis</h1>
+    <form id="loginForm" class="space-y-4">
+      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
+      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Masuk</button>
+    </form>
+    <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
   </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboardPage" class="hidden min-h-screen">
+  <header class="bg-blue-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-lg font-bold">Dashboard Terapis FisioSehat</h1>
+    <button id="logoutBtn" class="text-sm underline hover:text-gray-300">Logout</button>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-4">
+    <!-- Status -->
+    <div class="bg-white p-4 rounded shadow mb-4 flex justify-between items-center">
+      <span class="font-medium">Status Online:</span>
+      <select id="statusSelect" class="border px-2 py-1 rounded">
+        <option value="tersedia">Tersedia</option>
+        <option value="tidak">Tidak Tersedia</option>
+      </select>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-3 mb-4 flex-wrap">
+      <button class="tabBtn bg-blue-600 text-white px-4 py-2 rounded" data-tab="aktif">💬 Chat Aktif</button>
+      <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="riwayat">📁 Riwayat</button>
+      <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="jadwal">🗓️ Jadwal</button>
+      <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="offline">🏠 Offline</button>
+    </div>
+
+    <!-- Chat Aktif -->
+    <div id="tab-aktif" class="tabContent">
+      <label class="font-medium">Pilih Sesi:</label>
+      <select id="sessionSelect" class="w-full border px-3 py-2 rounded mb-2">
+        <option value="">-- Pilih Sesi --</option>
+      </select>
+      <div id="chatBoxAktif" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto mb-2"></div>
+      <form id="chatFormAktif" class="flex gap-2">
+        <input type="text" id="inputPesanAktif" class="flex-grow border px-3 py-2 rounded" placeholder="Balas pesan..." />
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
+      </form>
+    </div>
+
+    <!-- Riwayat -->
+    <div id="tab-riwayat" class="tabContent hidden">
+      <label class="font-medium">Pilih Sesi Selesai:</label>
+      <select id="riwayatSelect" class="w-full border px-3 py-2 rounded mb-2">
+        <option value="">-- Pilih Sesi --</option>
+      </select>
+      <div id="chatBoxRiwayat" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto"></div>
+    </div>
+
+    <!-- Jadwal -->
+    <div id="tab-jadwal" class="tabContent hidden">
+      <form id="jadwalForm" class="space-y-3">
+        <label class="block font-semibold">Pilih Hari & Jam:</label>
+        <select id="hariSelect" class="w-full border px-3 py-2 rounded">
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+        </select>
+        <div class="flex gap-2">
+          <input type="time" id="jamMulai" class="flex-1 border px-3 py-2 rounded" />
+          <input type="time" id="jamSelesai" class="flex-1 border px-3 py-2 rounded" />
+        </div>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">Simpan Jadwal</button>
+      </form>
+      <div class="mt-4">
+        <h3 class="font-semibold mb-2">Jadwal Anda:</h3>
+        <ul id="jadwalList" class="text-sm list-disc pl-5"></ul>
+      </div>
+    </div>
+
+    <!-- Konsultasi Offline -->
+    <div id="tab-offline" class="tabContent hidden">
+      <h3 class="font-semibold mb-2">Permintaan Home Visit:</h3>
+      <ul id="offlineList" class="space-y-3 text-sm">
+        <li class="text-gray-400 italic">Memuat data...</li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<!-- Script -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1",
+    storageBucket: "fisiosehat-af9f1.appspot.com",
+    messagingSenderId: "800971487968",
+    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let currentEmail = "";
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      currentEmail = user.email;
+      loginPage.classList.add("hidden");
+      dashboardPage.classList.remove("hidden");
+      inisialisasiDashboard();
+    } else {
+      dashboardPage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+    }
+  });
+
+  document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const email = email.value;
+    const pass = password.value;
+    auth.signInWithEmailAndPassword(email, pass).catch(err => {
+      loginError.textContent = err.message;
+      loginError.classList.remove("hidden");
+    });
+  });
+
+  logoutBtn.addEventListener("click", () => auth.signOut());
+
+  // Navigasi Tab
+  const tabBtns = document.querySelectorAll(".tabBtn");
+  const tabContents = document.querySelectorAll(".tabContent");
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tab = btn.dataset.tab;
+      tabBtns.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+      btn.classList.add("bg-blue-600", "text-white");
+      tabContents.forEach(tc => tc.classList.add("hidden"));
+      document.getElementById("tab-" + tab).classList.remove("hidden");
+    });
+  });
+
+  // Status Online
+  statusSelect.addEventListener("change", () => {
+    db.collection("terapis").doc(currentEmail).set({
+      status: statusSelect.value
+    }, { merge: true });
+  });
+
+  function loadStatusTerapis() {
+    db.collection("terapis").doc(currentEmail).get().then(doc => {
+      if (doc.exists) {
+        statusSelect.value = doc.data().status || "tidak";
+      }
+    });
+  }
+
+  // Chat Aktif
+  const sessionSelect = document.getElementById("sessionSelect");
+  const chatBoxAktif = document.getElementById("chatBoxAktif");
+  const inputPesanAktif = document.getElementById("inputPesanAktif");
+
+  function tampilkanChatAktif() {
+    db.collection("sessions")
+      .where("selesai", "==", false)
+      .where("kepada", "==", currentEmail)
+      .onSnapshot(snapshot => {
+        sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+        snapshot.forEach(doc => {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.id;
+          sessionSelect.appendChild(opt);
+        });
+      });
+  }
+
+  sessionSelect.addEventListener("change", () => {
+    const id = sessionSelect.value;
+    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBoxAktif.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate();
+          const jam = waktu?.getHours().toString().padStart(2, "0") ?? "--";
+          const menit = waktu?.getMinutes().toString().padStart(2, "0") ?? "--";
+          const bubble = document.createElement("div");
+          const isAdmin = data.dari === "Admin";
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxAktif.appendChild(bubble);
+        });
+        chatBoxAktif.scrollTop = chatBoxAktif.scrollHeight;
+      });
+  });
+
+  document.getElementById("chatFormAktif").addEventListener("submit", e => {
+    e.preventDefault();
+    const id = sessionSelect.value;
+    const pesan = inputPesanAktif.value.trim();
+    if (!id || !pesan) return;
+    db.collection("chats").add({
+      dari: "Admin",
+      kepada: id,
+      pesan,
+      sessionId: id,
+      waktu: firebase.firestore.Timestamp.now()
+    });
+    inputPesanAktif.value = "";
+  });
+
+  // Riwayat
+  function tampilkanRiwayat() {
+    db.collection("sessions").where("selesai", "==", true).where("kepada", "==", currentEmail)
+      .onSnapshot(snapshot => {
+        riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+        snapshot.forEach(doc => {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.id;
+          riwayatSelect.appendChild(opt);
+        });
+      });
+  }
+
+  riwayatSelect.addEventListener("change", () => {
+    const id = riwayatSelect.value;
+    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBoxRiwayat.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate();
+          const jam = waktu?.getHours().toString().padStart(2, "0") ?? "--";
+          const menit = waktu?.getMinutes().toString().padStart(2, "0") ?? "--";
+          const bubble = document.createElement("div");
+          const isAdmin = data.dari === "Admin";
+          bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
+            isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
+          }`;
+          bubble.innerHTML = `<div>${data.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
+          chatBoxRiwayat.appendChild(bubble);
+        });
+      });
+  });
+
+  // Jadwal
+  jadwalForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const hari = hariSelect.value;
+    const mulai = jamMulai.value;
+    const selesai = jamSelesai.value;
+    if (!hari || !mulai || !selesai) return alert("Lengkapi semua data!");
+    db.collection("jadwal").doc(currentEmail).set({ [hari]: `${mulai} - ${selesai}` }, { merge: true })
+      .then(() => { jadwalForm.reset(); tampilkanJadwalTerapis(); });
+  });
+
+  function tampilkanJadwalTerapis() {
+    db.collection("jadwal").doc(currentEmail).get().then(doc => {
+      jadwalList.innerHTML = "";
+      if (doc.exists) {
+        const data = doc.data();
+        const hariUrut = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+        hariUrut.forEach(h => {
+          if (data[h]) {
+            const li = document.createElement("li");
+            li.textContent = `${h}: ${data[h]}`;
+            jadwalList.appendChild(li);
+          }
+        });
+      } else {
+        jadwalList.innerHTML = "<li class='text-gray-400 italic'>Belum ada jadwal.</li>";
+      }
+    });
+  }
+
+  // Konsultasi Offline
+  function tampilkanPermintaanOffline() {
+    db.collection("offline_req")
+      .where("terapis", "==", currentEmail)
+      .where("status", "==", "pending")
+      .onSnapshot(snapshot => {
+        offlineList.innerHTML = "";
+        if (snapshot.empty) {
+          offlineList.innerHTML = `<li class="text-gray-400 italic">Tidak ada permintaan saat ini.</li>`;
+        } else {
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const li = document.createElement("li");
+            li.className = "bg-white p-3 border rounded shadow";
+            li.innerHTML = `
+              <div><strong>Nama:</strong> ${data.nama}</div>
+              <div><strong>Lokasi:</strong> ${data.lokasi}</div>
+              <div><strong>Jadwal:</strong> ${data.tanggal}</div>
+              <div><strong>Keluhan:</strong> ${data.keluhan}</div>
+              <div class="mt-2 flex gap-2">
+                <button class="terimaBtn bg-green-500 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Terima</button>
+                <button class="tolakBtn bg-red-500 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Tolak</button>
+              </div>
+            `;
+            offlineList.appendChild(li);
+          });
+        }
+      });
+  }
+
+  offlineList.addEventListener("click", e => {
+    const id = e.target.dataset.id;
+    if (e.target.classList.contains("terimaBtn")) {
+      db.collection("offline_req").doc(id).update({ status: "diterima" });
+    } else if (e.target.classList.contains("tolakBtn")) {
+      db.collection("offline_req").doc(id).update({ status: "ditolak" });
+    }
+  });
+
+  function inisialisasiDashboard() {
+    loadStatusTerapis();
+    tampilkanChatAktif();
+    tampilkanRiwayat();
+    tampilkanJadwalTerapis();
+    tampilkanPermintaanOffline();
+  }
+</script>
 </body>
 </html>

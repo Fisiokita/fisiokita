@@ -8,27 +8,24 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#e6d3c7] text-sm min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex items-center justify-between">
   <h1 class="text-lg font-semibold">📁 Riwayat Chat</h1>
   <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
 </header>
 
 <!-- Main -->
 <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
-  <!-- Daftar Riwayat -->
   <div>
     <label class="block font-medium mb-1">Pilih Sesi:</label>
-    <ul id="daftarRiwayat" class="space-y-2"></ul>
+    <ul id="riwayatList" class="space-y-2"></ul>
   </div>
 
-  <!-- Chat Box -->
-  <div id="riwayatContainer" class="hidden">
-    <div id="chatRiwayat" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow"></div>
+  <div id="chatContainer" class="hidden">
+    <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow"></div>
   </div>
 </main>
 
@@ -45,61 +42,56 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const daftarRiwayat = document.getElementById("daftarRiwayat");
-  const chatRiwayat = document.getElementById("chatRiwayat");
-  const riwayatContainer = document.getElementById("riwayatContainer");
+  const riwayatList = document.getElementById("riwayatList");
+  const chatContainer = document.getElementById("chatContainer");
+  const chatBox = document.getElementById("chatBox");
 
   let currentEmail = "";
 
   auth.onAuthStateChanged(user => {
     if (user) {
       currentEmail = user.email;
-      tampilkanDaftarRiwayat();
+      tampilkanRiwayat();
     } else {
       window.location.href = "login.html";
     }
   });
 
-  function tampilkanDaftarRiwayat() {
+  function tampilkanRiwayat() {
     db.collection("sessions")
       .where("selesai", "==", true)
       .where("kepada", "==", currentEmail)
       .orderBy("dibuat", "desc")
       .onSnapshot(snapshot => {
-        daftarRiwayat.innerHTML = "";
-
+        riwayatList.innerHTML = "";
         if (snapshot.empty) {
-          daftarRiwayat.innerHTML = "<li class='text-gray-600 italic'>Belum ada riwayat sesi.</li>";
+          riwayatList.innerHTML = "<li class='text-gray-600 italic'>Tidak ada riwayat sesi.</li>";
           return;
         }
 
         snapshot.forEach(doc => {
           const data = doc.data();
-          const item = document.createElement("li");
-          item.className = "bg-white p-3 rounded shadow flex justify-between items-center cursor-pointer hover:bg-pink-50 transition";
-          item.innerHTML = `
-            <div>
-              <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
-              <div class="text-xs text-gray-500">${doc.id}</div>
-            </div>
+          const li = document.createElement("li");
+          li.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-pink-50 transition";
+          li.innerHTML = `
+            <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
+            <div class="text-xs text-gray-500">${doc.id}</div>
           `;
-          item.addEventListener("click", () => bukaRiwayat(doc.id));
-          daftarRiwayat.appendChild(item);
+          li.addEventListener("click", () => {
+            bukaRiwayat(doc.id);
+          });
+          riwayatList.appendChild(li);
         });
       });
   }
 
   function bukaRiwayat(sessionId) {
-    riwayatContainer.classList.remove("hidden");
-    chatRiwayat.innerHTML = "";
-
-    db.collection("sessions")
-  .where("selesai", "==", true)
-  .where("kepada", "==", currentEmail)
-  .orderBy("dibuat", "asc")
-  .onSnapshot(snapshot => {
-    // render sesi riwayat
-        chatRiwayat.innerHTML = "";
+    chatContainer.classList.remove("hidden");
+    db.collection("chats")
+      .where("sessionId", "==", sessionId)
+      .orderBy("waktu", "asc")
+      .get().then(snapshot => {
+        chatBox.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
           const waktu = data.waktu?.toDate();
@@ -108,7 +100,6 @@
           const isAdmin = data.dari === "Admin";
 
           const div = document.createElement("div");
-
           if (isAdmin) {
             div.className = "flex flex-col items-end max-w-[80%] ml-auto";
             div.innerHTML = `
@@ -121,10 +112,9 @@
             div.innerHTML = `${data.pesan}
               <span class="text-xs text-white ml-2">${jam}.${menit}</span>`;
           }
-
-          chatRiwayat.appendChild(div);
+          chatBox.appendChild(div);
         });
-        chatRiwayat.scrollTop = chatRiwayat.scrollHeight;
+        chatBox.scrollTop = chatBox.scrollHeight;
       });
   }
 </script>

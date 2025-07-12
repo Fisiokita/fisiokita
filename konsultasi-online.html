@@ -83,36 +83,36 @@
     }
 
     snapshot.forEach(doc => {
-      const data = doc.data();
-      const email = doc.id;
-      const nama = data.nama || email;
-      const status = data.status || "tidak";
-      const deskripsi = data.deskripsi || "Terapis FisioSehat";
+  const data = doc.data();
+  const email = doc.id;
+  const nama = data.nama?.trim() && data.nama.length > 1 ? data.nama : "Terapis Tanpa Nama";
+  const status = data.status || "tidak";
+  const deskripsi = data.deskripsi || "Terapis FisioSehat";
 
-      const item = document.createElement("article");
-      item.className = "bg-white rounded-lg p-6 text-black shadow-md";
+  const item = document.createElement("article");
+  item.className = "bg-white rounded-lg p-6 text-black shadow-md";
 
-      item.innerHTML = `
-        <h3 class="font-semibold text-base mb-1">${nama}</h3>
-        <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
-          ${status === 'tersedia' ? '✅ Tersedia' : '❌ Sedang Konsultasi'}
-        </p>
-        <p class="text-xs mb-3">${deskripsi}</p>
-        ${
-          status === 'tersedia'
-            ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
-                class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-                Konsultasi Sekarang
-              </a>`
-            : `<button onclick="showQueuePopup('${nama}')"
-                class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-                Masuk Antrian
-              </button>`
-        }
-      `;
+  item.innerHTML = `
+    <h3 class="font-semibold text-base mb-1">${nama}</h3>
+    <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
+      ${status === 'tersedia' ? '✅ Tersedia' : '❌ Sedang Konsultasi'}
+    </p>
+    <p class="text-xs mb-3">${deskripsi}</p>
+    ${
+      status === 'tersedia'
+        ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
+            class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+            Konsultasi Sekarang
+          </a>`
+        : `<button onclick="showQueuePopup('${nama}')"
+            class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
+            Masuk Antrian
+          </button>`
+    }
+  `;
 
-      daftarTerapis.appendChild(item);
-    });
+  daftarTerapis.appendChild(item);
+});
   });
 </script>
 </body>

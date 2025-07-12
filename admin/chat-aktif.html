@@ -2,166 +2,144 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat Aktif - FisioSehat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Aktif - Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-[#e6d3c7] text-sm min-h-screen flex flex-col">
+<body class="bg-[#e6d3c7] text-black font-sans">
 
-<!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex items-center justify-between">
-  <h1 class="text-lg font-semibold">💬 Chat Aktif</h1>
-  <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+<header class="bg-pink-500 text-white px-4 py-3 text-center font-semibold shadow">
+  Chat Aktif Pasien
 </header>
 
-<!-- Main -->
-<main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
-  <!-- Daftar Sesi -->
-  <div>
-    <label class="block font-medium mb-1">Daftar Sesi:</label>
-    <ul id="daftarSesi" class="space-y-2"></ul>
-  </div>
+<main class="max-w-md mx-auto p-4 space-y-4">
+  <select id="sessionSelect" class="w-full border px-3 py-2 rounded">
+    <option value="">-- Pilih Sesi --</option>
+  </select>
 
-  <!-- Chat Box -->
-  <div id="chatContainer" class="hidden">
-    <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow"></div>
+  <div id="chatBox" class="bg-[#e6d3c7] rounded shadow p-4 h-[55vh] overflow-y-auto space-y-2"></div>
 
-    <form id="formChat" class="mt-3 flex gap-2">
-      <input type="text" id="inputPesan" class="flex-1 border px-3 py-2 rounded-full" placeholder="Ketik balasan..." />
-      <button class="bg-pink-500 text-white px-4 py-2 rounded-full">Kirim</button>
-    </form>
+  <form id="chatForm" class="flex gap-2">
+    <input type="text" id="inputPesan" placeholder="Ketik pesan..." class="flex-1 border px-4 py-2 rounded-full" />
+    <button class="bg-pink-500 text-white px-4 py-2 rounded-full">Kirim</button>
+  </form>
 
-    <button id="btnAkhiri" class="mt-2 text-xs text-red-600 underline hover:text-red-800 block text-right">Akhiri Chat</button>
-  </div>
+  <button id="btnAkhiri" class="text-sm text-red-600 underline hover:text-red-800">Akhiri Chat</button>
 </main>
 
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    projectId: "fisiosehat-af9f1"
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const daftarSesi = document.getElementById("daftarSesi");
-  const chatContainer = document.getElementById("chatContainer");
-  const chatBox = document.getElementById("chatBox");
-  const formChat = document.getElementById("formChat");
-  const inputPesan = document.getElementById("inputPesan");
-  const btnAkhiri = document.getElementById("btnAkhiri");
-
   let currentEmail = "";
   let currentSessionId = "";
+
+  const sessionSelect = document.getElementById("sessionSelect");
+  const chatBox = document.getElementById("chatBox");
+  const inputPesan = document.getElementById("inputPesan");
 
   auth.onAuthStateChanged(user => {
     if (user) {
       currentEmail = user.email;
-      tampilkanDaftarSesi();
+      loadSesiAktif();
     } else {
-      window.location.href = "login.html";
+      alert("Anda belum login.");
+      location.href = "login.html";
     }
   });
 
-  function tampilkanDaftarSesi() {
+  function loadSesiAktif() {
     db.collection("sessions")
-      .where("selesai", "==", false)
       .where("kepada", "==", currentEmail)
+      .where("selesai", "==", false)
       .orderBy("dibuat", "asc")
       .onSnapshot(snapshot => {
-        daftarSesi.innerHTML = "";
-        if (snapshot.empty) {
-          daftarSesi.innerHTML = "<li class='text-gray-600 italic'>Tidak ada sesi aktif.</li>";
-          return;
-        }
-
+        sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
         snapshot.forEach(doc => {
           const data = doc.data();
-          const item = document.createElement("li");
-          item.className = "bg-white p-3 rounded shadow flex justify-between items-center cursor-pointer hover:bg-pink-50 transition";
-          item.innerHTML = `
-            <div>
-              <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
-              <div class="text-xs text-gray-500">${doc.id}</div>
-            </div>
-            <span class="text-red-500 text-xs" id="notifikasi-${doc.id}">🔴</span>
-          `;
-
-          item.addEventListener("click", () => {
-            bukaSesi(doc.id);
-            document.getElementById(`notifikasi-${doc.id}`).classList.add("hidden");
-          });
-
-          daftarSesi.appendChild(item);
+          const option = document.createElement("option");
+          option.value = doc.id;
+          option.textContent = `${doc.data().namaPasien || 'Pasien'} - ${doc.id}`;
+          sessionSelect.appendChild(option);
         });
       });
   }
 
-  function bukaSesi(sessionId) {
-    currentSessionId = sessionId;
-    chatContainer.classList.remove("hidden");
+  sessionSelect.addEventListener("change", () => {
+    currentSessionId = sessionSelect.value;
+    if (!currentSessionId) return;
+    tampilkanChat(currentSessionId);
+  });
 
-    db.collection("sessions")
-  .where("selesai", "==", false)
-  .where("kepada", "==", currentEmail)
-  .orderBy("dibuat", "asc")
-  .onSnapshot(snapshot => {
-    // render sesi
+  function tampilkanChat(sessionId) {
+    db.collection("chats")
+      .where("sessionId", "==", sessionId)
+      .orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
         chatBox.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
           const waktu = data.waktu?.toDate();
           const jam = waktu?.getHours().toString().padStart(2, "0");
           const menit = waktu?.getMinutes().toString().padStart(2, "0");
+
+          const bubble = document.createElement("div");
           const isAdmin = data.dari === "Admin";
 
-          const div = document.createElement("div");
           if (isAdmin) {
-            div.className = "flex flex-col items-end max-w-[80%] ml-auto";
-            div.innerHTML = `
-              <div class="bg-white text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
+            bubble.className = "flex flex-col items-end max-w-[80%] ml-auto";
+            bubble.innerHTML = `
+              <div class="bg-white text-black px-3 py-2 rounded-xl rounded-br-none shadow">
                 ${data.pesan}
-                <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>
+                <div class="text-xs text-right text-gray-600">${jam}.${menit}</div>
               </div>`;
           } else {
-            div.className = "bg-[#f472b6] text-white text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
-            div.innerHTML = `${data.pesan}
-              <span class="text-xs text-white ml-2">${jam}.${menit}</span>`;
+            bubble.className = "flex flex-col max-w-[80%]";
+            bubble.innerHTML = `
+              <div class="bg-[#f472b6] text-white px-3 py-2 rounded-xl rounded-tl-none shadow">
+                ${data.pesan}
+                <div class="text-xs text-right text-white">${jam}.${menit}</div>
+              </div>`;
           }
-          chatBox.appendChild(div);
+
+          chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
       });
   }
 
-  formChat.addEventListener("submit", e => {
+  document.getElementById("chatForm").addEventListener("submit", e => {
     e.preventDefault();
-    const teks = inputPesan.value.trim();
-    if (!teks || !currentSessionId) return;
+    const pesan = inputPesan.value.trim();
+    if (!pesan || !currentSessionId) return;
 
     db.collection("chats").add({
-      sessionId: currentSessionId,
       dari: "Admin",
-      pesan: teks,
+      kepada: currentSessionId,
+      pesan,
+      sessionId: currentSessionId,
       waktu: firebase.firestore.Timestamp.now()
     });
+
     inputPesan.value = "";
   });
 
-  btnAkhiri.addEventListener("click", () => {
+  document.getElementById("btnAkhiri").addEventListener("click", () => {
     if (!currentSessionId) return;
-    if (confirm("Yakin ingin mengakhiri sesi ini?")) {
+    if (confirm("Akhiri sesi chat ini?")) {
       db.collection("sessions").doc(currentSessionId).update({ selesai: true });
-      chatBox.innerHTML += `<div class="text-center text-xs text-gray-500 italic mt-2">✅ Sesi telah diakhiri.</div>`;
-      inputPesan.disabled = true;
+      alert("Sesi diakhiri");
+      currentSessionId = "";
+      chatBox.innerHTML = "";
     }
   });
 </script>

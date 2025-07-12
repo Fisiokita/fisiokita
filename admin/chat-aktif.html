@@ -109,10 +109,12 @@
     currentSessionId = sessionId;
     chatContainer.classList.remove("hidden");
 
-    db.collection("chats")
-      .where("sessionId", "==", sessionId)
-      .orderBy("waktu", "asc")
-      .onSnapshot(snapshot => {
+    db.collection("sessions")
+  .where("selesai", "==", false)
+  .where("kepada", "==", currentEmail)
+  .orderBy("dibuat", "asc")
+  .onSnapshot(snapshot => {
+    // render sesi
         chatBox.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -145,13 +147,12 @@
     const teks = inputPesan.value.trim();
     if (!teks || !currentSessionId) return;
 
-    db.collection("sessions")
-  .where("selesai", "==", false)
-  .where("kepada", "==", currentEmail)
-  .orderBy("dibuat", "asc")
-  .onSnapshot(snapshot => {
-    // render sesi
-  });
+    db.collection("chats").add({
+      sessionId: currentSessionId,
+      dari: "Admin",
+      pesan: teks,
+      waktu: firebase.firestore.Timestamp.now()
+    });
     inputPesan.value = "";
   });
 

@@ -16,28 +16,13 @@
 </header>
 
 <!-- Chat Area -->
-  <main class="flex-1 overflow-y-auto relative">
-  <div id="chatBox" class="flex-1 overflow-y-auto relative px-4 py-3 space-y-2 bg-gray-100"></div>
+<main class="flex flex-col flex-grow">
+  <div id="chatBox" class="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-gray-100"></div>
 
-  <footer class="bg-[#202c33] flex items-center space-x-3 px-3 py-2 select-none">
-   <button aria-label="Emoji" class="text-gray-400 text-2xl">
-    <i class="far fa-smile">
-    </i>
-   </button>
-   <input class="flex-1 bg-transparent text-gray-300 placeholder-gray-400 text-base outline-none" placeholder="Ketik pesan" type="text"/>
-   <button aria-label="Attach" class="text-gray-400 text-xl">
-    <i class="fas fa-paperclip">
-    </i>
-   </button>
-   <button aria-label="Camera" class="text-gray-400 text-xl">
-    <i class="fas fa-camera">
-    </i>
-   </button>
-   <button aria-label="Send voice message" class="bg-[#00a884] w-10 h-10 rounded-full flex items-center justify-center text-white text-xl">
-    <i class="fas fa-microphone">
-    </i>
-   </button>
-  </footer>
+  <form id="chatForm" class="flex items-center gap-2 border-t px-4 py-3 bg-white">
+    <input type="text" id="inputPesan" class="flex-grow border rounded-full px-4 py-2 text-sm" placeholder="Ketik pesan..." required />
+    <button class="bg-blue-600 text-white rounded-full px-4 py-2 text-sm">Kirim</button>
+  </form>
 </main>
 
 <script>
@@ -126,7 +111,7 @@
         const isSaya = data.dari === pasien;
 
         const bubble = document.createElement("div");
-        bubble.className = `w-fit max-w-[75%] text-sm px-4 py-2 rounded-xl shadow whitespace-pre-line break-words ${
+        bubble.className = `w-fit max-w-[75%] text-sm px-4 py-2 rounded-xl shadow whitespace-pre-line auto break-words ${
           isSaya ? "bg-green-200 ml-auto text-black" : "bg-white text-black"
         }`;
         bubble.innerHTML = `

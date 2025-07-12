@@ -2,50 +2,37 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Admin - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    #chatBox::-webkit-scrollbar { width: 6px; }
-    #chatBox::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 3px; }
-  </style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen">
+<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
 
-  <header class="bg-[#f472b6] text-white px-4 py-3 flex justify-between items-center">
-    <h1 class="font-semibold text-lg">Dashboard Terapis</h1>
-    <button id="logoutBtn" class="text-sm underline hover:text-white">Logout</button>
+  <header class="bg-pink-500 text-white px-4 py-3 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Dashboard Admin</h1>
+    <button id="logoutBtn" class="text-sm underline">Logout</button>
   </header>
 
-  <main class="p-4 max-w-3xl mx-auto">
-    <section class="mb-4">
-      <label class="block font-medium mb-1">Status Online:</label>
-      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
-        <option value="tersedia">Tersedia</option>
-        <option value="tidak">Tidak Tersedia</option>
-      </select>
-    </section>
+  <main class="flex-1 p-6 max-w-md mx-auto space-y-6">
+    <h2 class="text-lg font-semibold text-center">Selamat datang 👋</h2>
 
-    <section class="mb-4">
-      <label class="block font-medium mb-1">Sesi Aktif:</label>
-      <select id="sessionSelect" class="w-full border px-3 py-2 rounded">
-        <option value="">-- Pilih Sesi --</option>
-      </select>
-    </section>
-
-    <section class="bg-white p-4 rounded shadow h-[50vh] overflow-y-auto mb-4" id="chatBox">
-      <p class="text-gray-400 text-sm text-center">Pilih sesi untuk melihat chat.</p>
-    </section>
-
-    <form id="chatForm" class="flex gap-2">
-      <input type="text" id="inputPesan" class="flex-1 border px-3 py-2 rounded-full" placeholder="Balas pesan..." />
-      <button type="submit" class="bg-[#f472b6] text-white px-4 py-2 rounded-full">Kirim</button>
-    </form>
+    <div class="grid gap-4">
+      <a href="chat-admin.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
+        💬 <span class="font-semibold">Chat Aktif</span>
+      </a>
+      <a href="riwayat-chat.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
+        📁 <span class="font-semibold">Riwayat Konsultasi</span>
+      </a>
+      <a href="jadwal-admin.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
+        🗓️ <span class="font-semibold">Jadwal Terapis</span>
+      </a>
+      <a href="offline-request.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
+        🏠 <span class="font-semibold">Permintaan Home Visit</span>
+      </a>
+    </div>
   </main>
 
   <script>
@@ -59,111 +46,18 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    const statusSelect = document.getElementById("statusSelect");
-    const sessionSelect = document.getElementById("sessionSelect");
-    const chatBox = document.getElementById("chatBox");
-    const inputPesan = document.getElementById("inputPesan");
-    const chatForm = document.getElementById("chatForm");
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    });
 
-    let currentEmail = "";
-    let unsubscribeChat = null;
-
+    // Proteksi halaman
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "login.html";
-      } else {
-        currentEmail = user.email;
-        loadStatus();
-        loadSesiAktif();
       }
-    });
-
-    logoutBtn.addEventListener("click", () => auth.signOut());
-
-    statusSelect.addEventListener("change", () => {
-      db.collection("terapis").doc(currentEmail).set({ status: statusSelect.value }, { merge: true });
-    });
-
-    function loadStatus() {
-      db.collection("terapis").doc(currentEmail).get().then(doc => {
-        if (doc.exists) {
-          statusSelect.value = doc.data().status || "tidak";
-        }
-      });
-    }
-
-    function loadSesiAktif() {
-      db.collection("sessions")
-        .where("selesai", "==", false)
-        .where("kepada", "==", currentEmail)
-        .onSnapshot(snapshot => {
-          sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const opt = document.createElement("option");
-            opt.value = doc.id;
-            opt.textContent = `${doc.id} - ${data.namaPasien || "Pasien"}`;
-            sessionSelect.appendChild(opt);
-          });
-        });
-    }
-
-    sessionSelect.addEventListener("change", () => {
-      if (unsubscribeChat) unsubscribeChat();
-      const sessionId = sessionSelect.value;
-      if (!sessionId) return;
-
-      unsubscribeChat = db.collection("chats")
-        .where("sessionId", "==", sessionId)
-        .orderBy("waktu", "asc")
-        .onSnapshot(snapshot => {
-          chatBox.innerHTML = "";
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const waktu = data.waktu?.toDate();
-            const jam = waktu?.getHours().toString().padStart(2, "0");
-            const menit = waktu?.getMinutes().toString().padStart(2, "0");
-            const isAdmin = data.dari === "Admin";
-
-            const bubble = document.createElement("div");
-            if (isAdmin) {
-              bubble.className = "flex flex-col items-end mb-2";
-              bubble.innerHTML = `
-                <div class="bg-white text-black text-sm px-3 py-2 rounded-xl rounded-br-none shadow">
-                  ${data.pesan}
-                  <div class="text-right text-[10px] text-gray-500 mt-1">${jam}.${menit}</div>
-                </div>`;
-            } else {
-              bubble.className = "mb-2";
-              bubble.innerHTML = `
-                <div class="bg-[#f472b6] text-white text-sm px-3 py-2 rounded-xl rounded-tl-none shadow">
-                  ${data.pesan}
-                  <div class="text-right text-[10px] mt-1 text-white">${jam}.${menit}</div>
-                </div>`;
-            }
-            chatBox.appendChild(bubble);
-          });
-          chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    });
-
-    chatForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const sessionId = sessionSelect.value;
-      const pesan = inputPesan.value.trim();
-      if (!sessionId || !pesan) return;
-
-      db.collection("chats").add({
-        dari: "Admin",
-        kepada: sessionId,
-        pesan: pesan,
-        sessionId: sessionId,
-        waktu: firebase.firestore.Timestamp.now()
-      });
-      inputPesan.value = "";
     });
   </script>
 

@@ -49,14 +49,14 @@
   let currentEmail = "";
 
   auth.onAuthStateChanged(user => {
-    if (user) {
-      currentEmail = user.email;
-      tampilkanRiwayat();
-    } else {
-      window.location.href = "login.html";
-    }
-  });
-
+  if (user) {
+    currentEmail = user.email;
+    console.log("Terapis login:", currentEmail); // ✅ pastikan tampil
+    tampilkanRiwayat();
+  } else {
+    window.location.href = "login.html";
+  }
+});
   function tampilkanRiwayat() {
     db.collection("sessions")
       .where("selesai", "==", true)

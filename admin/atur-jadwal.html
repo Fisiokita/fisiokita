@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atur Jadwal - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#e6d3c7] min-h-screen">
+  <header class="bg-[#f472b6] text-white px-4 py-3 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Atur Jadwal</h1>
+    <a href="dashboard.html" class="text-sm underline">← Kembali</a>
+  </header>
+
+  <main class="p-4 max-w-xl mx-auto">
+    <form id="jadwalForm" class="bg-white p-4 rounded shadow space-y-4">
+      <div>
+        <label class="block font-semibold mb-1">Hari</label>
+        <select id="hariSelect" class="w-full border px-3 py-2 rounded">
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <input type="time" id="jamMulai" class="flex-1 border px-3 py-2 rounded" />
+        <input type="time" id="jamSelesai" class="flex-1 border px-3 py-2 rounded" />
+      </div>
+      <button type="submit" class="w-full bg-pink-500 text-white py-2 rounded font-semibold">Simpan Jadwal</button>
+    </form>
+
+    <div class="mt-6">
+      <h2 class="font-semibold mb-2 text-lg">Jadwal Tersimpan:</h2>
+      <ul id="jadwalList" class="list-disc text-sm pl-5"></ul>
+    </div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentEmail = "";
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        currentEmail = user.email;
+        tampilkanJadwal();
+      }
+    });
+
+    const form = document.getElementById("jadwalForm");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const hari = document.getElementById("hariSelect").value;
+      const mulai = document.getElementById("jamMulai").value;
+      const selesai = document.getElementById("jamSelesai").value;
+
+      if (!hari || !mulai || !selesai) return alert("Lengkapi semua data!");
+
+      db.collection("jadwal").doc(currentEmail).set({
+        [hari]: `${mulai} - ${selesai}`
+      }, { merge: true }).then(() => {
+        form.reset();
+        tampilkanJadwal();
+      });
+    });
+
+    function tampilkanJadwal() {
+      const jadwalList = document.getElementById("jadwalList");
+      jadwalList.innerHTML = "<li class='text-gray-400 italic'>Memuat...</li>";
+      db.collection("jadwal").doc(currentEmail).get().then(doc => {
+        jadwalList.innerHTML = "";
+        if (doc.exists) {
+          const data = doc.data();
+          const hariUrut = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+          hariUrut.forEach(h => {
+            if (data[h]) {
+              const li = document.createElement("li");
+              li.textContent = `${h}: ${data[h]}`;
+              jadwalList.appendChild(li);
+            }
+          });
+        } else {
+          jadwalList.innerHTML = "<li class='text-gray-400 italic'>Belum ada jadwal.</li>";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

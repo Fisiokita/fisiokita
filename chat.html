@@ -13,7 +13,7 @@
 <main class="flex-grow max-w-md mx-auto w-full px-4 py-4">
   <h1 class="text-xl font-semibold mb-2 text-center">Chat Fisioterapis</h1>
   <div class="text-center text-sm mb-2">
-    Session: <span id="sessionIdDisplay" class="font-mono"></span>
+    Sesi: <span id="sessionIdDisplay" class="font-mono"></span>
   </div>
   <div id="chatBox" class="bg-white text-black rounded p-4 h-[60vh] overflow-y-auto mb-3"></div>
 
@@ -44,12 +44,13 @@
   const inputPesan = document.getElementById("inputPesan");
   const sessionIdDisplay = document.getElementById("sessionIdDisplay");
 
-  // Ambil data URL
   const params = new URLSearchParams(window.location.search);
-  const pasien = params.get("pasien") || "Anonim";
-  const emailTerapis = params.get("email") || "terapis1@fisiosehat.com";
+  const emailTerapis = params.get("email");
+  const pasien = params.get("pasien");
+  const keluhan = params.get("keluhan") || "";
+  const kontak = params.get("kontak") || "";
 
-  // Session ID unik per pasien
+  // Buat sessionId unik
   let sessionId = localStorage.getItem("chatSessionId");
   if (!sessionId) {
     sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
@@ -57,7 +58,7 @@
   }
   sessionIdDisplay.textContent = sessionId;
 
-  // Simpan sesi jika belum ada
+  // Buat dokumen sesi jika belum ada
   const sesiRef = db.collection("sessions").doc(sessionId);
   sesiRef.get().then(doc => {
     if (!doc.exists) {
@@ -69,7 +70,23 @@
     }
   });
 
-  // Kirim pesan
+  // Kirim keluhan awal sebagai pesan pertama (jika belum ada pesan)
+  db.collection("chats")
+    .where("sessionId", "==", sessionId)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty && keluhan) {
+        db.collection("chats").add({
+          dari: pasien,
+          kepada: emailTerapis,
+          pesan: `📝 Keluhan awal:\n${keluhan}\n📞 Kontak: ${kontak}`,
+          sessionId: sessionId,
+          waktu: firebase.firestore.Timestamp.now()
+        });
+      }
+    });
+
+  // Kirim pesan manual
   document.getElementById("chatForm").addEventListener("submit", e => {
     e.preventDefault();
     const pesan = inputPesan.value.trim();
@@ -82,6 +99,7 @@
       sessionId: sessionId,
       waktu: firebase.firestore.Timestamp.now()
     });
+
     inputPesan.value = "";
   });
 
@@ -103,7 +121,7 @@
           isPasien ? "bg-blue-700 text-white ml-auto" : "bg-gray-200 text-black"
         }`;
         bubble.innerHTML = `
-          <div>${data.pesan}</div>
+          <div>${data.pesan.replace(/\n/g, "<br>")}</div>
           <div class="text-[10px] text-right mt-1">${jam}:${menit}</div>
         `;
         chatBox.appendChild(bubble);

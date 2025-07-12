@@ -111,6 +111,18 @@
 
       const sessionId = "CHAT-" + Date.now();
 
+      // Cari sesi aktif dengan email pasien yang belum selesai
+const querySnapshot = await db.collection("sessions")
+  .where("kontak", "==", kontak)
+  .where("selesai", "==", false)
+  .get();
+
+if (!querySnapshot.empty) {
+  const existingSession = querySnapshot.docs[0];
+  const sessionId = existingSession.id;
+  window.location.href = `chat.html?sessionId=${sessionId}&pasien=${encodeURIComponent(nama)}&email=${encodeURIComponent(emailTerapis)}&keluhan=${encodeURIComponent(keluhan)}&kontak=${encodeURIComponent(kontak)}`;
+  return;
+}
       // Simpan data ke Firestore
       await db.collection("sessions").doc(sessionId).set({
         kepada: emailTerapis,

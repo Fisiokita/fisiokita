@@ -59,19 +59,26 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
+    const emailTerapis = params.get("email") || "";
+
     document.getElementById("namaFisio").textContent = namaFisio;
 
     document.getElementById("formPasien").addEventListener("submit", function (e) {
       e.preventDefault();
-      const namaPasien = document.getElementById("nama").value;
-      const kontak = document.getElementById("kontak").value;
-      const keluhan = document.getElementById("keluhan").value;
+      const namaPasien = document.getElementById("nama").value.trim();
+      const kontak = document.getElementById("kontak").value.trim();
+      const keluhan = document.getElementById("keluhan").value.trim();
+
+      if (!emailTerapis) {
+        alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
+        return;
+      }
 
       const query = new URLSearchParams({
-        nama: namaFisio,
         pasien: namaPasien,
-        kontak,
-        keluhan
+        email: emailTerapis,
+        kontak: kontak,
+        keluhan: keluhan
       }).toString();
 
       window.location.href = `chat.html?${query}`;

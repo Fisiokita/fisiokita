@@ -13,7 +13,7 @@
 <body class="bg-[#e6d3c7] text-sm min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex items-center justify-between">
   <h1 class="text-lg font-semibold">💬 Chat Aktif</h1>
   <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
 </header>
@@ -40,7 +40,6 @@
 </main>
 
 <script>
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -53,7 +52,6 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // Element
   const daftarSesi = document.getElementById("daftarSesi");
   const chatContainer = document.getElementById("chatContainer");
   const chatBox = document.getElementById("chatBox");
@@ -64,7 +62,6 @@
   let currentEmail = "";
   let currentSessionId = "";
 
-  // Autentikasi
   auth.onAuthStateChanged(user => {
     if (user) {
       currentEmail = user.email;
@@ -74,7 +71,6 @@
     }
   });
 
-  // Tampilkan Daftar Sesi Aktif
   function tampilkanDaftarSesi() {
     db.collection("sessions")
       .where("selesai", "==", false)
@@ -96,12 +92,12 @@
               <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
               <div class="text-xs text-gray-500">${doc.id}</div>
             </div>
-            <span class="text-red-500 text-xs" id="notif-${doc.id}">●</span>
+            <span class="text-red-500 text-xs" id="notifikasi-${doc.id}">🔴</span>
           `;
 
           item.addEventListener("click", () => {
             bukaSesi(doc.id);
-            document.getElementById(`notif-${doc.id}`).classList.add("hidden");
+            document.getElementById(`notifikasi-${doc.id}`).classList.add("hidden");
           });
 
           daftarSesi.appendChild(item);
@@ -109,7 +105,6 @@
       });
   }
 
-  // Buka sesi
   function bukaSesi(sessionId) {
     currentSessionId = sessionId;
     chatContainer.classList.remove("hidden");
@@ -145,7 +140,6 @@
       });
   }
 
-  // Kirim pesan
   formChat.addEventListener("submit", e => {
     e.preventDefault();
     const teks = inputPesan.value.trim();
@@ -160,7 +154,6 @@
     inputPesan.value = "";
   });
 
-  // Akhiri sesi
   btnAkhiri.addEventListener("click", () => {
     if (!currentSessionId) return;
     if (confirm("Yakin ingin mengakhiri sesi ini?")) {

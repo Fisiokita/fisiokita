@@ -93,10 +93,12 @@
     riwayatContainer.classList.remove("hidden");
     chatRiwayat.innerHTML = "";
 
-    db.collection("chats")
-      .where("sessionId", "==", sessionId)
-      .orderBy("waktu", "asc")
-      .onSnapshot(snapshot => {
+    db.collection("sessions")
+  .where("selesai", "==", true)
+  .where("kepada", "==", currentEmail)
+  .orderBy("dibuat", "asc")
+  .onSnapshot(snapshot => {
+    // render sesi riwayat
         chatRiwayat.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();

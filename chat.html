@@ -23,12 +23,18 @@
 <main class="flex-1 overflow-y-auto px-3 py-4 space-y-3 max-w-md mx-auto w-full" id="chatBox"></main>
 
 <!-- Input -->
-<footer class="bg-white flex items-center space-x-2 px-4 py-3 shadow max-w-md mx-auto w-full">
-  <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border rounded-full outline-none" placeholder="Ketik pesan..." />
-  <button id="kirimBtn" class="bg-[#f472b6] w-10 h-10 rounded-full text-white flex items-center justify-center">
-    <i class="fas fa-paper-plane text-sm"></i>
+<footer class="bg-white px-4 py-3 shadow max-w-md mx-auto w-full flex flex-col gap-2">
+  <div class="flex items-center space-x-2">
+    <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border rounded-full outline-none" placeholder="Ketik pesan..." />
+    <button id="kirimBtn" class="bg-[#f472b6] w-10 h-10 rounded-full text-white flex items-center justify-center">
+      <i class="fas fa-paper-plane text-sm"></i>
+    </button>
+  </div>
+  <button id="btnAkhiri" class="text-xs text-red-600 underline hover:text-red-800 self-end">
+    Akhiri Chat
   </button>
 </footer>
+
 
 <script>
   const firebaseConfig = {

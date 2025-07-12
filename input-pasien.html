@@ -32,15 +32,16 @@
         <input type="text" id="nama" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
       </div>
       <div>
-        <label class="block text-sm font-semibold mb-1">Nomor HP </label>
+        <label class="block text-sm font-semibold mb-1">Nomor HP</label>
         <input
-  type="tel"
-  inputmode="numeric"
-  id="kontak"
-  required
-  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-/>
-        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus valid.</p>
+          type="tel"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          id="kontak"
+          required
+          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+        />
+        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus berupa angka.</p>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>
@@ -78,63 +79,59 @@
   </script>
 
   <!-- Script Form -->
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
-  const emailTerapis = params.get("email") || "";
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
+    const emailTerapis = params.get("email") || "";
 
-  document.getElementById("namaFisio").textContent = namaFisio;
+    document.getElementById("namaFisio").textContent = namaFisio;
 
-  const form = document.getElementById("formPasien");
-  const kontakInput = document.getElementById("kontak");
-  const kontakError = document.getElementById("kontakError");
+    const form = document.getElementById("formPasien");
+    const kontakInput = document.getElementById("kontak");
+    const kontakError = document.getElementById("kontakError");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-    const nama = document.getElementById("nama").value.trim();
-    const kontak = kontakInput.value.trim();
-    const keluhan = document.getElementById("keluhan").value.trim();
+      const nama = document.getElementById("nama").value.trim();
+      const kontak = kontakInput.value.trim();
+      const keluhan = document.getElementById("keluhan").value.trim();
 
-    // Validasi nomor HP
-    if (!/^\d+$/.test(cetakAngka(kontak))) {
-      kontakError.classList.remove("hidden");
-      return;
-    } else {
-      kontakError.classList.add("hidden");
-    }
+      if (!/^\d+$/.test(kontak)) {
+        kontakError.classList.remove("hidden");
+        return;
+      } else {
+        kontakError.classList.add("hidden");
+      }
 
-    if (!emailTerapis) {
-      alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
-      return;
-    }
+      if (!emailTerapis) {
+        alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
+        return;
+      }
 
-    // Generate session ID unik
-    const sessionId = "CHAT-" + Date.now();
+      const sessionId = "CHAT-" + Date.now();
 
-    // Simpan data sesi ke Firestore
-    await db.collection("sessions").doc(sessionId).set({
-      kepada: emailTerapis,
-      namaPasien: nama,
-      selesai: false,
-      dibuat: firebase.firestore.Timestamp.now()
+      // Simpan data ke Firestore
+      await db.collection("sessions").doc(sessionId).set({
+        kepada: emailTerapis,
+        namaPasien: nama,
+        kontak,
+        keluhan,
+        selesai: false,
+        dibuat: firebase.firestore.Timestamp.now()
+      });
+
+      // Redirect ke halaman chat
+      const query = new URLSearchParams({
+        sessionId,
+        pasien: nama,
+        email: emailTerapis,
+        keluhan,
+        kontak
+      }).toString();
+
+      window.location.href = `chat.html?${query}`;
     });
-
-    // Arahkan ke chat.html
-    const query = new URLSearchParams({
-      sessionId: sessionId,
-      pasien: nama,
-      email: emailTerapis,
-      kontak: kontak,
-      keluhan: keluhan
-    }).toString();
-
-    window.location.href = `chat.html?${query}`;
-  });
-
-  function cetakAngka(teks) {
-    return teks.replace(/\D/g, "");
-  }
-    </script>
+  </script>
 </body>
 </html>

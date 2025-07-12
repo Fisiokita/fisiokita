@@ -3,34 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat Fisioterapis - FisioSehat</title>
+  <title>Konsultasi Chat - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="flex flex-col h-screen bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+<body class="flex flex-col h-screen bg-white">
 
 <!-- Header -->
-<header class="px-4 py-3 bg-[#2563EB] text-white text-center font-semibold shadow">
+<header class="bg-blue-700 text-white px-4 py-3 text-center font-semibold">
   Chat Fisioterapis
 </header>
 
 <!-- Chat Area -->
-<main class="flex-1 overflow-y-auto px-4 py-3 space-y-2">
-  <div id="chatBox" class="space-y-3"></div>
+  <main class="flex-1 overflow-y-auto relative">
+  <div id="chatBox" class="flex-1 overflow-y-auto relative px-4 py-3 space-y-2 bg-gray-100"></div>
+
+  <footer class="bg-[#202c33] flex items-center space-x-3 px-3 py-2 select-none">
+   <button aria-label="Emoji" class="text-gray-400 text-2xl">
+    <i class="far fa-smile">
+    </i>
+   </button>
+   <input class="flex-1 bg-transparent text-gray-300 placeholder-gray-400 text-base outline-none" placeholder="Ketik pesan" type="text"/>
+   <button aria-label="Attach" class="text-gray-400 text-xl">
+    <i class="fas fa-paperclip">
+    </i>
+   </button>
+   <button aria-label="Camera" class="text-gray-400 text-xl">
+    <i class="fas fa-camera">
+    </i>
+   </button>
+   <button aria-label="Send voice message" class="bg-[#00a884] w-10 h-10 rounded-full flex items-center justify-center text-white text-xl">
+    <i class="fas fa-microphone">
+    </i>
+   </button>
+  </footer>
 </main>
 
-<!-- Input -->
-<footer class="bg-white px-4 py-3 flex gap-2 items-center">
-  <input id="inputPesan" class="flex-grow border border-gray-300 rounded-full px-4 py-2 text-sm text-black" placeholder="Ketik pesan..." />
-  <button id="kirimBtn" class="bg-[#2563EB] text-white px-4 py-2 rounded-full text-sm"><i class="fas fa-paper-plane"></i></button>
-</footer>
-
-<!-- Script -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -58,7 +67,7 @@
   const chatBox = document.getElementById("chatBox");
   const inputPesan = document.getElementById("inputPesan");
 
-  // Inisiasi sesi jika belum ada
+  // Simpan sesi jika belum ada
   const sesiRef = db.collection("sessions").doc(sessionId);
   sesiRef.get().then(doc => {
     if (!doc.exists) {
@@ -70,17 +79,37 @@
     }
   });
 
-  // Kirim keluhan awal jika belum ada chat
-  db.collection("chats").where("sessionId", "==", sessionId).get().then(snapshot => {
-    if (snapshot.empty && keluhan) {
-      db.collection("chats").add({
-        dari: pasien,
-        kepada: emailTerapis,
-        pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
-        sessionId: sessionId,
-        waktu: firebase.firestore.Timestamp.now()
-      });
-    }
+  // Simpan keluhan awal sebagai pesan pertama jika belum ada chat
+  db.collection("chats")
+    .where("sessionId", "==", sessionId)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty && keluhan) {
+        db.collection("chats").add({
+          dari: pasien,
+          kepada: emailTerapis,
+          pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
+          sessionId: sessionId,
+          waktu: firebase.firestore.Timestamp.now()
+        });
+      }
+    });
+
+  // Kirim pesan
+  document.getElementById("chatForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const pesan = inputPesan.value.trim();
+    if (!pesan) return;
+
+    db.collection("chats").add({
+      dari: pasien,
+      kepada: emailTerapis,
+      pesan: pesan,
+      sessionId: sessionId,
+      waktu: firebase.firestore.Timestamp.now()
+    });
+
+    inputPesan.value = "";
   });
 
   // Tampilkan chat real-time
@@ -92,39 +121,22 @@
       snapshot.forEach(doc => {
         const data = doc.data();
         const waktu = data.waktu?.toDate();
-        const jam = waktu?.getHours().toString().padStart(2, "0");
-        const menit = waktu?.getMinutes().toString().padStart(2, "0");
+        const jam = waktu?.getHours().toString().padStart(2, "0") ?? "--";
+        const menit = waktu?.getMinutes().toString().padStart(2, "0") ?? "--";
         const isSaya = data.dari === pasien;
 
         const bubble = document.createElement("div");
-        bubble.className = `text-sm px-4 py-2 rounded-2xl max-w-[75%] whitespace-pre-line break-words shadow ${
-          isSaya
-            ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white ml-auto rounded-br-none"
-            : "bg-white text-black mr-auto rounded-tl-none"
+        bubble.className = `w-fit max-w-[75%] text-sm px-4 py-2 rounded-xl shadow whitespace-pre-line break-words ${
+          isSaya ? "bg-green-200 ml-auto text-black" : "bg-white text-black"
         }`;
-
         bubble.innerHTML = `
           <div>${data.pesan}</div>
-          <div class="text-[10px] text-right mt-1 ${isSaya ? 'text-white/70' : 'text-gray-400'}">${jam}:${menit}</div>
+          <div class="text-[10px] text-right mt-1 text-gray-500">${jam}:${menit}</div>
         `;
         chatBox.appendChild(bubble);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
     });
-
-  // Kirim pesan
-  document.getElementById("kirimBtn").addEventListener("click", () => {
-    const pesan = inputPesan.value.trim();
-    if (!pesan) return;
-    db.collection("chats").add({
-      dari: pasien,
-      kepada: emailTerapis,
-      pesan,
-      sessionId: sessionId,
-      waktu: firebase.firestore.Timestamp.now()
-    });
-    inputPesan.value = "";
-  });
 </script>
 </body>
 </html>

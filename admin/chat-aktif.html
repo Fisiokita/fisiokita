@@ -145,12 +145,13 @@
     const teks = inputPesan.value.trim();
     if (!teks || !currentSessionId) return;
 
-    db.collection("chats").add({
-      sessionId: currentSessionId,
-      dari: "Admin",
-      pesan: teks,
-      waktu: firebase.firestore.Timestamp.now()
-    });
+    db.collection("sessions")
+  .where("selesai", "==", false)
+  .where("kepada", "==", currentEmail)
+  .orderBy("dibuat", "asc")
+  .onSnapshot(snapshot => {
+    // render sesi
+  });
     inputPesan.value = "";
   });
 

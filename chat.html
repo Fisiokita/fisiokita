@@ -11,13 +11,13 @@
   <style>
     body { font-family: 'Roboto', sans-serif; }
     #chatBox::-webkit-scrollbar { width: 6px; }
-    #chatBox::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 3px; }
+    #chatBox::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 3px; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-600 to-purple-700 min-h-screen flex flex-col">
+<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#2563EB] text-white px-4 py-3 font-semibold text-center shadow">Chat Fisioterapis</header>
+<header class="bg-[#f472b6] text-white px-4 py-3 font-semibold text-center shadow">Chat Fisioterapis</header>
 
 <!-- Chat Area -->
 <main class="flex-1 overflow-y-auto px-3 py-4 space-y-3 max-w-md mx-auto w-full" id="chatBox"></main>
@@ -25,7 +25,7 @@
 <!-- Input -->
 <footer class="bg-white flex items-center space-x-2 px-4 py-3 shadow max-w-md mx-auto w-full">
   <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border rounded-full outline-none" placeholder="Ketik pesan..." />
-  <button id="kirimBtn" class="bg-[#00a884] w-10 h-10 rounded-full text-white flex items-center justify-center">
+  <button id="kirimBtn" class="bg-[#f472b6] w-10 h-10 rounded-full text-white flex items-center justify-center">
     <i class="fas fa-paper-plane text-sm"></i>
   </button>
 </footer>
@@ -97,15 +97,15 @@
         if (isSaya) {
           bubble.className = "flex flex-col items-end max-w-[80%] ml-auto space-y-1";
           bubble.innerHTML = `
-            <div class="bg-[#056162] text-white text-sm rounded-xl rounded-br-none px-3 py-2 break-words">
+            <div class="bg-[#f472b6] text-white text-sm rounded-xl rounded-br-none px-3 py-2 break-words shadow">
               ${data.pesan}
-              <span class="text-gray-300 text-xs ml-2">${jam}.${menit}</span>
-              <i class="fas fa-check-double text-gray-300 text-xs ml-1"></i>
+              <span class="text-white text-xs ml-2">${jam}.${menit}</span>
+              <i class="fas fa-check-double text-white text-xs ml-1"></i>
             </div>`;
         } else {
-          bubble.className = "bg-[#202c33] text-white text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] ml-0 inline-block break-words";
+          bubble.className = "bg-white text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] ml-0 inline-block break-words shadow";
           bubble.innerHTML = `${data.pesan}
-            <span class="text-gray-400 text-xs ml-2">${jam}.${menit}</span>`;
+            <span class="text-gray-500 text-xs ml-2">${jam}.${menit}</span>`;
         }
 
         chatBox.appendChild(bubble);

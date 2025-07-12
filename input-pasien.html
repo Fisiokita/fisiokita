@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Data Pasien - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="konsultasi-online.html">
-      <img src="https://placehold.co/24x24/png?text=←" alt="Back" class="w-6 h-6" />
+      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
     </a>
     <span class="font-semibold text-lg">FisioSehat</span>
   </header>
@@ -32,8 +32,9 @@
         <input type="text" id="nama" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
       </div>
       <div>
-        <label class="block text-sm font-semibold mb-1">Email / Nomor HP</label>
+        <label class="block text-sm font-semibold mb-1">Nomor HP / Email</label>
         <input type="text" id="kontak" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus berupa angka atau email valid.</p>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>
@@ -56,7 +57,21 @@
     <p>Masukkan data Anda sebelum memulai konsultasi.</p>
   </footer>
 
-  <!-- Script -->
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Script Form -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
@@ -64,27 +79,56 @@
 
     document.getElementById("namaFisio").textContent = namaFisio;
 
-    document.getElementById("formPasien").addEventListener("submit", function (e) {
+    const form = document.getElementById("formPasien");
+    const kontakInput = document.getElementById("kontak");
+    const kontakError = document.getElementById("kontakError");
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const namaPasien = document.getElementById("nama").value.trim();
-      const kontak = document.getElementById("kontak").value.trim();
+
+      const nama = document.getElementById("nama").value.trim();
+      const kontak = kontakInput.value.trim();
       const keluhan = document.getElementById("keluhan").value.trim();
+
+      // Validasi nomor HP
+      if (!/^\d+$/.test(cetakAngka(kontak))) {
+        kontakError.classList.remove("hidden");
+        return;
+      } else {
+        kontakError.classList.add("hidden");
+      }
 
       if (!emailTerapis) {
         alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
         return;
       }
 
+      // Generate session baru
+      const sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
+
+      // Simpan ke Firestore
+      await db.collection("sessions").doc(sessionId).set({
+        kepada: emailTerapis,
+        namaPasien: nama,
+        selesai: false,
+        dibuat: firebase.firestore.Timestamp.now()
+      });
+
+      // Arahkan ke chat.html
       const query = new URLSearchParams({
-        pasien: namaPasien,
         email: emailTerapis,
-        nama: namaFisio,
-        kontak: kontak,
-        keluhan: keluhan
+        pasien: nama,
+        kontak,
+        keluhan,
+        sessionId
       }).toString();
 
       window.location.href = `chat.html?${query}`;
     });
+
+    function cetakAngka(teks) {
+      return teks.replace(/\D/g, ""); // hanya ambil digit angka
+    }
   </script>
 </body>
 </html>

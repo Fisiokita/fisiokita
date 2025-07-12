@@ -21,8 +21,8 @@
   <div class="bg-white p-6 rounded shadow max-w-sm w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Login Terapis</h1>
     <form id="loginForm" class="space-y-4">
-      <input type="email" id="emailInput" placeholder="Email" required class="w-full border px-3 py-2 rounded"/>
-      <input type="password" id="passwordInput" placeholder="Password" required class="w-full border px-3 py-2 rounded"/>
+      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded"/>
+      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded"/>
       <button type="submit" class="w-full bg-pink-500 text-white py-2 rounded">Masuk</button>
     </form>
     <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
@@ -62,16 +62,7 @@
           <option value="">-- Pilih Sesi --</option>
         </select>
       </div>
-
-      <!-- Tombol Akhiri Chat -->
-      <div class="flex justify-end mb-2">
-        <button id="akhiriBtn" class="bg-red-600 text-white px-4 py-1 rounded text-sm hidden">Akhiri Chat</button>
-      </div>
-
-      <!-- Chatbox -->
       <div id="chatBoxAktif" class="bg-[#e6d3c7] p-3 rounded shadow h-[50vh] overflow-y-auto space-y-2"></div>
-
-      <!-- Form Kirim Pesan -->
       <form id="chatFormAktif" class="flex gap-2 mt-2">
         <input type="text" id="inputPesanAktif" placeholder="Balas pesan..." class="flex-1 border px-3 py-2 rounded-full"/>
         <button type="submit" class="bg-pink-500 text-white px-4 py-2 rounded-full">Kirim</button>
@@ -124,7 +115,6 @@
     messagingSenderId: "800971487968",
     appId: "1:800971487968:web:0dec5977632004aa0fee85"
   };
-
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
@@ -159,6 +149,7 @@
 
   logoutBtn.addEventListener("click", () => auth.signOut());
 
+  // Navigasi tab
   document.querySelectorAll(".tabBtn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("bg-pink-500", "text-white"));
@@ -168,38 +159,29 @@
     });
   });
 
-  // Load status
-  function loadStatusTerapis() {
-    db.collection("terapis").doc(currentEmail).get().then(doc => {
-      if (doc.exists) statusSelect.value = doc.data().status || "tidak";
-    });
-  }
-
+  // Status Online
   statusSelect.addEventListener("change", () => {
     db.collection("terapis").doc(currentEmail).set({ status: statusSelect.value }, { merge: true });
   });
 
+  function loadStatusTerapis() {
+    db.collection("terapis").doc(currentEmail).get().then(doc => {
+      if (doc.exists) {
+        statusSelect.value = doc.data().status || "tidak";
+      }
+    });
+  }
+
   // Chat Aktif
   function tampilkanSesiAktif() {
-    db.collection("sessions")
-      .where("selesai", "==", false)
-      .where("kepada", "==", currentEmail)
+    db.collection("sessions").where("selesai", "==", false).where("kepada", "==", currentEmail)
       .onSnapshot(snapshot => {
         sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
         snapshot.forEach(doc => {
-          const sessionId = doc.id;
-          db.collection("chats")
-            .where("sessionId", "==", sessionId)
-            .where("dari", "!=", "Admin")
-            .where("dibaca", "==", false)
-            .get()
-            .then(querySnapshot => {
-              const unread = querySnapshot.size;
-              const opt = document.createElement("option");
-              opt.value = sessionId;
-              opt.textContent = unread > 0 ? `${sessionId} (${unread} baru)` : sessionId;
-              sessionSelect.appendChild(opt);
-            });
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.id;
+          sessionSelect.appendChild(opt);
         });
       });
   }
@@ -207,8 +189,6 @@
   sessionSelect.addEventListener("change", () => {
     const id = sessionSelect.value;
     if (!id) return;
-    akhiriBtn.classList.remove("hidden");
-
     db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
       .onSnapshot(snapshot => {
         chatBoxAktif.innerHTML = "";
@@ -218,6 +198,7 @@
           const jam = waktu?.getHours().toString().padStart(2, "0");
           const menit = waktu?.getMinutes().toString().padStart(2, "0");
           const isAdmin = data.dari === "Admin";
+
           const bubble = document.createElement("div");
 
           if (isAdmin) {
@@ -234,11 +215,6 @@
           }
 
           chatBoxAktif.appendChild(bubble);
-
-          // tandai pesan pasien sebagai dibaca
-          if (!data.dibaca && !isAdmin) {
-            db.collection("chats").doc(doc.id).update({ dibaca: true });
-          }
         });
         chatBoxAktif.scrollTop = chatBoxAktif.scrollHeight;
       });
@@ -254,24 +230,12 @@
       kepada: id,
       pesan,
       sessionId: id,
-      waktu: firebase.firestore.Timestamp.now(),
-      dibaca: true
+      waktu: firebase.firestore.Timestamp.now()
     });
     inputPesanAktif.value = "";
   });
 
-  // Tombol akhiri chat
-  akhiriBtn.addEventListener("click", () => {
-    const id = sessionSelect.value;
-    if (id && confirm("Yakin ingin mengakhiri sesi ini?")) {
-      db.collection("sessions").doc(id).update({ selesai: true });
-      sessionSelect.value = "";
-      chatBoxAktif.innerHTML = `<p class="text-center text-sm text-gray-500">Sesi telah diakhiri.</p>`;
-      akhiriBtn.classList.add("hidden");
-    }
-  });
-
-  // Riwayat Chat
+  // Riwayat
   function tampilkanRiwayat() {
     db.collection("sessions").where("selesai", "==", true).where("kepada", "==", currentEmail)
       .onSnapshot(snapshot => {
@@ -296,6 +260,7 @@
           const jam = waktu?.getHours().toString().padStart(2, "0");
           const menit = waktu?.getMinutes().toString().padStart(2, "0");
           const isAdmin = data.dari === "Admin";
+
           const bubble = document.createElement("div");
 
           if (isAdmin) {
@@ -313,7 +278,6 @@
 
           chatBoxRiwayat.appendChild(bubble);
         });
-        chatBoxRiwayat.scrollTop = chatBoxRiwayat.scrollHeight;
       });
   });
 
@@ -347,11 +311,9 @@
     });
   }
 
-  // Permintaan Konsultasi Offline
+  // Konsultasi Offline
   function tampilkanOffline() {
-    db.collection("offline_req")
-      .where("terapis", "==", currentEmail)
-      .where("status", "==", "pending")
+    db.collection("offline_req").where("terapis", "==", currentEmail).where("status", "==", "pending")
       .onSnapshot(snapshot => {
         offlineList.innerHTML = "";
         if (snapshot.empty) {

@@ -1,221 +1,75 @@
+<!-- /fisiokita/admin-dashboard.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard - FisioSehat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script defer src="/js/firebase-config.js"></script>
+  <script defer src="/js/admin.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
+  <div class="flex h-screen">
 
-<!-- Login Page -->
-<div id="loginPage" class="flex flex-col items-center justify-center min-h-screen px-4">
-  <div class="bg-white p-6 rounded-lg shadow w-full max-w-sm">
-    <h1 class="text-xl font-semibold text-center mb-4">Login Admin</h1>
-    <form id="loginForm" class="space-y-4">
-      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
-      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
-      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Masuk</button>
-    </form>
-    <p id="loginError" class="text-red-600 text-sm text-center mt-3 hidden"></p>
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r p-4">
+      <h1 class="text-xl font-bold text-blue-600 mb-6">FisioKita Admin</h1>
+      <nav class="flex flex-col gap-2">
+        <button class="nav-link text-left" data-target="chat-aktif">📨 Chat Aktif</button>
+        <button class="nav-link text-left" data-target="riwayat-chat">📁 Riwayat Konsultasi</button>
+        <button class="nav-link text-left" data-target="ubah-jadwal">🗓️ Ubah Jadwal</button>
+        <button class="nav-link text-left" data-target="status-terapis">🟢 Status Konsultasi</button>
+        <button class="nav-link text-left" data-target="permintaan-offline">🏠 Permintaan Offline</button>
+        <button id="logoutBtn" class="text-red-600 mt-8">🚪 Logout</button>
+      </nav>
+    </aside>
+
+    <!-- Konten Utama -->
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <!-- Konten Chat Aktif -->
+      <section id="chat-aktif" class="hidden">
+        <h2 class="text-2xl font-semibold mb-4">Chat Aktif</h2>
+        <div id="chatAktifList" class="space-y-2"></div>
+      </section>
+
+      <!-- Konten Riwayat Chat -->
+      <section id="riwayat-chat" class="hidden">
+        <h2 class="text-2xl font-semibold mb-4">Riwayat Konsultasi</h2>
+        <div id="riwayatList" class="space-y-2"></div>
+      </section>
+
+      <!-- Konten Ubah Jadwal -->
+      <section id="ubah-jadwal" class="hidden">
+        <h2 class="text-2xl font-semibold mb-4">Ubah Jadwal Konsultasi</h2>
+        <form id="formJadwal" class="space-y-4">
+          <div>
+            <label class="block">Hari:</label>
+            <input type="text" id="jadwalHari" class="border rounded px-3 py-2 w-full" placeholder="Contoh: Senin - Jumat" />
+          </div>
+          <div>
+            <label class="block">Jam:</label>
+            <input type="text" id="jadwalJam" class="border rounded px-3 py-2 w-full" placeholder="Contoh: 09.00 - 17.00" />
+          </div>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Simpan Jadwal</button>
+        </form>
+      </section>
+
+      <!-- Konten Status Tersedia -->
+      <section id="status-terapis" class="hidden">
+        <h2 class="text-2xl font-semibold mb-4">Status Konsultasi</h2>
+        <button id="btnToggleStatus" class="px-4 py-2 bg-green-500 text-white rounded">Ubah ke Tidak Tersedia</button>
+        <p class="mt-2 text-sm text-gray-600">Status saat ini: <span id="statusLabel" class="font-semibold">Memuat...</span></p>
+      </section>
+
+      <!-- Konten Permintaan Konsultasi Offline -->
+      <section id="permintaan-offline" class="hidden">
+        <h2 class="text-2xl font-semibold mb-4">Permintaan Konsultasi Offline</h2>
+        <div id="offlineRequestsList" class="space-y-2"></div>
+      </section>
+
+    </main>
   </div>
-</div>
-
-<!-- Dashboard -->
-<div id="dashboardPage" class="hidden min-h-screen">
-  <header class="bg-[#4B6CC1] text-white p-4 flex justify-between items-center">
-    <h1 class="text-lg font-semibold">Dashboard Admin FisioSehat</h1>
-    <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
-  </header>
-
-  <main class="max-w-4xl mx-auto p-4">
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <div class="bg-white p-4 rounded shadow text-center">
-        <h2 class="text-lg font-semibold">Sesi Aktif</h2>
-        <p id="jumlahAktif" class="text-2xl font-bold text-blue-600">0</p>
-      </div>
-      <div class="bg-white p-4 rounded shadow text-center">
-        <h2 class="text-lg font-semibold">Sesi Selesai</h2>
-        <p id="jumlahSelesai" class="text-2xl font-bold text-green-600">0</p>
-      </div>
-    </div>
-
-    <div class="flex gap-4 mb-4">
-      <button class="tabBtn bg-blue-600 text-white px-4 py-2 rounded" data-tab="aktif">💬 Chat Aktif</button>
-      <button class="tabBtn bg-gray-200 text-gray-800 px-4 py-2 rounded" data-tab="riwayat">📁 Riwayat Chat</button>
-    </div>
-
-    <div id="tab-aktif" class="tabContent">
-      <label class="font-medium">Pilih Sesi Aktif:</label>
-      <select id="sessionSelect" class="w-full border px-3 py-2 rounded mb-2">
-        <option value="">-- Pilih Sesi --</option>
-      </select>
-      <div id="chatBoxAktif" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto mb-2"></div>
-      <form id="chatFormAktif" class="flex gap-2">
-        <input type="text" id="inputPesanAktif" class="flex-grow border px-3 py-2 rounded" placeholder="Balas pesan..." />
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">Kirim</button>
-      </form>
-    </div>
-
-    <div id="tab-riwayat" class="tabContent hidden">
-      <label class="font-medium">Pilih Sesi Selesai:</label>
-      <select id="riwayatSelect" class="w-full border px-3 py-2 rounded mb-2">
-        <option value="">-- Pilih Sesi --</option>
-      </select>
-      <div id="chatBoxRiwayat" class="bg-white border rounded p-4 h-[40vh] overflow-y-auto"></div>
-    </div>
-  </main>
-</div>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const loginPage = document.getElementById("loginPage");
-  const dashboardPage = document.getElementById("dashboardPage");
-  const loginForm = document.getElementById("loginForm");
-  const loginError = document.getElementById("loginError");
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      loginPage.classList.add("hidden");
-      dashboardPage.classList.remove("hidden");
-      inisialisasiDashboard();
-    } else {
-      dashboardPage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
-    }
-  });
-
-  loginForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(email, pass)
-      .catch(err => {
-        loginError.textContent = err.message;
-        loginError.classList.remove("hidden");
-      });
-  });
-
-  logoutBtn.addEventListener("click", () => auth.signOut());
-
-  const tabBtns = document.querySelectorAll(".tabBtn");
-  const tabContents = document.querySelectorAll(".tabContent");
-  tabBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      tabBtns.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
-      btn.classList.add("bg-blue-600", "text-white");
-      tabContents.forEach(t => t.classList.add("hidden"));
-      document.getElementById("tab-" + tab).classList.remove("hidden");
-    });
-  });
-
-  // Dashboard logic
-  function inisialisasiDashboard() {
-    db.collection("sessions").where("selesai", "!=", true).onSnapshot(snap => {
-      document.getElementById("jumlahAktif").textContent = snap.size;
-      const sessionSelect = document.getElementById("sessionSelect");
-      const selected = sessionSelect.value;
-      sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-      snap.forEach(doc => {
-        const opt = document.createElement("option");
-        opt.value = doc.id;
-        opt.textContent = doc.id;
-        sessionSelect.appendChild(opt);
-      });
-      if (selected) sessionSelect.value = selected;
-    });
-
-    db.collection("sessions").where("selesai", "==", true).onSnapshot(snap => {
-      document.getElementById("jumlahSelesai").textContent = snap.size;
-      const riwayatSelect = document.getElementById("riwayatSelect");
-      riwayatSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-      snap.forEach(doc => {
-        const opt = document.createElement("option");
-        opt.value = doc.id;
-        opt.textContent = doc.id;
-        riwayatSelect.appendChild(opt);
-      });
-    });
-  }
-
-  // Chat Aktif
-  const sessionSelect = document.getElementById("sessionSelect");
-  const chatBoxAktif = document.getElementById("chatBoxAktif");
-  const inputPesanAktif = document.getElementById("inputPesanAktif");
-
-  sessionSelect.addEventListener("change", () => {
-    const id = sessionSelect.value;
-    if (!id) return;
-    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
-      .onSnapshot(snap => {
-        chatBoxAktif.innerHTML = "";
-        snap.forEach(doc => {
-          const d = doc.data(), t = d.waktu?.toDate();
-          const jam = t?.getHours().toString().padStart(2, "0") ?? "--";
-          const menit = t?.getMinutes().toString().padStart(2, "0") ?? "--";
-          const div = document.createElement("div");
-          div.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${d.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"}`;
-          div.innerHTML = `<div>${d.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
-          chatBoxAktif.appendChild(div);
-        });
-        chatBoxAktif.scrollTop = chatBoxAktif.scrollHeight;
-      });
-  });
-
-  document.getElementById("chatFormAktif").addEventListener("submit", e => {
-    e.preventDefault();
-    const id = sessionSelect.value;
-    const pesan = inputPesanAktif.value.trim();
-    if (!id || !pesan) return;
-    db.collection("chats").add({
-      dari: "Admin",
-      kepada: id,
-      pesan: pesan,
-      sessionId: id,
-      waktu: firebase.firestore.Timestamp.now()
-    });
-    inputPesanAktif.value = "";
-  });
-
-  // Riwayat Chat
-  const riwayatSelect = document.getElementById("riwayatSelect");
-  const chatBoxRiwayat = document.getElementById("chatBoxRiwayat");
-
-  riwayatSelect.addEventListener("change", () => {
-    const id = riwayatSelect.value;
-    if (!id) return;
-    db.collection("chats").where("sessionId", "==", id).orderBy("waktu", "asc")
-      .onSnapshot(snap => {
-        chatBoxRiwayat.innerHTML = "";
-        snap.forEach(doc => {
-          const d = doc.data(), t = d.waktu?.toDate();
-          const jam = t?.getHours().toString().padStart(2, "0") ?? "--";
-          const menit = t?.getMinutes().toString().padStart(2, "0") ?? "--";
-          const div = document.createElement("div");
-          div.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${d.dari === "Admin" ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"}`;
-          div.innerHTML = `<div>${d.pesan}</div><div class="text-[10px] text-right mt-1">${jam}:${menit}</div>`;
-          chatBoxRiwayat.appendChild(div);
-        });
-        chatBoxRiwayat.scrollTop = chatBoxRiwayat.scrollHeight;
-      });
-  });
-</script>
-
 </body>
 </html>

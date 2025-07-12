@@ -26,6 +26,15 @@
       <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
     </div>
 
+    !-- Pilih Status -->
+    <div class="bg-white p-4 rounded shadow mb-4">
+      <label class="block font-medium mb-1">Status Online:</label>
+      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
+        <option value="tersedia">Tersedia</option>
+        <option value="tidak">Tidak Tersedia</option>
+      </select>
+    </div>
+
     <div class="space-y-4">
       <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
         <div class="flex items-center justify-between">
@@ -82,6 +91,10 @@
       auth.signOut().then(() => {
         window.location.href = "login.html";
       });
+      // Status Online
+  statusSelect.addEventListener("change", () => {
+    db.collection("terapis").doc(currentEmail).set({ status: statusSelect.value }, { merge: true });
+  });
     });
   </script>
 

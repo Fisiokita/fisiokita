@@ -2,39 +2,62 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Admin - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+<body class="bg-[#e6d3c7] text-gray-800 min-h-screen flex flex-col">
 
-  <header class="bg-pink-500 text-white px-4 py-3 flex justify-between items-center shadow">
-    <h1 class="text-lg font-semibold">Dashboard Admin</h1>
-    <button id="logoutBtn" class="text-sm underline">Logout</button>
+  <!-- Header -->
+  <header class="bg-[#f472b6] text-white px-4 py-3 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Dashboard Terapis</h1>
+    <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
 
-  <main class="flex-1 p-6 max-w-md mx-auto space-y-6">
-    <h2 class="text-lg font-semibold text-center">Selamat datang 👋</h2>
+  <!-- Main -->
+  <main class="flex-1 p-6 max-w-md mx-auto w-full">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold mb-2">Halo, <span id="terapisEmail" class="underline">...</span></h2>
+      <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
+    </div>
 
-    <div class="grid gap-4">
-      <a href="chat-admin.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
-        💬 <span class="font-semibold">Chat Aktif</span>
+    <div class="space-y-4">
+      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">💬 Chat Aktif</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
       </a>
-      <a href="riwayat-chat.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
-        📁 <span class="font-semibold">Riwayat Konsultasi</span>
+
+      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">📁 Riwayat Konsultasi</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
       </a>
-      <a href="jadwal-admin.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
-        🗓️ <span class="font-semibold">Jadwal Terapis</span>
+
+      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">🗓️ Jadwal Terapis</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
       </a>
-      <a href="offline-request.html" class="block bg-white rounded-lg p-4 shadow text-center hover:bg-gray-100">
-        🏠 <span class="font-semibold">Permintaan Home Visit</span>
+
+      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">🏠 Permintaan Home Visit</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
       </a>
     </div>
   </main>
 
+  <!-- Firebase Auth -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -47,19 +70,22 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("terapisEmail").textContent = user.email;
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => {
         window.location.href = "login.html";
       });
     });
-
-    // Proteksi halaman
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "login.html";
-      }
-    });
   </script>
 
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

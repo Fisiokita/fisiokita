@@ -78,65 +78,63 @@
   </script>
 
   <!-- Script Form -->
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
-    const emailTerapis = params.get("email") || "";
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
+  const emailTerapis = params.get("email") || "";
 
-    document.getElementById("namaFisio").textContent = namaFisio;
+  document.getElementById("namaFisio").textContent = namaFisio;
 
-    const form = document.getElementById("formPasien");
-    const kontakInput = document.getElementById("kontak");
-    const kontakError = document.getElementById("kontakError");
+  const form = document.getElementById("formPasien");
+  const kontakInput = document.getElementById("kontak");
+  const kontakError = document.getElementById("kontakError");
 
-    form.addEventListener("submit", async function (e) {
-      e.preventDefault();
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      const nama = document.getElementById("nama").value.trim();
-      const kontak = kontakInput.value.trim();
-      const keluhan = document.getElementById("keluhan").value.trim();
+    const nama = document.getElementById("nama").value.trim();
+    const kontak = kontakInput.value.trim();
+    const keluhan = document.getElementById("keluhan").value.trim();
 
-      // Validasi nomor HP
-      if (!/^\d+$/.test(cetakAngka(kontak))) {
-        kontakError.classList.remove("hidden");
-        return;
-      } else {
-        kontakError.classList.add("hidden");
-      }
+    // Validasi nomor HP
+    if (!/^\d+$/.test(cetakAngka(kontak))) {
+      kontakError.classList.remove("hidden");
+      return;
+    } else {
+      kontakError.classList.add("hidden");
+    }
 
-      if (!emailTerapis) {
-        alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
-        return;
-      }
+    if (!emailTerapis) {
+      alert("Email terapis tidak ditemukan. Silakan kembali dan pilih ulang.");
+      return;
+    }
 
-      // Generate session baru
-      const sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
+    // Generate session ID unik
+    const sessionId = "CHAT-" + Date.now();
 
-      // Simpan ke Firestore
-      await db.collection("sessions").doc(sessionId).set({
-        kepada: emailTerapis,
-        namaPasien: nama,
-        selesai: false,
-        dibuat: firebase.firestore.Timestamp.now()
-      });
-
-      // Arahkan ke chat.html
-      const sessionId = "CHAT-" + Date.now(); // atau buat ID unik lainnya
-      const query = new URLSearchParams({
-         sessionId,
-         pasien,
-         email,
-         keluhan,
-         kontak
-      }).toString();
-      window.location.href = `chat.html?${query}`;
-
-      window.location.href = `chat.html?${query}`;
+    // Simpan data sesi ke Firestore
+    await db.collection("sessions").doc(sessionId).set({
+      kepada: emailTerapis,
+      namaPasien: nama,
+      selesai: false,
+      dibuat: firebase.firestore.Timestamp.now()
     });
 
-    function cetakAngka(teks) {
-      return teks.replace(/\D/g, ""); // hanya ambil digit angka
-    }
-  </script>
+    // Arahkan ke chat.html
+    const query = new URLSearchParams({
+      sessionId: sessionId,
+      pasien: nama,
+      email: emailTerapis,
+      kontak: kontak,
+      keluhan: keluhan
+    }).toString();
+
+    window.location.href = `chat.html?${query}`;
+  });
+
+  function cetakAngka(teks) {
+    return teks.replace(/\D/g, "");
+  }
+    </script>
 </body>
 </html>

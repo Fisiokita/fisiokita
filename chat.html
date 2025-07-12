@@ -54,12 +54,7 @@
   const keluhan = params.get("keluhan") || "";
   const kontak = params.get("kontak") || "";
 
-  let sessionId = localStorage.getItem("chatSessionId");
-  if (!sessionId) {
-    sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
-    localStorage.setItem("chatSessionId", sessionId);
-  }
-
+  const sessionId = params.get("sessionId") || `CHAT-${Math.floor(100000 + Math.random() * 900000)}`;
   const chatBox = document.getElementById("chatBox");
   const inputPesan = document.getElementById("inputPesan");
   const kirimBtn = document.getElementById("kirimBtn");
@@ -68,15 +63,13 @@
   const sesiRef = db.collection("sessions").doc(sessionId);
 
   // Cek apakah sesi sudah ada
-  sesiRef.get().then(doc => {
-    if (!doc.exists) {
-      sesiRef.set({
-        kepada: emailTerapis,
-        pasien,
-        kontak,
-        selesai: false,
-        dibuat: firebase.firestore.Timestamp.now()
-      });
+  sesiRef.set({
+  kepada: emailTerapis,
+  namaPasien: pasien,
+  kontak: kontak,
+  selesai: false,
+  dibuat: firebase.firestore.Timestamp.now()
+});
     } else if (doc.data().selesai) {
       matikanInput();
       tampilkanPesanSystem("💬 Sesi ini telah diakhiri.");
@@ -152,19 +145,17 @@
   });
 
   // Akhiri chat
-  btnAkhiri.addEventListener("click", () => {
-    if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
-      sesiRef.update({ selesai: true }).then(() => {
-        localStorage.removeItem("chatSessionId"); // ✅ reset
-        tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
-        matikanInput();
-
-        setTimeout(() => {
-          window.location.href = "konsultasi-jenis.html"; // ✅ kembali ke awal
-        }, 2000);
-      });
-    }
-  });
+  document.getElementById("btnAkhiri").addEventListener("click", () => {
+  if (confirm("Akhiri sesi konsultasi ini?")) {
+    sesiRef.update({ selesai: true }).then(() => {
+      tampilkanPesanSystem("✅ Konsultasi telah diakhiri.");
+      matikanInput();
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 2000);
+    });
+  }
+});
 
   function tampilkanPesanSystem(pesan) {
     const div = document.createElement("div");

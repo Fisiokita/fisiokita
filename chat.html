@@ -9,40 +9,28 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    body { font-family: 'Roboto', sans-serif; }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#121b22] min-h-screen flex flex-col">
+<body class="flex flex-col h-screen bg-gradient-to-br from-blue-500 to-purple-500 text-white">
 
 <!-- Header -->
-<header class="bg-[#121b22] text-white flex items-center space-x-3 px-3 py-2 select-none">
-  <button onclick="history.back()" class="text-white text-2xl">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="flex items-center space-x-2">
-    <div class="w-8 h-8 rounded-full bg-[#1c3e5a] flex items-center justify-center text-white font-bold text-lg">A</div>
-    <span class="text-white text-base font-normal truncate max-w-[150px]" id="terapisTitle">FisioSehat</span>
-  </div>
+<header class="px-4 py-3 bg-[#2563EB] text-white text-center font-semibold shadow">
+  Chat Fisioterapis
 </header>
 
-<!-- Chat area -->
-<main class="flex-1 overflow-y-auto relative">
-  <img aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-30"
-       src="https://storage.googleapis.com/a1aa/image/dcf7de6f-f21f-4b31-46c6-8a9beea4596f.jpg" />
-  <div id="chatBox" class="text-white text-sm rounded-xl rounded-br-none px-3 py-2 max-w-[80%] ml-auto break-words"></div>
+<!-- Chat Area -->
+<main class="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+  <div id="chatBox" class="space-y-3"></div>
 </main>
 
-<!-- Input area -->
-<footer class="bg-[#202c33] flex items-center space-x-3 px-3 py-2 select-none z-20 relative">
-  <button class="text-gray-400 text-2xl"><i class="far fa-smile"></i></button>
-  <input id="inputPesan" class="flex-1 bg-transparent text-gray-300 placeholder-gray-400 text-base outline-none"
-         placeholder="Ketik pesan" type="text"/>
-  <button id="kirimBtn" class="bg-[#00a884] w-10 h-10 rounded-full flex items-center justify-center text-white text-xl">
-    <i class="fas fa-paper-plane"></i>
-  </button>
+<!-- Input -->
+<footer class="bg-white px-4 py-3 flex gap-2 items-center">
+  <input id="inputPesan" class="flex-grow border border-gray-300 rounded-full px-4 py-2 text-sm text-black" placeholder="Ketik pesan..." />
+  <button id="kirimBtn" class="bg-[#2563EB] text-white px-4 py-2 rounded-full text-sm"><i class="fas fa-paper-plane"></i></button>
 </footer>
 
-<!-- Firebase & Chat Logic -->
+<!-- Script -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -60,8 +48,6 @@
   const pasien = params.get("pasien");
   const keluhan = params.get("keluhan") || "";
   const kontak = params.get("kontak") || "";
-
-  document.getElementById("terapisTitle").textContent = emailTerapis || "Fisioterapis";
 
   let sessionId = localStorage.getItem("chatSessionId");
   if (!sessionId) {
@@ -97,7 +83,7 @@
     }
   });
 
-  // Tampilkan pesan real-time
+  // Tampilkan chat real-time
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .orderBy("waktu", "asc")
@@ -111,14 +97,15 @@
         const isSaya = data.dari === pasien;
 
         const bubble = document.createElement("div");
-        bubble.className = `text-sm px-3 py-2 break-words max-w-[80%] ${
+        bubble.className = `text-sm px-4 py-2 rounded-2xl max-w-[75%] whitespace-pre-line break-words shadow ${
           isSaya
-            ? "bg-[#056162] text-white ml-auto rounded-xl rounded-br-none"
-            : "bg-[#202c33] text-white mr-auto rounded-xl rounded-tl-none"
+            ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white ml-auto rounded-br-none"
+            : "bg-white text-black mr-auto rounded-tl-none"
         }`;
+
         bubble.innerHTML = `
-          <span>${data.pesan}</span>
-          <div class="text-gray-400 text-xs text-right mt-1">${jam}:${menit}</div>
+          <div>${data.pesan}</div>
+          <div class="text-[10px] text-right mt-1 ${isSaya ? 'text-white/70' : 'text-gray-400'}">${jam}:${menit}</div>
         `;
         chatBox.appendChild(bubble);
       });

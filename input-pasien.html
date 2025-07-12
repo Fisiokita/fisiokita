@@ -13,6 +13,7 @@
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="konsultasi-online.html">
@@ -33,23 +34,15 @@
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Nomor HP</label>
-        <input
-          type="tel"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          id="kontak"
-          required
-          class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-        />
-        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus berupa angka.</p>
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="kontak" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
+        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus 10–15 digit angka.</p>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>
         <textarea id="keluhan" required rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"></textarea>
       </div>
 
-      <button type="submit"
-              class="w-full bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
+      <button type="submit" class="w-full bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
         Mulai Konsultasi
       </button>
     </form>
@@ -78,7 +71,7 @@
     const db = firebase.firestore();
   </script>
 
-  <!-- Script Form -->
+  <!-- Logic -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
@@ -97,7 +90,8 @@
       const kontak = kontakInput.value.trim();
       const keluhan = document.getElementById("keluhan").value.trim();
 
-      if (!/^\d+$/.test(kontak)) {
+      // Validasi nomor HP (10–15 digit angka)
+      if (!/^\d{10,15}$/.test(kontak)) {
         kontakError.classList.remove("hidden");
         return;
       } else {
@@ -109,31 +103,29 @@
         return;
       }
 
-      const sessionId = "CHAT-" + Date.now();
+      let sessionId = "CHAT-" + Date.now();
 
-      // Cari sesi aktif dengan email pasien yang belum selesai
-const querySnapshot = await db.collection("sessions")
-  .where("kontak", "==", kontak)
-  .where("selesai", "==", false)
-  .get();
+      // Cek apakah ada sesi yang belum selesai untuk nomor ini
+      const existing = await db.collection("sessions")
+        .where("kontak", "==", kontak)
+        .where("selesai", "==", false)
+        .limit(1)
+        .get();
 
-if (!querySnapshot.empty) {
-  const existingSession = querySnapshot.docs[0];
-  const sessionId = existingSession.id;
-  window.location.href = `chat.html?sessionId=${sessionId}&pasien=${encodeURIComponent(nama)}&email=${encodeURIComponent(emailTerapis)}&keluhan=${encodeURIComponent(keluhan)}&kontak=${encodeURIComponent(kontak)}`;
-  return;
-}
-      // Simpan data ke Firestore
-      await db.collection("sessions").doc(sessionId).set({
-        kepada: emailTerapis,
-        namaPasien: nama,
-        kontak,
-        keluhan,
-        selesai: false,
-        dibuat: firebase.firestore.Timestamp.now()
-      });
+      if (!existing.empty) {
+        sessionId = existing.docs[0].id;
+      } else {
+        await db.collection("sessions").doc(sessionId).set({
+          kepada: emailTerapis,
+          namaPasien: nama,
+          kontak,
+          keluhan,
+          selesai: false,
+          dibuat: firebase.firestore.Timestamp.now()
+        });
+      }
 
-      // Redirect ke halaman chat
+      // Redirect ke chat
       const query = new URLSearchParams({
         sessionId,
         pasien: nama,
@@ -141,7 +133,6 @@ if (!querySnapshot.empty) {
         keluhan,
         kontak
       }).toString();
-
       window.location.href = `chat.html?${query}`;
     });
   </script>

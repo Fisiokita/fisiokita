@@ -16,7 +16,7 @@
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="konsultasi-online.html">
-      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+      <img src="https://placehold.co/24x24/png?text=←" alt="Back" class="w-6 h-6" />
     </a>
     <span class="font-semibold text-lg">FisioSehat</span>
   </header>
@@ -56,6 +56,7 @@
     <p>Masukkan data Anda sebelum memulai konsultasi.</p>
   </footer>
 
+  <!-- Script -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
@@ -77,6 +78,7 @@
       const query = new URLSearchParams({
         pasien: namaPasien,
         email: emailTerapis,
+        nama: namaFisio,
         kontak: kontak,
         keluhan: keluhan
       }).toString();

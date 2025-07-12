@@ -5,135 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Konsultasi Online - FisioSehat</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col relative">
-  <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3">
-    <a href="konsultasi-jenis.html">
-      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
-    </a>
-    <span class="font-semibold text-lg">FisioSehat</span>
-  </header>
 
-  <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
+<!-- Header -->
+<header class="flex items-center gap-2 px-4 py-3">
+  <a href="konsultasi-jenis.html">
+    <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+  </a>
+  <span class="font-semibold text-lg">FisioSehat</span>
+</header>
 
-    <div class="space-y-6">
-      <!-- Terapis 1 -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Dr. Ahmad Santoso</h3>
-        <p class="text-xs text-green-600 font-semibold mb-2">✅ Tersedia</p>
-        <p class="text-xs mb-3">Spesialis ortopedi. Siap menangani konsultasi online.</p>
-        <a href="input-pasien.html?nama=Dr.%20Ahmad%20Santoso"
-           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-          Konsultasi Sekarang
-        </a>
-      </article>
-
-      <!-- Terapis 2 -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Dr. Sari Wijaya</h3>
-        <p class="text-xs text-red-600 font-semibold mb-2">❌ Sedang Konsultasi</p>
-        <p class="text-xs mb-3">Spesialis neurologi. Saat ini sedang menangani pasien.</p>
-        <button onclick="showQueuePopup('Dr. Sari Wijaya')"
-                class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-          Masuk Antrian
-        </button>
-      </article>
-
-      <!-- Reza Olyverdi -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Reza Olyverdi, S. Ft, M. Kes</h3>
-        <p class="text-xs text-green-600 font-semibold mb-2">✅ Tersedia</p>
-        <p class="text-xs mb-3">Fisioterapis di Padang. Ahli terapi ortopedi dan olahraga.</p>
-        <a href="input-pasien.html?nama=Reza%20Olyverdi"
-           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-          Konsultasi Sekarang
-        </a>
-      </article>
-
-      <!-- Irhas Syah -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Irhas Syah, SKM, M. Fis</h3>
-        <p class="text-xs text-green-600 font-semibold mb-2">✅ Tersedia</p>
-        <p class="text-xs mb-3">Fisioterapis dari Padang Panjang. Fokus pada neurologi dan rehabilitasi.</p>
-        <a href="input-pasien.html?nama=Irhas%20Syah"
-           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-          Konsultasi Sekarang
-        </a>
-      </article>
-
-      <!-- Riri Segita -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Riri Segita, SKM, M. Fis</h3>
-        <p class="text-xs text-red-600 font-semibold mb-2">❌ Sedang Konsultasi</p>
-        <p class="text-xs mb-3">Fisioterapis anak di Batusangkar. Saat ini sedang menangani pasien.</p>
-        <button onclick="showQueuePopup('Riri Segita')"
-                class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-          Masuk Antrian
-        </button>
-      </article>
-
-      <!-- Rindu Febriyeni -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Rindu Febriyeni Utami, S. Ft, MKM</h3>
-        <p class="text-xs text-green-600 font-semibold mb-2">✅ Tersedia</p>
-        <p class="text-xs mb-3">Ahli terapi rehabilitasi dari Solok. Tersedia untuk konsultasi online.</p>
-        <a href="input-pasien.html?nama=Rindu%20Febriyeni"
-           class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-          Konsultasi Sekarang
-        </a>
-      </article>
-
-      <!-- Siti Munawarah -->
-      <article class="bg-white rounded-lg p-6 text-black shadow-md">
-        <h3 class="font-semibold text-base mb-1">Siti Munawarah, SST, MKM</h3>
-        <p class="text-xs text-red-600 font-semibold mb-2">❌ Sedang Konsultasi</p>
-        <p class="text-xs mb-3">Fisioterapis lansia di Bukittinggi. Konsultasi akan tersedia segera.</p>
-        <button onclick="showQueuePopup('Siti Munawarah')"
-                class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-          Masuk Antrian
-        </button>
-      </article>
-    </div>
-  </main>
-
-  <!-- Popup Antrian -->
-  <div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
-      <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
-      <p class="text-sm mb-4">Fisioterapis sedang menangani pasien lain.<br />Anda telah masuk ke dalam antrian.</p>
-      <button onclick="closePopup()"
-              class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
-        Oke, Mengerti
-      </button>
-    </div>
+<!-- Main -->
+<main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
+  <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
+  <div id="daftarTerapis" class="space-y-6">
+    <p class="text-center text-sm text-white">Memuat daftar terapis...</p>
   </div>
+</main>
 
-  <!-- Footer -->
-  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
-    <div class="flex items-center gap-2">
-      <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
-      <span>FisioSehat</span>
-    </div>
-    <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
-  </footer>
+<!-- Popup Antrian -->
+<div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
+    <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
+    <p class="text-sm mb-4">Fisioterapis sedang menangani pasien lain.<br />Anda telah masuk ke dalam antrian.</p>
+    <button onclick="closePopup()" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">Oke, Mengerti</button>
+  </div>
+</div>
 
-  <script>
-    function showQueuePopup(nama) {
-      document.getElementById("queuePopup").classList.remove("hidden");
+<!-- Footer -->
+<footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
+  <div class="flex items-center gap-2">
+    <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
+    <span>FisioSehat</span>
+  </div>
+  <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
+</footer>
+
+<!-- Firebase & Script -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1",
+    storageBucket: "fisiosehat-af9f1.appspot.com",
+    messagingSenderId: "800971487968",
+    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const daftarTerapis = document.getElementById("daftarTerapis");
+
+  function showQueuePopup(nama) {
+    document.getElementById("queuePopup").classList.remove("hidden");
+  }
+
+  function closePopup() {
+    document.getElementById("queuePopup").classList.add("hidden");
+  }
+
+  // Ambil terapis dari Firestore
+  db.collection("terapis").get().then(snapshot => {
+    daftarTerapis.innerHTML = ""; // kosongkan loading
+    if (snapshot.empty) {
+      daftarTerapis.innerHTML = `<p class="text-center text-white text-sm italic">Tidak ada terapis terdaftar.</p>`;
+      return;
     }
 
-    function closePopup() {
-      document.getElementById("queuePopup").classList.add("hidden");
-    }
-  </script>
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const email = doc.id;
+      const nama = data.nama || email;
+      const status = data.status || "tidak";
+      const deskripsi = data.deskripsi || "Terapis FisioSehat";
+
+      const article = document.createElement("article");
+      article.className = "bg-white rounded-lg p-6 text-black shadow-md";
+
+      article.innerHTML = `
+        <h3 class="font-semibold text-base mb-1">${nama}</h3>
+        <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
+          ${status === 'tersedia' ? '✅ Tersedia' : '❌ Sedang Konsultasi'}
+        </p>
+        <p class="text-xs mb-3">${deskripsi}</p>
+        ${
+          status === 'tersedia'
+            ? `<a href="input-pasien.html?nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}"
+                   class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+                 Konsultasi Sekarang
+               </a>`
+            : `<button onclick="showQueuePopup('${nama}')" class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
+                 Masuk Antrian
+               </button>`
+        }
+      `;
+      daftarTerapis.appendChild(article);
+    });
+  });
+</script>
 </body>
-                        </html>
+</html>

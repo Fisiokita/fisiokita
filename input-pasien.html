@@ -32,9 +32,15 @@
         <input type="text" id="nama" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
       </div>
       <div>
-        <label class="block text-sm font-semibold mb-1">Nomor HP / Email</label>
-        <input type="text" id="kontak" required class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" />
-        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus berupa angka atau email valid.</p>
+        <label class="block text-sm font-semibold mb-1">Nomor HP </label>
+        <input
+  type="tel"
+  inputmode="numeric"
+  id="kontak"
+  required
+  class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+/>
+        <p id="kontakError" class="text-xs text-red-600 hidden mt-1">Nomor HP harus valid.</p>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>

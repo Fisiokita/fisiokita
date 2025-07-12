@@ -130,15 +130,14 @@
   });
 
   document.getElementById("loginForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const email = email.value;
-    const pass = password.value;
-    auth.signInWithEmailAndPassword(email, pass).catch(err => {
-      loginError.textContent = err.message;
-      loginError.classList.remove("hidden");
-    });
+  e.preventDefault();
+  const emailInput = document.getElementById("email").value;
+  const passwordInput = document.getElementById("password").value;
+  auth.signInWithEmailAndPassword(emailInput, passwordInput).catch(err => {
+    loginError.textContent = err.message;
+    loginError.classList.remove("hidden");
   });
-
+});
   logoutBtn.addEventListener("click", () => auth.signOut());
 
   // Navigasi Tab

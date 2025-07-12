@@ -121,13 +121,15 @@
       });
 
       // Arahkan ke chat.html
+      const sessionId = "CHAT-" + Date.now(); // atau buat ID unik lainnya
       const query = new URLSearchParams({
-        email: emailTerapis,
-        pasien: nama,
-        kontak,
-        keluhan,
-        sessionId
+         sessionId,
+         pasien,
+         email,
+         keluhan,
+         kontak
       }).toString();
+      window.location.href = `chat.html?${query}`;
 
       window.location.href = `chat.html?${query}`;
     });

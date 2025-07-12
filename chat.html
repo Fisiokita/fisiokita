@@ -62,30 +62,41 @@
 
   const chatBox = document.getElementById("chatBox");
   const inputPesan = document.getElementById("inputPesan");
+  const kirimBtn = document.getElementById("kirimBtn");
+  const btnAkhiri = document.getElementById("btnAkhiri");
 
   const sesiRef = db.collection("sessions").doc(sessionId);
+
+  // Cek apakah sesi sudah ada
   sesiRef.get().then(doc => {
     if (!doc.exists) {
       sesiRef.set({
         kepada: emailTerapis,
+        pasien,
+        kontak,
         selesai: false,
         dibuat: firebase.firestore.Timestamp.now()
       });
+    } else if (doc.data().selesai) {
+      matikanInput();
+      tampilkanPesanSystem("💬 Sesi ini telah diakhiri.");
     }
   });
 
+  // Kirim pesan keluhan pertama
   db.collection("chats").where("sessionId", "==", sessionId).get().then(snapshot => {
     if (snapshot.empty && keluhan) {
       db.collection("chats").add({
         dari: pasien,
         kepada: emailTerapis,
         pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
-        sessionId: sessionId,
+        sessionId,
         waktu: firebase.firestore.Timestamp.now()
       });
     }
   });
 
+  // Realtime chat listener
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .orderBy("waktu", "asc")
@@ -105,13 +116,12 @@
           bubble.innerHTML = `
             <div class="bg-[#f472b6] text-white text-sm rounded-xl rounded-br-none px-3 py-2 break-words shadow">
               ${data.pesan}
-              <span class="text-white text-xs ml-2">${jam}.${menit}</span>
-              <i class="fas fa-check-double text-white text-xs ml-1"></i>
+              <div class="text-white text-xs text-right mt-1">${jam}.${menit}</div>
             </div>`;
         } else {
           bubble.className = "bg-white text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] ml-0 inline-block break-words shadow";
           bubble.innerHTML = `${data.pesan}
-            <span class="text-gray-500 text-xs ml-2">${jam}.${menit}</span>`;
+            <div class="text-gray-500 text-xs text-right mt-1">${jam}.${menit}</div>`;
         }
 
         chatBox.appendChild(bubble);
@@ -119,24 +129,40 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-  document.getElementById("kirimBtn").addEventListener("click", () => {
+  // Kirim pesan
+  kirimBtn.addEventListener("click", () => {
     const pesan = inputPesan.value.trim();
     if (!pesan) return;
     db.collection("chats").add({
       dari: pasien,
       kepada: emailTerapis,
       pesan,
-      sessionId: sessionId,
+      sessionId,
       waktu: firebase.firestore.Timestamp.now()
     });
     inputPesan.value = "";
   });
-// Akhiri chat
+
+  // Enter untuk kirim
+  inputPesan.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      kirimBtn.click();
+    }
+  });
+
+  // Akhiri chat
   btnAkhiri.addEventListener("click", () => {
     if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
-      sesiRef.update({ selesai: true });
-      tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
-      matikanInput();
+      sesiRef.update({ selesai: true }).then(() => {
+        localStorage.removeItem("chatSessionId"); // ✅ reset
+        tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
+        matikanInput();
+
+        setTimeout(() => {
+          window.location.href = "konsultasi-jenis.html"; // ✅ kembali ke awal
+        }, 2000);
+      });
     }
   });
 

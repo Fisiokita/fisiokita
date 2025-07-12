@@ -180,7 +180,8 @@
         snapshot.forEach(doc => {
           const opt = document.createElement("option");
           opt.value = doc.id;
-          opt.textContent = doc.id;
+          const nama = doc.data().namaPasien || "Pasien";
+opt.textContent = `${doc.id} - ${nama}`;
           sessionSelect.appendChild(opt);
         });
       });
@@ -243,7 +244,8 @@
         snapshot.forEach(doc => {
           const opt = document.createElement("option");
           opt.value = doc.id;
-          opt.textContent = doc.id;
+          const nama = doc.data().namaPasien || "Pasien";
+opt.textContent = `${doc.id} - ${nama}`;
           riwayatSelect.appendChild(opt);
         });
       });

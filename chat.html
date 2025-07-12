@@ -62,18 +62,17 @@
 
   // ⏳ Cek & buat sesi jika belum ada
   sesiRef.get().then(doc => {
-    if (!doc.exists) {
-      sesiRef.set({
-        kepada: emailTerapis,
-        namaPasien: pasien,
-        selesai: false,
-        dibuat: firebase.firestore.Timestamp.now()
-      });
-    } else if (doc.data().selesai) {
-      tampilkanPesanSystem("⚠️ Sesi ini telah diakhiri.");
-      matikanInput();
-    }
-  });
+  if (!doc.exists) {
+    sesiRef.set({
+      kepada: emailTerapis,
+      selesai: false,
+      dibuat: firebase.firestore.Timestamp.now()
+    });
+  } else if (doc.data().selesai === true) {
+    tampilkanPesanSystem("⚠️ Sesi ini sudah diakhiri.");
+    matikanInput();
+  }
+});
 
   // 💬 Kirim keluhan sebagai pesan awal jika belum ada
   db.collection("chats")
@@ -138,24 +137,24 @@
 
   // 🛑 Akhiri chat
   btnAkhiri.addEventListener("click", () => {
-    if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
-      sesiRef.update({ selesai: true }).then(() => {
-        tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
-        matikanInput();
-        localStorage.removeItem("chatSessionId");
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1500);
-      });
-    }
-  });
+  if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
+    sesiRef.update({ selesai: true }).then(() => {
+      tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
+      matikanInput();
+      localStorage.removeItem("chatSessionId"); // 🔁 hapus sessionId
+      setTimeout(() => {
+        window.location.href = "konsultasi-online.html"; // 🔁 redirect ke awal
+      }, 2000);
+    });
+  }
+});
 
   // 🧊 Nonaktifkan input
   function matikanInput() {
-    inputPesan.disabled = true;
-    kirimBtn.disabled = true;
-    inputPesan.classList.add("opacity-50", "cursor-not-allowed");
-    kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
+  inputPesan.disabled = true;
+  kirimBtn.disabled = true;
+  inputPesan.classList.add("opacity-50", "cursor-not-allowed");
+  kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
   }
 
   // 📌 Tampilkan pesan sistem

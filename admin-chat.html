@@ -7,17 +7,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="px-4 py-3 bg-[#4B6CC1] text-white">
-    <header class="px-4 py-3 bg-[#4B6CC1] text-white flex justify-between items-center">
-  <h1 class="text-lg font-semibold">Panel Chat Fisioterapis</h1>
-  <a href="riwayat-chat.html" class="text-xs underline hover:text-gray-200">Riwayat Chat</a>
-    </header>
+  <header class="px-4 py-3 bg-[#4B6CC1] text-white flex justify-between items-center">
     <h1 class="text-lg font-semibold">Panel Chat Fisioterapis</h1>
+    <div class="flex items-center gap-4">
+      <a href="riwayat-chat.html" class="text-xs underline hover:text-gray-200">Riwayat Chat</a>
+      <button onclick="logout()" class="text-xs hover:text-red-200">Logout</button>
+    </div>
   </header>
 
   <main class="flex-grow p-4 max-w-3xl mx-auto w-full">
@@ -47,13 +48,13 @@
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.firebasestorage.app",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
       messagingSenderId: "800971487968",
       appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
     const sessionSelect = document.getElementById("sessionSelect");
     const chatBox = document.getElementById("chatBox");
@@ -61,24 +62,33 @@
     const inputPesan = document.getElementById("inputPesan");
 
     let currentSession = "";
+    let currentEmail = "";
 
-    // 🔄 Ambil daftar sesi yang BELUM selesai
-    db.collection("sessions")
-      .where("selesai", "!=", true)
-      .onSnapshot(snapshot => {
-        const selected = sessionSelect.value;
-        sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
-        snapshot.forEach(doc => {
-          const sessionId = doc.id;
-          const opt = document.createElement("option");
-          opt.value = sessionId;
-          opt.textContent = sessionId;
-          sessionSelect.appendChild(opt);
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html"; // arahkan ke login jika belum login
+        return;
+      }
+      currentEmail = user.email;
+
+      // Ambil sesi yang belum selesai untuk terapis ini
+      db.collection("sessions")
+        .where("kepada", "==", currentEmail)
+        .where("selesai", "==", false)
+        .onSnapshot(snapshot => {
+          const selected = sessionSelect.value;
+          sessionSelect.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+          snapshot.forEach(doc => {
+            const sessionId = doc.id;
+            const opt = document.createElement("option");
+            opt.value = sessionId;
+            opt.textContent = sessionId;
+            sessionSelect.appendChild(opt);
+          });
+          if (selected) sessionSelect.value = selected;
         });
-        if (selected) sessionSelect.value = selected;
-      });
+    });
 
-    // 🔁 Tampilkan chat saat sesi dipilih
     sessionSelect.addEventListener("change", () => {
       currentSession = sessionSelect.value;
       tampilkanChat();
@@ -86,7 +96,6 @@
 
     function tampilkanChat() {
       if (!currentSession) return;
-
       db.collection("chats")
         .where("sessionId", "==", currentSession)
         .orderBy("waktu", "asc")
@@ -97,7 +106,7 @@
           }
           snapshot.forEach(doc => {
             const data = doc.data();
-            const isAdmin = data.dari === "Admin";
+            const isAdmin = data.dari === currentEmail;
             const bubble = document.createElement("div");
             bubble.className = `mb-2 text-sm px-4 py-2 rounded max-w-[75%] ${
               isAdmin ? "bg-blue-100 text-black ml-auto" : "bg-gray-200 text-black"
@@ -109,7 +118,6 @@
         });
     }
 
-    // 💬 Kirim pesan admin
     chatForm.addEventListener("submit", function (e) {
       e.preventDefault();
       if (!currentSession) return alert("Pilih sesi chat terlebih dahulu.");
@@ -117,8 +125,8 @@
       if (!pesan) return;
 
       db.collection("chats").add({
-        dari: "Admin",
-        kepada: currentSession,
+        dari: currentEmail,
+        kepada: currentSession, // bisa diisi apa pun, tidak digunakan saat menampilkan
         pesan: pesan,
         sessionId: currentSession,
         waktu: firebase.firestore.Timestamp.now()
@@ -126,6 +134,12 @@
 
       inputPesan.value = "";
     });
+
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "login.html";
+      });
+    }
   </script>
 </body>
 </html>

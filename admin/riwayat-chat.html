@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riwayat Chat - FisioSehat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    #chatBox::-webkit-scrollbar { width: 6px; }
+    #chatBox::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#e6d3c7] min-h-screen">
+
+  <header class="bg-[#f472b6] text-white px-4 py-3 flex justify-between items-center">
+    <h1 class="font-semibold text-lg">Riwayat Konsultasi</h1>
+    <a href="dashboard.html" class="text-sm underline">← Kembali</a>
+  </header>
+
+  <main class="p-4 max-w-3xl mx-auto">
+    <label class="block mb-2 text-sm font-semibold">Pilih Sesi:</label>
+    <select id="sesiRiwayat" class="w-full border px-3 py-2 rounded mb-4">
+      <option value="">-- Pilih Sesi --</option>
+    </select>
+
+    <div id="chatBox" class="bg-white p-4 rounded shadow h-[60vh] overflow-y-auto space-y-2">
+      <p class="text-gray-400 text-sm text-center">Pilih sesi untuk melihat riwayat chat.</p>
+    </div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const sesiRiwayat = document.getElementById("sesiRiwayat");
+    const chatBox = document.getElementById("chatBox");
+
+    let currentEmail = "";
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        currentEmail = user.email;
+        tampilkanDaftarRiwayat();
+      }
+    });
+
+    function tampilkanDaftarRiwayat() {
+      db.collection("sessions")
+        .where("selesai", "==", true)
+        .where("kepada", "==", currentEmail)
+        .orderBy("dibuat", "desc")
+        .onSnapshot(snapshot => {
+          sesiRiwayat.innerHTML = `<option value="">-- Pilih Sesi --</option>`;
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const opt = document.createElement("option");
+            opt.value = doc.id;
+            opt.textContent = `${doc.id} - ${data.namaPasien || "Pasien"}`;
+            sesiRiwayat.appendChild(opt);
+          });
+        });
+    }
+
+    sesiRiwayat.addEventListener("change", () => {
+      const id = sesiRiwayat.value;
+      if (!id) return;
+
+      db.collection("chats")
+        .where("sessionId", "==", id)
+        .orderBy("waktu", "asc")
+        .onSnapshot(snapshot => {
+          chatBox.innerHTML = "";
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const waktu = data.waktu?.toDate();
+            const jam = waktu?.getHours().toString().padStart(2, "0");
+            const menit = waktu?.getMinutes().toString().padStart(2, "0");
+            const isAdmin = data.dari === "Admin";
+
+            const bubble = document.createElement("div");
+            if (isAdmin) {
+              bubble.className = "flex flex-col items-end mb-2";
+              bubble.innerHTML = `
+                <div class="bg-white text-black text-sm px-3 py-2 rounded-xl rounded-br-none shadow">
+                  ${data.pesan}
+                  <div class="text-right text-[10px] text-gray-500 mt-1">${jam}.${menit}</div>
+                </div>`;
+            } else {
+              bubble.className = "mb-2";
+              bubble.innerHTML = `
+                <div class="bg-[#f472b6] text-white text-sm px-3 py-2 rounded-xl rounded-tl-none shadow">
+                  ${data.pesan}
+                  <div class="text-right text-[10px] mt-1 text-white">${jam}.${menit}</div>
+                </div>`;
+            }
+            chatBox.appendChild(bubble);
+          });
+          chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    });
+  </script>
+</body>
+</html>

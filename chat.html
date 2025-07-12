@@ -7,24 +7,42 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: 'Roboto', sans-serif; }
+  </style>
 </head>
-<body class="flex flex-col h-screen bg-white">
+<body class="bg-[#121b22] min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-blue-700 text-white px-4 py-3 text-center font-semibold">
-  Chat Fisioterapis
+<header class="bg-[#121b22] text-white flex items-center space-x-3 px-3 py-2 select-none">
+  <button onclick="history.back()" class="text-white text-2xl">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="flex items-center space-x-2">
+    <div class="w-8 h-8 rounded-full bg-[#1c3e5a] flex items-center justify-center text-white font-bold text-lg">A</div>
+    <span class="text-white text-base font-normal truncate max-w-[150px]" id="terapisTitle">FisioSehat</span>
+  </div>
 </header>
 
-<!-- Chat Area -->
-<main class="flex flex-col flex-grow">
-  <div id="chatBox" class="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-gray-100"></div>
-
-  <form id="chatForm" class="flex items-center gap-2 border-t px-4 py-3 bg-white">
-    <input type="text" id="inputPesan" class="flex-grow border rounded-full px-4 py-2 text-sm" placeholder="Ketik pesan..." required />
-    <button class="bg-blue-600 text-white rounded-full px-4 py-2 text-sm">Kirim</button>
-  </form>
+<!-- Chat area -->
+<main class="flex-1 overflow-y-auto relative">
+  <img aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-30"
+       src="https://storage.googleapis.com/a1aa/image/dcf7de6f-f21f-4b31-46c6-8a9beea4596f.jpg" />
+  <div id="chatBox" class="relative px-3 py-4 space-y-2 max-w-md mx-auto z-10"></div>
 </main>
 
+<!-- Input area -->
+<footer class="bg-[#202c33] flex items-center space-x-3 px-3 py-2 select-none z-20 relative">
+  <button class="text-gray-400 text-2xl"><i class="far fa-smile"></i></button>
+  <input id="inputPesan" class="flex-1 bg-transparent text-gray-300 placeholder-gray-400 text-base outline-none"
+         placeholder="Ketik pesan" type="text"/>
+  <button id="kirimBtn" class="bg-[#00a884] w-10 h-10 rounded-full flex items-center justify-center text-white text-xl">
+    <i class="fas fa-paper-plane"></i>
+  </button>
+</footer>
+
+<!-- Firebase & Chat Logic -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -43,6 +61,8 @@
   const keluhan = params.get("keluhan") || "";
   const kontak = params.get("kontak") || "";
 
+  document.getElementById("terapisTitle").textContent = emailTerapis || "Fisioterapis";
+
   let sessionId = localStorage.getItem("chatSessionId");
   if (!sessionId) {
     sessionId = "CHAT-" + Math.floor(100000 + Math.random() * 900000);
@@ -52,7 +72,7 @@
   const chatBox = document.getElementById("chatBox");
   const inputPesan = document.getElementById("inputPesan");
 
-  // Buat sesi jika belum ada
+  // Inisiasi sesi jika belum ada
   const sesiRef = db.collection("sessions").doc(sessionId);
   sesiRef.get().then(doc => {
     if (!doc.exists) {
@@ -64,35 +84,17 @@
     }
   });
 
-  // Kirim keluhan awal sebagai pesan pertama jika belum ada chat
-  db.collection("chats")
-    .where("sessionId", "==", sessionId)
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty && keluhan) {
-        db.collection("chats").add({
-          dari: pasien,
-          kepada: emailTerapis,
-          pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
-          sessionId: sessionId,
-          waktu: firebase.firestore.Timestamp.now()
-        });
-      }
-    });
-
-  // Kirim pesan
-  document.getElementById("chatForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const pesan = inputPesan.value.trim();
-    if (!pesan) return;
-    db.collection("chats").add({
-      dari: pasien,
-      kepada: emailTerapis,
-      pesan: pesan,
-      sessionId: sessionId,
-      waktu: firebase.firestore.Timestamp.now()
-    });
-    inputPesan.value = "";
+  // Kirim keluhan awal jika belum ada chat
+  db.collection("chats").where("sessionId", "==", sessionId).get().then(snapshot => {
+    if (snapshot.empty && keluhan) {
+      db.collection("chats").add({
+        dari: pasien,
+        kepada: emailTerapis,
+        pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
+        sessionId: sessionId,
+        waktu: firebase.firestore.Timestamp.now()
+      });
+    }
   });
 
   // Tampilkan pesan real-time
@@ -109,20 +111,33 @@
         const isSaya = data.dari === pasien;
 
         const bubble = document.createElement("div");
-        bubble.className = `text-sm px-4 py-2 rounded-2xl max-w-[75%] whitespace-pre-line break-words shadow ${
+        bubble.className = `text-sm px-3 py-2 break-words max-w-[80%] ${
           isSaya
-            ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white ml-auto"
-            : "bg-white text-black"
+            ? "bg-[#056162] text-white ml-auto rounded-xl rounded-br-none"
+            : "bg-[#202c33] text-white mr-auto rounded-xl rounded-tl-none"
         }`;
-
         bubble.innerHTML = `
-          <div>${data.pesan}</div>
-          <div class="text-[10px] text-right mt-1 ${isSaya ? 'text-white/80' : 'text-gray-500'}">${jam}:${menit}</div>
+          <span>${data.pesan}</span>
+          <div class="text-gray-400 text-xs text-right mt-1">${jam}:${menit}</div>
         `;
         chatBox.appendChild(bubble);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
     });
+
+  // Kirim pesan
+  document.getElementById("kirimBtn").addEventListener("click", () => {
+    const pesan = inputPesan.value.trim();
+    if (!pesan) return;
+    db.collection("chats").add({
+      dari: pasien,
+      kepada: emailTerapis,
+      pesan,
+      sessionId: sessionId,
+      waktu: firebase.firestore.Timestamp.now()
+    });
+    inputPesan.value = "";
+  });
 </script>
 </body>
 </html>

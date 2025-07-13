@@ -73,9 +73,9 @@
 
   function tampilkanDaftarSesi() {
     db.collection("sessions")
-      .where("selesai", "==", false)
-      .where("kepada", "==", currentEmail)
-      
+  .where("selesai", "==", true)
+  .where("kepada", "==", currentEmail)
+  .orderBy("dibuat", "desc")
       .onSnapshot(snapshot => {
         daftarSesi.innerHTML = "";
         if (snapshot.empty) {

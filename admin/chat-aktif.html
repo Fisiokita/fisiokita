@@ -155,13 +155,20 @@
   });
 
   btnAkhiri.addEventListener("click", () => {
-    if (!currentSessionId) return;
-    if (confirm("Yakin ingin mengakhiri sesi ini?")) {
-      db.collection("sessions").doc(currentSessionId).update({ selesai: true });
-      chatBox.innerHTML += `<div class="text-center text-xs text-gray-500 italic mt-2">✅ Sesi telah diakhiri.</div>`;
+  if (!currentSessionId) return;
+  if (confirm("Yakin ingin mengakhiri sesi ini?")) {
+    db.collection("sessions").doc(currentSessionId).update({ selesai: true }).then(() => {
+      db.collection("chats").add({
+        sessionId: currentSessionId,
+        dari: "System",
+        pesan: "✅ Sesi telah diakhiri oleh terapis.",
+        waktu: firebase.firestore.Timestamp.now()
+      });
       inputPesan.disabled = true;
-    }
-  });
+      chatBox.innerHTML += `<div class="text-center text-xs text-gray-500 italic mt-2">✅ Sesi telah diakhiri.</div>`;
+    });
+  }
+});
 </script>
 </body>
 </html>

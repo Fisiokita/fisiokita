@@ -1,0 +1,125 @@
+/* ========== GLOBAL VARIABLE WARNA ========== */
+:root {
+  --warna-bg: #e6d3c7;
+  --warna-primer: #601EF9;
+  --warna-sekunder: #f472b6;
+  --warna-teks: #1f2937; /* gray-800 */
+  --warna-putih: #ffffff;
+  --warna-border: #d1d5db; /* gray-300 */
+}
+
+/* ========== RESET ========== */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--warna-bg);
+  color: var(--warna-teks);
+  margin: 0;
+  padding: 0;
+}
+
+/* ========== HEADER ========== */
+header {
+  background-color: var(--warna-primer);
+  color: var(--warna-putih);
+}
+
+/* ========== BUTTONS ========== */
+.btn-primer {
+  background-color: var(--warna-primer);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primer:hover {
+  background-color: #4a1cd0;
+}
+
+.btn-sekunder {
+  background-color: var(--warna-sekunder);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  transition: background-color 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-sekunder:hover {
+  background-color: #ec4899;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--warna-primer);
+  border: 2px solid var(--warna-primer);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.btn-outline:hover {
+  background-color: var(--warna-primer);
+  color: white;
+}
+
+/* ========== FORM ========== */
+input, select, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--warna-border);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--warna-teks);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--warna-primer);
+  outline: none;
+}
+
+/* ========== CARD / BOX ========== */
+.card {
+  background-color: var(--warna-putih);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== TEKS SPESIAL ========== */
+.text-header {
+  color: var(--warna-primer);
+  font-weight: bold;
+}
+
+.text-muted {
+  color: #6b7280; /* gray-500 */
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+  padding: 1rem;
+}

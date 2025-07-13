@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat Fisioterapis - FisioSehat</title>
+  <title>Chat Fisioterapis - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -14,10 +14,12 @@
     #chatBox::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 3px; }
   </style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 font-semibold text-center shadow">Chat Fisioterapis</header>
+<header class="bg-[#2563EB] text-white px-4 py-3 font-semibold text-center shadow">
+  Chat Fisioterapis
+</header>
 
 <!-- Chat Area -->
 <main id="chatBox" class="flex-1 overflow-y-auto px-3 py-4 space-y-3 max-w-md mx-auto w-full"></main>
@@ -26,7 +28,7 @@
 <footer class="bg-white px-4 py-3 shadow max-w-md mx-auto w-full flex flex-col gap-2" id="footerArea">
   <div class="flex items-center space-x-2">
     <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border rounded-full outline-none" placeholder="Ketik pesan..." />
-    <button id="kirimBtn" class="bg-[#f472b6] w-10 h-10 rounded-full text-white flex items-center justify-center">
+    <button id="kirimBtn" class="bg-[#2563EB] w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-[#1E40AF] transition">
       <i class="fas fa-paper-plane text-sm"></i>
     </button>
   </div>
@@ -56,25 +58,22 @@
   const inputPesan = document.getElementById("inputPesan");
   const kirimBtn = document.getElementById("kirimBtn");
   const btnAkhiri = document.getElementById("btnAkhiri");
-  const footerArea = document.getElementById("footerArea");
 
   const sesiRef = db.collection("sessions").doc(sessionId);
 
-  // ⏳ Cek & buat sesi jika belum ada
   sesiRef.get().then(doc => {
-  if (!doc.exists) {
-    sesiRef.set({
-      kepada: emailTerapis,
-      selesai: false,
-      dibuat: firebase.firestore.Timestamp.now()
-    });
-  } else if (doc.data().selesai === true) {
-    tampilkanPesanSystem("⚠️ Sesi ini sudah diakhiri.");
-    matikanInput();
-  }
-});
+    if (!doc.exists) {
+      sesiRef.set({
+        kepada: emailTerapis,
+        selesai: false,
+        dibuat: firebase.firestore.Timestamp.now()
+      });
+    } else if (doc.data().selesai === true) {
+      tampilkanPesanSystem("⚠️ Sesi ini sudah diakhiri.");
+      matikanInput();
+    }
+  });
 
-  // 💬 Kirim keluhan sebagai pesan awal jika belum ada
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .get().then(snapshot => {
@@ -83,13 +82,12 @@
           dari: pasien,
           kepada: emailTerapis,
           pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
-          sessionId: sessionId,
+          sessionId,
           waktu: firebase.firestore.Timestamp.now()
         });
       }
     });
 
-  // 🔁 Tampilkan semua chat berdasarkan waktu
   db.collection("chats")
     .where("sessionId", "==", sessionId)
     .orderBy("waktu", "asc")
@@ -106,22 +104,21 @@
         if (isPasien) {
           bubble.className = "flex flex-col items-end max-w-[80%] ml-auto space-y-1";
           bubble.innerHTML = `
-            <div class="bg-[#f472b6] text-white text-sm rounded-xl rounded-br-none px-3 py-2 break-words shadow">
+            <div class="bg-[#DBEAFE] text-black text-sm rounded-xl rounded-br-none px-3 py-2 break-words shadow">
               ${data.pesan}
-              <span class="text-white text-xs ml-2">${jam}.${menit}</span>
-              <i class="fas fa-check-double text-white text-xs ml-1"></i>
+              <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
+              <i class="fas fa-check-double text-xs text-gray-400 ml-1"></i>
             </div>`;
         } else {
-          bubble.className = "bg-white text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] ml-0 inline-block break-words shadow";
+          bubble.className = "bg-white text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
           bubble.innerHTML = `${data.pesan}
-            <span class="text-gray-500 text-xs ml-2">${jam}.${menit}</span>`;
+            <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>`;
         }
         chatBox.appendChild(bubble);
       });
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-  // 📤 Kirim pesan
   kirimBtn.addEventListener("click", () => {
     const pesan = inputPesan.value.trim();
     if (!pesan) return;
@@ -135,36 +132,29 @@
     inputPesan.value = "";
   });
 
-  // 🛑 Akhiri chat
   btnAkhiri.addEventListener("click", () => {
-  if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
-    sesiRef.update({ selesai: true }).then(() => {
-      tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
-      matikanInput();
-      localStorage.removeItem("chatSessionId"); // 🔁 hapus sessionId
-      setTimeout(() => {
-        window.location.href = "konsultasi-online.html"; // 🔁 redirect ke awal
-      }, 2000);
-    });
-    if (doc.data().selesai === true) {
-  alert("Sesi ini sudah diakhiri. Silakan mulai konsultasi baru.");
-  window.location.href = "index.html";
+    if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
+      sesiRef.update({ selesai: true }).then(() => {
+        tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
+        matikanInput();
+        localStorage.removeItem("chatSessionId");
+        setTimeout(() => {
+          window.location.href = "konsultasi-online.html";
+        }, 2000);
+      });
     }
-  }
-});
+  });
 
-  // 🧊 Nonaktifkan input
   function matikanInput() {
-  inputPesan.disabled = true;
-  kirimBtn.disabled = true;
-  inputPesan.classList.add("opacity-50", "cursor-not-allowed");
-  kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
+    inputPesan.disabled = true;
+    kirimBtn.disabled = true;
+    inputPesan.classList.add("opacity-50", "cursor-not-allowed");
+    kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
   }
 
-  // 📌 Tampilkan pesan sistem
   function tampilkanPesanSystem(pesan) {
     const div = document.createElement("div");
-    div.className = "text-center text-xs text-gray-600 italic";
+    div.className = "text-center text-xs text-gray-500 italic";
     div.textContent = pesan;
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;

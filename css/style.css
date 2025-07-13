@@ -1,125 +1,101 @@
-/* ========== GLOBAL VARIABLE WARNA ========== */
-:root {
-  --warna-bg: #e6d3c7;
-  --warna-primer: #601EF9;
-  --warna-sekunder: #f472b6;
-  --warna-teks: #1f2937; /* gray-800 */
-  --warna-putih: #ffffff;
-  --warna-border: #d1d5db; /* gray-300 */
-}
+/* ======== THEME COLORS ======== */
 
-/* ========== RESET ========== */
+/* Body Background */
 body {
+  background-color: #e6d3c7; /* warna cokelat susu */
+  color: #1f1f1f; /* teks default */
   font-family: 'Inter', sans-serif;
-  background-color: var(--warna-bg);
-  color: var(--warna-teks);
-  margin: 0;
-  padding: 0;
 }
 
-/* ========== HEADER ========== */
+/* Header */
 header {
-  background-color: var(--warna-primer);
-  color: var(--warna-putih);
+  background-color: #601EF9; /* Ungu tua */
+  color: #ffffff;
 }
 
-/* ========== BUTTONS ========== */
-.btn-primer {
-  background-color: var(--warna-primer);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  text-align: center;
-  display: inline-block;
-  transition: background-color 0.3s;
+/* Buttons */
+button, .button {
+  background-color: #601EF9;
+  color: #ffffff;
   border: none;
-  cursor: pointer;
-}
-
-.btn-primer:hover {
-  background-color: #4a1cd0;
-}
-
-.btn-sekunder {
-  background-color: var(--warna-sekunder);
-  color: white;
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   font-weight: 600;
-  text-align: center;
-  display: inline-block;
-  transition: background-color 0.3s;
-  border: none;
-  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.btn-sekunder:hover {
-  background-color: #ec4899;
+button:hover, .button:hover {
+  background-color: #4e13cc;
 }
 
-.btn-outline {
-  background-color: transparent;
-  color: var(--warna-primer);
-  border: 2px solid var(--warna-primer);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  text-align: center;
-  display: inline-block;
-  transition: all 0.3s;
+/* White cards/boxes (ubah warna dasar putih) */
+.bg-white, .card, .box {
+  background-color: #f9f4f0 !important;  /* krem muda */
+  color: #1f1f1f;
 }
 
-.btn-outline:hover {
-  background-color: var(--warna-primer);
-  color: white;
+/* Highlight Warna Aksen (sebelumnya pink-500) */
+.text-pink-600, .text-pink-500, .bg-pink-500 {
+  color: #601EF9 !important;
+  background-color: #601EF9 !important;
 }
 
-/* ========== FORM ========== */
-input, select, textarea {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--warna-border);
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  color: var(--warna-teks);
+.hover\:bg-pink-50:hover {
+  background-color: #ede9fe !important; /* ungu muda */
 }
 
-input:focus, select:focus, textarea:focus {
-  border-color: var(--warna-primer);
-  outline: none;
+/* Status Button Colors */
+.bg-green-500, .bg-green-600 {
+  background-color: #16a34a !important;
 }
 
-/* ========== CARD / BOX ========== */
-.card {
-  background-color: var(--warna-putih);
-  padding: 1.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.bg-red-500, .bg-red-600 {
+  background-color: #dc2626 !important;
 }
 
-/* ========== TEKS SPESIAL ========== */
-.text-header {
-  color: var(--warna-primer);
-  font-weight: bold;
+.text-white {
+  color: #ffffff !important;
 }
 
-.text-muted {
-  color: #6b7280; /* gray-500 */
+/* Utility override examples */
+.border-gray-300 {
+  border-color: #c9c9c9 !important;
 }
 
-.text-center {
-  text-align: center;
+.text-gray-600 {
+  color: #4b5563 !important;
 }
 
-.text-sm {
-  font-size: 0.875rem;
+.text-gray-500 {
+  color: #6b7280 !important;
 }
 
-/* ========== FOOTER ========== */
-footer {
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-align: center;
-  padding: 1rem;
+.text-gray-400 {
+  color: #9ca3af !important;
+}
+
+/* Link underline & hover */
+a:hover {
+  opacity: 0.9;
+}
+
+/* Optional dark mode (toggle class later if dibutuhkan) */
+body.dark {
+  background-color: #1f1f1f;
+  color: #f9f9f9;
+}
+
+body.dark header {
+  background-color: #3c1d7e;
+}
+
+body.dark .bg-white,
+body.dark .card,
+body.dark .box {
+  background-color: #2d2d2d !important;
+  color: #f0f0f0;
+}
+
+body.dark .button {
+  background-color: #764df9;
 }

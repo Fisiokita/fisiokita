@@ -9,12 +9,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style> body { font-family: 'Inter', sans-serif; } </style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-[#111827] min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-[#601EF9] text-white px-4 py-3 flex justify-between items-center shadow">
+  <header class="bg-[#1D4ED8] text-white px-4 py-3 flex justify-between items-center shadow">
     <h1 class="text-lg font-semibold">Dashboard Terapis</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
@@ -22,67 +24,67 @@
   <!-- Main -->
   <main class="flex-1 p-6 max-w-md mx-auto w-full">
     <div class="text-center mb-6">
-      <h2 class="text-xl font-semibold mb-2 text-[#601EF9]">Halo, <span id="terapisNama" class="underline">...</span></h2>
-      <p class="text-sm text-gray-700">Silakan pilih menu layanan:</p>
+      <h2 class="text-xl font-semibold mb-2">Halo, <span id="terapisNama" class="underline">...</span></h2>
+      <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
     </div>
 
-    <!-- Status Online -->
-    <div class="bg-gray-100 p-4 rounded shadow mb-4">
-      <label class="block font-medium mb-1 text-gray-800">Status Online:</label>
-      <select id="statusSelect" class="w-full border px-3 py-2 rounded text-sm">
+    <!-- Pilih Status -->
+    <div class="bg-white p-4 rounded shadow mb-4">
+      <label class="block font-medium mb-1">Status Online:</label>
+      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
         <option value="tersedia">Tersedia</option>
         <option value="tidak">Tidak Tersedia</option>
       </select>
     </div>
 
-    <!-- Menu -->
+    <!-- Menu Admin -->
     <div class="space-y-4">
-      <a href="chat-aktif.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">💬 Chat Aktif</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">💬 Chat Aktif</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="riwayat-chat.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">📁 Riwayat Konsultasi</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">📁 Riwayat Konsultasi</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="jadwal.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">🗓️ Jadwal Terapis</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">🗓️ Jadwal Terapis</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="konsultasi-offline.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">🏠 Permintaan Home Visit</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">🏠 Permintaan Home Visit</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="pengaturan.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">⚙️ Pengaturan Akun</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">⚙️ Pengaturan Akun</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
       <!-- Hanya untuk admin utama -->
-      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
+      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#dbeafe] transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold">👨‍⚕️ Tambah Terapis Baru</span>
-          <i class="fas fa-chevron-right text-black"></i>
+          <span class="font-semibold text-[#1D4ED8]">👨‍⚕️ Tambah Terapis Baru</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
     </div>
   </main>
 
-  <!-- Script -->
+  <!-- Firebase Auth -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -99,20 +101,22 @@
     let currentEmail = "";
 
     auth.onAuthStateChanged(user => {
-      if (!user) return window.location.href = "login.html";
+      if (user) {
+        currentEmail = user.email;
+        db.collection("terapis").doc(currentEmail).get().then(doc => {
+          const data = doc.data() || {};
+          document.getElementById("terapisNama").textContent = data.nama || user.email;
 
-      currentEmail = user.email;
+          if (data.status) {
+            document.getElementById("statusSelect").value = data.status;
+          }
 
-      db.collection("terapis").doc(currentEmail).get().then(doc => {
-        const data = doc.data() || {};
-        document.getElementById("terapisNama").textContent = data.nama || currentEmail;
-        if (data.status) {
-          document.getElementById("statusSelect").value = data.status;
-        }
-      });
-
-      if (currentEmail.toLowerCase() === "fisiokita@gmail.com") {
-        document.getElementById("menuTambahTerapis").classList.remove("hidden");
+          if (user.email.toLowerCase() === "fisiokita@gmail.com") {
+            document.getElementById("menuTambahTerapis").classList.remove("hidden");
+          }
+        });
+      } else {
+        window.location.href = "login.html";
       }
     });
 

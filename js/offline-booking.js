@@ -1,55 +1,65 @@
-// Inisialisasi Firebase (jika belum ada, pastikan sudah include firebase-config.js)
-const db = firebase.firestore();
-
-// Load kabupaten/kota dari wilayah.json
-fetch("data/wilayah.json")
-  .then(res => res.json())
-  .then(data => {
-    const kabupatenSelect = document.getElementById("kabupaten");
-    kabupatenSelect.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
-    Object.keys(data).forEach(kab => {
-      const opt = document.createElement("option");
-      opt.value = kab;
-      opt.textContent = kab;
-      kabupatenSelect.appendChild(opt);
-    });
-  });
-
-// Handle form submit
-document.getElementById("booking-form").addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  const provinsi = "Sumatera Barat";
-  const kabupaten = document.getElementById("kabupaten").value;
-  const tanggal = document.getElementById("tanggal").value;
-  const catatan = document.getElementById("catatan").value.trim();
+document.addEventListener("DOMContentLoaded", () => {
+  const provinsiSelect = document.getElementById("provinsi");
+  const kabupatenSelect = document.getElementById("kabupaten");
+  const form = document.getElementById("booking-form");
   const statusText = document.getElementById("status");
 
-  if (!kabupaten || !tanggal) {
-    statusText.textContent = "Mohon lengkapi semua data.";
-    statusText.classList.add("text-red-600");
-    return;
-  }
+  // Default provinsi tetap Sumatera Barat
+  const provinsiTetap = "Sumatera Barat";
 
-  try {
-    await db.collection("offline_req").add({
+  // Load wilayah.json
+  fetch("data/wilayah.json")
+    .then(response => response.json())
+    .then(data => {
+      // Tampilkan hanya Sumatera Barat
+      const option = document.createElement("option");
+      option.value = provinsiTetap;
+      option.textContent = provinsiTetap;
+      provinsiSelect.appendChild(option);
+      provinsiSelect.value = provinsiTetap;
+
+      // Isi kabupaten/kota
+      kabupatenSelect.innerHTML = `<option value="">Pilih Kabupaten/Kota</option>`;
+      const kabupatenList = Object.keys(data[provinsiTetap]);
+      kabupatenList.forEach(kab => {
+        const opt = document.createElement("option");
+        opt.value = kab;
+        opt.textContent = kab;
+        kabupatenSelect.appendChild(opt);
+      });
+    })
+    .catch(err => {
+      console.error("Gagal memuat wilayah.json:", err);
+      statusText.textContent = "❌ Gagal memuat data wilayah.";
+    });
+
+  // Submit form
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const provinsi = provinsiSelect.value;
+    const kabupaten = kabupatenSelect.value;
+    const tanggal = document.getElementById("tanggal").value;
+    const catatan = document.getElementById("catatan").value;
+
+    if (!kabupaten || !tanggal) {
+      statusText.textContent = "❗ Lengkapi semua data sebelum mengirim.";
+      return;
+    }
+
+    // Simpan ke Firestore
+    firebase.firestore().collection("offline_req").add({
       provinsi,
       kabupaten,
       tanggal,
       catatan,
       status: "pending",
       dibuat: firebase.firestore.Timestamp.now()
+    }).then(() => {
+      statusText.textContent = "✅ Permintaan berhasil dikirim.";
+      form.reset();
+    }).catch(err => {
+      console.error("Gagal menyimpan:", err);
+      statusText.textContent = "❌ Gagal menyimpan permintaan.";
     });
-
-    // Reset form dan tampilkan pesan sukses
-    document.getElementById("booking-form").reset();
-    statusText.textContent = "✅ Permintaan Anda berhasil dikirim.";
-    statusText.classList.remove("text-red-600");
-    statusText.classList.add("text-green-600");
-
-  } catch (err) {
-    console.error("Gagal menyimpan permintaan:", err);
-    statusText.textContent = "❌ Terjadi kesalahan. Coba lagi.";
-    statusText.classList.add("text-red-600");
-  }
+  });
 });

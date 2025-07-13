@@ -13,7 +13,7 @@
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="index.html">
-      <img src="/img/logo.png" alt="Logo" class="w-6 h-6" />
+      <img src="img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
     <span class="font-semibold text-lg">FisioKita</span>
   </header>
@@ -41,7 +41,7 @@
       </div>
       <div>
         <p class="text-sm font-semibold">Jadwal Konsultasi:</p>
-        <p><span id="hari"></span>, <span id="waktu"></span></p>
+        <p><span id="hari" class="text-sm font-medium"></span>, <span id="waktu" class="text-sm font-medium"></span></p>
       </div>
       <div id="lokasiWrapper" class="hidden">
         <p class="text-sm font-semibold">Lokasi Konsultasi:</p>
@@ -54,7 +54,7 @@
          class="block w-full bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
         Kembali ke Beranda
       </a>
-      <button onclick="window.print()"
+      <button onclick="cetakTiket()"
               class="block w-full border border-white text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#3b58b3] transition">
         Cetak Tiket
       </button>
@@ -83,6 +83,14 @@
     if (prov && kab) {
       document.getElementById("lokasiWrapper").classList.remove("hidden");
       document.getElementById("lokasiText").textContent = `${kab}, ${prov}`;
+    }
+
+    function cetakTiket() {
+      if (window.print) {
+        window.print();
+      } else {
+        alert("Fitur cetak tidak tersedia di perangkat Anda.");
+      }
     }
   </script>
 </body>

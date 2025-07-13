@@ -81,56 +81,55 @@
   </main>
 
   <!-- Firebase Auth & Firestore -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1",
+    storageBucket: "fisiosehat-af9f1.appspot.com",
+    messagingSenderId: "800971487968",
+    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    let currentEmail = "";
+  let currentEmail = "";
 
-    auth.onAuthStateChanged(user => {
-    auth.onAuthStateChanged(user => {
-  if (user) {
-    currentEmail = user.email;
-    document.getElementById("terapisEmail").textContent = user.email;
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      currentEmail = user.email;
+      document.getElementById("terapisEmail").textContent = user.email;
 
-    // Load status online dari Firestore
-    db.collection("terapis").doc(currentEmail).get().then(doc => {
-      if (doc.exists && doc.data().status) {
-        document.getElementById("statusSelect").value = doc.data().status;
+      // ✅ Tampilkan menu tambah terapis jika email == admin utama
+      if (user.email.toLowerCase() === "fisiokita@gmail.com") {
+        document.getElementById("menuTambahTerapis").classList.remove("hidden");
       }
-    });
 
-    // ✅ Tampilkan menu tambah terapis jika email == admin utama
-    if (user.email === "fisiokita@gmail.com") {
-      document.getElementById("menuTambahTerapis").classList.remove("hidden");
+      // Load status online dari Firestore
+      db.collection("terapis").doc(currentEmail).get().then(doc => {
+        if (doc.exists && doc.data().status) {
+          document.getElementById("statusSelect").value = doc.data().status;
+        }
+      });
+
+    } else {
+      window.location.href = "login.html";
     }
+  });
 
-  } else {
-    window.location.href = "login.html";
-  }
-});
+  // Ganti status online
+  document.getElementById("statusSelect").addEventListener("change", (e) => {
+    if (!currentEmail) return;
+    db.collection("terapis").doc(currentEmail).set({
+      status: e.target.value
+    }, { merge: true });
+  });
 
-    // Ganti status online
-    document.getElementById("statusSelect").addEventListener("change", (e) => {
-      if (!currentEmail) return;
-      db.collection("terapis").doc(currentEmail).set({
-        status: e.target.value
-      }, { merge: true });
-    });
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => window.location.href = "login.html");
-    });
-  </script>
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    auth.signOut().then(() => window.location.href = "login.html");
+  });
+</script>
 </body>
 </html>

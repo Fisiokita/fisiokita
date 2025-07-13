@@ -76,7 +76,7 @@
         // Cek apakah ini admin/terapis
         db.collection("terapis").doc(email).get().then(doc => {
           if (doc.exists) {
-            window.location.href = "admin-dashboard.html";
+            window.location.href = "admin/dashboard.html";
           } else {
             tampilkanProfil(email);
             tampilkanRiwayat(email);

@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
-  <link rel="stylesheet" href="../css/style.css" />
 <head>
+  <link rel="stylesheet" href="../css/style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Jadwal Terapis - FisioSehat</title>
+  <title>Jadwal Terapis - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex justify-between items-center">
   <h1 class="text-lg font-semibold">🗓️ Jadwal Kerja</h1>
   <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
 </header>
@@ -26,17 +27,17 @@
   <form id="jadwalForm" class="bg-white rounded p-4 shadow space-y-3 mb-6">
     <div>
       <label class="block font-medium mb-1">Hari</label>
-      <select id="hariSelect" class="w-full border px-3 py-2 rounded">
+      <select id="hariSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
         <option value="">-- Pilih Hari --</option>
         <option>Senin</option><option>Selasa</option><option>Rabu</option>
         <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
       </select>
     </div>
     <div class="flex gap-2">
-      <input type="time" id="jamMulai" class="flex-1 border px-3 py-2 rounded" />
-      <input type="time" id="jamSelesai" class="flex-1 border px-3 py-2 rounded" />
+      <input type="time" id="jamMulai" class="flex-1 border border-gray-300 px-3 py-2 rounded" />
+      <input type="time" id="jamSelesai" class="flex-1 border border-gray-300 px-3 py-2 rounded" />
     </div>
-    <button class="bg-pink-500 text-white px-4 py-2 rounded w-full">Simpan Jadwal</button>
+    <button class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white px-4 py-2 rounded w-full font-medium transition">Simpan Jadwal</button>
   </form>
 
   <section>

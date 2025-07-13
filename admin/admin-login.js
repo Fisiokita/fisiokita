@@ -14,7 +14,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     // Simpan UID dan redirect
     localStorage.setItem("adminUID", user.uid);
-    window.location.href = "admin-dashboard.html";
+    window.location.href = "admin/dashboard.html";
   } catch (error) {
     errorMessage.textContent = "Login gagal. Periksa email dan password.";
     errorMessage.classList.remove("hidden");

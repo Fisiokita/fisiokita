@@ -6,6 +6,7 @@
   <title>Konsultasi Home Visit - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
@@ -13,28 +14,32 @@
 <body class="bg-white text-black min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1] text-white">
+  <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1] text-white shadow">
     <img src="img/logo.png" alt="FisioKita" class="w-6 h-6" />
     <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
   <!-- Main -->
   <main class="flex-grow px-4 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-bold mb-4">Pilih Lokasi Anda</h1>
+    <h1 class="text-xl font-bold mb-4 text-center">Pilih Lokasi Anda</h1>
 
     <form id="lokasiForm" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium">Provinsi</label>
-        <select id="provinsi" class="w-full border p-2 rounded" required></select>
+        <label class="block text-sm font-medium mb-1">Provinsi</label>
+        <select id="provinsi" class="w-full border border-gray-300 rounded px-3 py-2" required>
+          <option value="">Pilih Provinsi</option>
+        </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium">Kabupaten/Kota</label>
-        <select id="kabupaten" class="w-full border p-2 rounded" required></select>
+        <label class="block text-sm font-medium mb-1">Kabupaten/Kota</label>
+        <select id="kabupaten" class="w-full border border-gray-300 rounded px-3 py-2" required>
+          <option value="">Pilih Kabupaten/Kota</option>
+        </select>
       </div>
 
       <button type="submit"
-              class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
+              class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
         Lihat Fisioterapis
       </button>
     </form>
@@ -45,7 +50,7 @@
   <!-- Footer -->
   <footer class="text-center text-xs text-gray-500 py-6">
     <div class="flex justify-center items-center gap-2 mb-1">
-      <img src="/img/logo.png" alt="Logo" class="w-4 h-4" />
+      <img src="img/logo.png" alt="Logo" class="w-4 h-4" />
       <span>FisioKita</span>
     </div>
     <p>&copy; 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
@@ -90,7 +95,7 @@
       }
     });
 
-    // Saat submit, redirect ke fisioterapis-daerah.html
+    // Submit Form
     document.getElementById("lokasiForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const prov = provinsiSelect.value;

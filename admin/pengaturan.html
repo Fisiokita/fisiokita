@@ -2,43 +2,113 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Password Toggle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ganti Password - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    .input-wrapper {
-      position: relative;
-    }
-    .toggle-password {
+    body { font-family: 'Inter', sans-serif; }
+    .eye-toggle {
       position: absolute;
+      right: 1rem;
       top: 50%;
-      right: 12px;
       transform: translateY(-50%);
       cursor: pointer;
-      color: #888;
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-  <div class="bg-white p-6 rounded shadow-md w-full max-w-sm">
-    <label class="block text-sm font-medium mb-1">Password</label>
-    <div class="input-wrapper">
-      <input type="password" id="passwordInput" class="w-full border px-3 py-2 rounded" />
-      <i id="toggleIcon" class="fas fa-eye toggle-password"></i>
-    </div>
-  </div>
+<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+  <!-- Header -->
+  <header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">⚙️ Ganti Password</h1>
+    <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1 p-4 max-w-md mx-auto w-full">
+    <form id="passwordForm" class="bg-white p-6 rounded shadow space-y-4 relative">
+      <div class="relative">
+        <label class="block text-sm font-semibold mb-1">Password Baru</label>
+        <input type="password" id="passwordBaru" class="w-full border rounded px-3 py-2 text-sm" required />
+        <i class="fas fa-eye eye-toggle text-gray-500" onclick="togglePassword('passwordBaru', this)"></i>
+      </div>
+      <div class="relative">
+        <label class="block text-sm font-semibold mb-1">Ulangi Password Baru</label>
+        <input type="password" id="konfirmasiPassword" class="w-full border rounded px-3 py-2 text-sm" required />
+        <i class="fas fa-eye eye-toggle text-gray-500" onclick="togglePassword('konfirmasiPassword', this)"></i>
+      </div>
+      <button type="submit"
+              class="bg-[#f472b6] text-white w-full py-2 rounded hover:bg-pink-600 transition">
+        Simpan Password Baru
+      </button>
+      <p id="pesan" class="text-sm text-center mt-2"></p>
+    </form>
+  </main>
 
   <script>
-    const toggleIcon = document.getElementById("toggleIcon");
-    const passwordInput = document.getElementById("passwordInput");
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    toggleIcon.addEventListener("click", () => {
-      const type = passwordInput.type === "password" ? "text" : "password";
-      passwordInput.type = type;
-      toggleIcon.classList.toggle("fa-eye");
-      toggleIcon.classList.toggle("fa-eye-slash");
+    const form = document.getElementById("passwordForm");
+    const pesan = document.getElementById("pesan");
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
     });
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const pw1 = document.getElementById("passwordBaru").value.trim();
+      const pw2 = document.getElementById("konfirmasiPassword").value.trim();
+
+      if (pw1.length < 6) {
+        tampilkan("❌ Password minimal 6 karakter", true); return;
+      }
+      if (pw1 !== pw2) {
+        tampilkan("❌ Password tidak cocok", true); return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) return tampilkan("❌ Anda belum login", true);
+
+      user.updatePassword(pw1)
+        .then(() => {
+          tampilkan("✅ Password berhasil diubah");
+          setTimeout(() => auth.signOut(), 2000);
+        })
+        .catch(err => {
+          if (err.code === "auth/requires-recent-login") {
+            tampilkan("⚠️ Anda perlu login ulang untuk mengubah password.", true);
+          } else {
+            tampilkan("❌ Gagal: " + err.message, true);
+          }
+        });
+    });
+
+    function tampilkan(msg, error = false) {
+      pesan.textContent = msg;
+      pesan.className = `text-sm text-center mt-2 ${error ? 'text-red-600' : 'text-green-600'}`;
+    }
+
+    function togglePassword(id, icon) {
+      const input = document.getElementById(id);
+      const type = input.type === "password" ? "text" : "password";
+      input.type = type;
+      icon.classList.toggle("fa-eye");
+      icon.classList.toggle("fa-eye-slash");
+    }
   </script>
 </body>
 </html>

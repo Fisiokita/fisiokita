@@ -70,6 +70,13 @@
     <i class="fas fa-chevron-right text-gray-400"></i>
   </div>
       </a>
+      <!-- Tambahkan di bagian dalam <main> atau menu -->
+<a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+  <div class="flex items-center justify-between">
+    <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
+    <i class="fas fa-chevron-right text-gray-400"></i>
+  </div>
+</a>
     </div>
   </main>
 
@@ -90,19 +97,27 @@
     let currentEmail = "";
 
     auth.onAuthStateChanged(user => {
-      if (user) {
-        currentEmail = user.email;
-        document.getElementById("terapisEmail").textContent = user.email;
-        // Load status online dari Firestore
-        db.collection("terapis").doc(currentEmail).get().then(doc => {
-          if (doc.exists && doc.data().status) {
-            document.getElementById("statusSelect").value = doc.data().status;
-          }
-        });
-      } else {
-        window.location.href = "login.html";
+    auth.onAuthStateChanged(user => {
+  if (user) {
+    currentEmail = user.email;
+    document.getElementById("terapisEmail").textContent = user.email;
+
+    // Load status online dari Firestore
+    db.collection("terapis").doc(currentEmail).get().then(doc => {
+      if (doc.exists && doc.data().status) {
+        document.getElementById("statusSelect").value = doc.data().status;
       }
     });
+
+    // ✅ Tampilkan menu tambah terapis jika email == admin utama
+    if (user.email === "fisiokita@gmail.com") {
+      document.getElementById("menuTambahTerapis").classList.remove("hidden");
+    }
+
+  } else {
+    window.location.href = "login.html";
+  }
+});
 
     // Ganti status online
     document.getElementById("statusSelect").addEventListener("change", (e) => {

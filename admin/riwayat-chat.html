@@ -8,6 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body class="bg-[#e6d3c7] text-sm min-h-screen flex flex-col">
 
@@ -19,11 +20,13 @@
 
 <!-- Main -->
 <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
+  <!-- Daftar Riwayat -->
   <div>
-    <label class="block font-medium mb-1">Pilih Sesi:</label>
-    <ul id="riwayatList" class="space-y-2"></ul>
+    <label class="block font-medium mb-1">Daftar Riwayat:</label>
+    <ul id="daftarRiwayat" class="space-y-2"></ul>
   </div>
 
+  <!-- Chat Box -->
   <div id="chatContainer" class="hidden">
     <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow"></div>
   </div>
@@ -42,55 +45,61 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  const riwayatList = document.getElementById("riwayatList");
-  const chatContainer = document.getElementById("chatContainer");
+  const daftarRiwayat = document.getElementById("daftarRiwayat");
   const chatBox = document.getElementById("chatBox");
+  const chatContainer = document.getElementById("chatContainer");
 
   let currentEmail = "";
 
   auth.onAuthStateChanged(user => {
-  if (user) {
-    currentEmail = user.email;
-    console.log("Terapis login:", currentEmail); // ✅ pastikan tampil
-    tampilkanRiwayat();
-  } else {
-    window.location.href = "login.html";
-  }
-});
+    if (user) {
+      currentEmail = user.email;
+      tampilkanRiwayat();
+    } else {
+      window.location.href = "login.html";
+    }
+  });
+
   function tampilkanRiwayat() {
     db.collection("sessions")
       .where("selesai", "==", true)
       .where("kepada", "==", currentEmail)
-      .orderBy("dibuat", "desc")
+      .orderBy("dibuat", "desc") // 🔁 pastikan index Firestore dibuat
       .onSnapshot(snapshot => {
-        riwayatList.innerHTML = "";
+        daftarRiwayat.innerHTML = "";
+
         if (snapshot.empty) {
-          riwayatList.innerHTML = "<li class='text-gray-600 italic'>Tidak ada riwayat sesi.</li>";
+          daftarRiwayat.innerHTML = `<li class="text-gray-500 italic">Belum ada riwayat konsultasi selesai.</li>`;
           return;
         }
 
         snapshot.forEach(doc => {
           const data = doc.data();
-          const li = document.createElement("li");
-          li.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-pink-50 transition";
-          li.innerHTML = `
+          const item = document.createElement("li");
+          item.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-pink-50 transition";
+          item.innerHTML = `
             <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
             <div class="text-xs text-gray-500">${doc.id}</div>
           `;
-          li.addEventListener("click", () => {
+          item.addEventListener("click", () => {
             bukaRiwayat(doc.id);
           });
-          riwayatList.appendChild(li);
+
+          daftarRiwayat.appendChild(item);
         });
+      }, err => {
+        console.error("🔥 Gagal load riwayat:", err.message);
       });
   }
 
   function bukaRiwayat(sessionId) {
     chatContainer.classList.remove("hidden");
+    chatBox.innerHTML = "";
+
     db.collection("chats")
       .where("sessionId", "==", sessionId)
       .orderBy("waktu", "asc")
-      .get().then(snapshot => {
+      .onSnapshot(snapshot => {
         chatBox.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -112,6 +121,7 @@
             div.innerHTML = `${data.pesan}
               <span class="text-xs text-white ml-2">${jam}.${menit}</span>`;
           }
+
           chatBox.appendChild(div);
         });
         chatBox.scrollTop = chatBox.scrollHeight;

@@ -12,28 +12,32 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
-  <header class="flex items-center gap-2 px-4 py-3">
+<body class="bg-[#f8fafc] text-[#111827] min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3 bg-[#2563EB] text-white shadow">
     <a href="konsultasi-offline.html">
-      <img src="/img/logo.png" alt="Logo" class="w-6 h-6" />
+      <img src="img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
     <span class="font-semibold text-lg">Fisio Kita</span>
   </header>
 
+  <!-- Main Content -->
   <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
-    <p class="text-sm text-center mb-6" id="lokasi"></p>
+    <p class="text-sm text-center text-gray-600 mb-6" id="lokasi">Memuat lokasi...</p>
 
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
-    <p id="tidak-ada" class="text-center text-sm text-white hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
+    <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
   </main>
 
-  <footer class="text-white text-xs max-w-md mx-auto pb-6 mt-8 text-center">
-    <img src="/img/logo.png" class="w-5 h-5 mx-auto mb-1" alt="Logo" />
+  <!-- Footer -->
+  <footer class="text-xs text-center text-gray-500 pb-6 max-w-md mx-auto">
+    <img src="img/logo.png" class="w-5 h-5 mx-auto mb-1" alt="Logo" />
     <p>© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
   </footer>
 
-  <!-- Firebase config -->
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -44,7 +48,7 @@
     const db = firebase.firestore();
   </script>
 
-  <!-- Script -->
+  <!-- Script untuk Menampilkan Terapis -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const prov = params.get("prov");
@@ -68,13 +72,13 @@
         snapshot.forEach(doc => {
           const t = doc.data();
           const html = `
-            <article class="bg-white rounded-lg p-6 text-black shadow-md">
-              <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
-              <p class="text-xs text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
-              <p class="text-xs mb-2">Jadwal: ${t.jadwal}</p>
-              <p class="text-xs mb-4">Lokasi praktik: ${t.lokasi}</p>
+            <article class="bg-white rounded-lg p-5 shadow text-sm space-y-1 text-[#111827]">
+              <h3 class="font-semibold text-base">${t.nama}</h3>
+              <p class="text-[#2563EB] font-medium">${t.spesialis}</p>
+              <p>🗓️ Jadwal: ${t.jadwal || '-'}</p>
+              <p>📍 Lokasi praktik: ${t.lokasi || '-'}</p>
               <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
-                 class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+                 class="block mt-3 bg-[#2563EB] text-white text-xs font-semibold rounded px-4 py-2 text-center hover:bg-[#1e40af] transition">
                 Jadwalkan Konsultasi
               </a>
             </article>

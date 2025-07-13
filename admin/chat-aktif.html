@@ -75,7 +75,7 @@
     db.collection("sessions")
       .where("selesai", "==", false)
       .where("kepada", "==", currentEmail)
-      .orderBy("dibuat", "asc")
+      
       .onSnapshot(snapshot => {
         daftarSesi.innerHTML = "";
         if (snapshot.empty) {

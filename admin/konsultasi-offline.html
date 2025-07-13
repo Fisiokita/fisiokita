@@ -5,29 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Permintaan Home Visit - FisioKita</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .tab-btn { @apply px-4 py-2 rounded-t font-medium border-b-2; }
-    .tab-active { @apply border-pink-500 text-pink-600 bg-white; }
-    .badge { @apply text-xs px-2 py-1 rounded-full font-medium; }
   </style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex justify-between items-center">
   <h1 class="text-lg font-semibold">🏠 Permintaan Home Visit</h1>
   <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
 </header>
 
 <!-- Tabs -->
-<nav class="flex justify-center space-x-2 bg-white shadow px-4">
-  <button class="tab-btn tab-active" data-tab="pending">Permintaan</button>
-  <button class="tab-btn" data-tab="diterima">Disetujui</button>
-  <button class="tab-btn" data-tab="ditolak">Ditolak</button>
+<nav class="flex justify-center bg-white border-b shadow text-sm font-medium">
+  <button class="px-4 py-2 border-b-2 border-[#1D4ED8] text-[#1D4ED8]" data-tab="pending">Permintaan</button>
+  <button class="px-4 py-2 text-gray-600 hover:text-[#1D4ED8]" data-tab="diterima">Disetujui</button>
+  <button class="px-4 py-2 text-gray-600 hover:text-[#1D4ED8]" data-tab="ditolak">Ditolak</button>
 </nav>
 
 <!-- Main -->
@@ -54,11 +53,11 @@
   let currentEmail = "";
   let currentTab = "pending";
 
-  const tabButtons = document.querySelectorAll(".tab-btn");
+  const tabButtons = document.querySelectorAll("nav button");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("tab-active"));
-      btn.classList.add("tab-active");
+      tabButtons.forEach(b => b.classList.remove("border-b-2", "border-[#1D4ED8]", "text-[#1D4ED8]"));
+      btn.classList.add("border-b-2", "border-[#1D4ED8]", "text-[#1D4ED8]");
       currentTab = btn.dataset.tab;
       tampilkanPermintaanOffline();
     });
@@ -83,36 +82,38 @@
         offlineList.innerHTML = "";
         if (snapshot.empty) {
           offlineList.innerHTML = `<li class="text-gray-500 italic">Tidak ada data ${currentTab}.</li>`;
-        } else {
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const badgeColor = {
-              pending: "bg-gray-300 text-gray-800",
-              diterima: "bg-green-200 text-green-800",
-              ditolak: "bg-red-200 text-red-800"
-            }[data.status];
-
-            const li = document.createElement("li");
-            li.className = "bg-white p-4 rounded shadow space-y-1";
-
-            li.innerHTML = `
-              <div class="flex justify-between items-center">
-                <strong>${data.pasien || '-'}</strong>
-                <span class="badge ${badgeColor}">${data.status}</span>
-              </div>
-              <div><strong>No. HP:</strong> ${data.nohp || '-'}</div>
-              <div><strong>Keluhan:</strong> ${data.keluhan || '-'}</div>
-              <div><strong>Jadwal:</strong> ${data.hari || '-'}, ${data.waktu || '-'}</div>
-              <div><strong>Wilayah:</strong> ${data.kab || '-'}, ${data.prov || '-'}</div>
-              ${data.status === "pending" ? `
-              <div class="mt-3 flex gap-2">
-                <button class="terimaBtn bg-green-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Terima</button>
-                <button class="tolakBtn bg-red-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Tolak</button>
-              </div>` : ''}
-            `;
-            offlineList.appendChild(li);
-          });
+          return;
         }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const badgeStyle = {
+            pending: "bg-gray-200 text-gray-800",
+            diterima: "bg-green-200 text-green-800",
+            ditolak: "bg-red-200 text-red-800"
+          }[data.status];
+
+          const li = document.createElement("li");
+          li.className = "bg-white p-4 rounded shadow";
+
+          li.innerHTML = `
+            <div class="flex justify-between items-center mb-1">
+              <strong>${data.pasien || '-'}</strong>
+              <span class="text-xs px-2 py-1 rounded-full font-medium ${badgeStyle}">${data.status}</span>
+            </div>
+            <div><strong>No. HP:</strong> ${data.nohp || '-'}</div>
+            <div><strong>Keluhan:</strong> ${data.keluhan || '-'}</div>
+            <div><strong>Jadwal:</strong> ${data.hari || '-'}, ${data.waktu || '-'}</div>
+            <div><strong>Wilayah:</strong> ${data.kab || '-'}, ${data.prov || '-'}</div>
+            ${data.status === "pending" ? `
+            <div class="mt-3 flex gap-2">
+              <button class="terimaBtn bg-green-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Terima</button>
+              <button class="tolakBtn bg-red-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Tolak</button>
+            </div>` : ''}
+          `;
+
+          offlineList.appendChild(li);
+        });
       });
   }
 

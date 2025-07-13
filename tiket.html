@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tiket Konsultasi - FisioSehat</title>
+  <title>Tiket Konsultasi - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -11,13 +11,15 @@
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
-  <header class="flex items-center gap-2 px-4 py-3">
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1]">
     <a href="index.html">
-      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+      <img src="/img/logo.png" alt="Logo FisioKita" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">FisioSehat</span>
+    <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
+  <!-- Main Content -->
   <main class="flex-grow px-6 pt-8 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-6">Tiket Konsultasi</h1>
 
@@ -60,10 +62,12 @@
     </div>
   </main>
 
+  <!-- Footer -->
   <footer class="text-white text-xs max-w-md mx-auto text-center pb-6 mt-8">
-    <p>© 2025 FisioSehat. Tiket ini adalah bukti pemesanan Anda.</p>
+    <p>&copy; 2025 FisioKita. Tiket ini adalah bukti pemesanan Anda.</p>
   </footer>
 
+  <!-- Script -->
   <script>
     const params = new URLSearchParams(window.location.search);
 
@@ -78,9 +82,9 @@
     const kab = params.get("kab");
     const kec = params.get("kec");
 
-    if (prov && kab && kec) {
+    if (prov && kab) {
       document.getElementById("lokasiWrapper").classList.remove("hidden");
-      document.getElementById("lokasiText").textContent = `${kec}, ${kab}, ${prov}`;
+      document.getElementById("lokasiText").textContent = kec ? `${kec}, ${kab}, ${prov}` : `${kab}, ${prov}`;
     }
   </script>
 </body>

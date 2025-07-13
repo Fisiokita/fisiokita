@@ -3,118 +3,135 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Konsultasi Offline - FisioKita</title>
+  <title>Dashboard Terapis - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body class="bg-[[#e6d3c7] min-h-screen flex flex-col">
+<body class="bg-[#e6d3c7] text-gray-800 min-h-screen flex flex-col">
 
-<!-- Header -->
-<header class="bg-[#601EF9] text-white px-4 py-3 shadow flex justify-between items-center">
-  <h1 class="text-lg font-semibold">🏠 Konsultasi Offline</h1>
-  <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
-</header>
+  <!-- Header -->
+  <header class="bg-[#601EF9] text-white px-4 py-3 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Dashboard Terapis</h1>
+    <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
+  </header>
 
-<!-- Tabs -->
-<div class="flex justify-center bg-white shadow">
-  <button class="tab-btn py-2 px-4 text-sm font-medium border-b-2 border-transparent hover:border-pink-500 focus:outline-none" data-tab="pending">🕒 Permintaan</button>
-  <button class="tab-btn py-2 px-4 text-sm font-medium border-b-2 border-transparent hover:border-pink-500 focus:outline-none" data-tab="ditolak">❌ Ditolak</button>
-  <button class="tab-btn py-2 px-4 text-sm font-medium border-b-2 border-transparent hover:border-pink-500 focus:outline-none" data-tab="diterima">✅ Diterima</button>
-</div>
+  <!-- Main -->
+  <main class="flex-1 p-6 max-w-md mx-auto w-full">
+    <div class="text-center mb-6">
+      <h2 class="text-xl font-semibold mb-2">Halo, <span id="terapisNama" class="underline">...</span></h2>
+      <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
+    </div>
 
-<!-- Konten -->
-<main class="flex-1 max-w-md mx-auto w-full p-4 space-y-4">
-  <ul id="offlineList" class="space-y-4 text-sm">
-    <li class="text-gray-500 italic">Memuat data...</li>
-  </ul>
-</main>
+    <!-- Pilih Status -->
+    <div class="bg-white p-4 rounded shadow mb-4">
+      <label class="block font-medium mb-1">Status Online:</label>
+      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
+        <option value="tersedia">Tersedia</option>
+        <option value="tidak">Tidak Tersedia</option>
+      </select>
+    </div>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    <!-- Menu Admin -->
+    <div class="space-y-4">
+      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">💬 Chat Aktif</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
 
-  const offlineList = document.getElementById("offlineList");
-  let currentEmail = "";
-  let currentTab = "pending";
+      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">📁 Riwayat Konsultasi</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
 
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      currentEmail = user.email;
-      loadData(currentTab);
-    } else {
-      window.location.href = "login.html";
-    }
-  });
+      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">🗓️ Jadwal Terapis</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
 
-  function loadData(statusFilter) {
-    offlineList.innerHTML = `<li class="text-gray-500 italic">Memuat data...</li>`;
-    db.collection("offline_req")
-      .where("terapis", "==", currentEmail)
-      .where("status", "==", statusFilter)
-      .orderBy("dibuat", "desc")
-      .onSnapshot(snapshot => {
-        offlineList.innerHTML = "";
-        if (snapshot.empty) {
-          offlineList.innerHTML = `<li class="text-gray-500 italic">Tidak ada data.</li>`;
-          return;
-        }
+      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">🏠 Permintaan Home Visit</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const li = document.createElement("li");
-          li.className = "bg-white p-4 rounded shadow";
+      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">⚙️ Pengaturan Akun</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
 
-          li.innerHTML = `
-            <div><strong>Nama:</strong> ${data.pasien || '-'}</div>
-            <div><strong>No. HP:</strong> ${data.nohp || '-'}</div>
-            <div><strong>Keluhan:</strong> ${data.keluhan || '-'}</div>
-            <div><strong>Jadwal:</strong> ${data.hari || '-'}, ${data.waktu || '-'}</div>
-            <div><strong>Wilayah:</strong> ${data.kab || '-'}, ${data.prov || '-'}</div>
-            ${statusFilter === 'pending' ? `
-              <div class="mt-3 flex gap-2">
-                <button class="terimaBtn bg-green-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Terima</button>
-                <button class="tolakBtn bg-red-600 text-white px-3 py-1 rounded text-sm" data-id="${doc.id}">Tolak</button>
-              </div>
-            ` : `<div class="mt-2 text-xs italic text-gray-500">Status: ${statusFilter.toUpperCase()}</div>`}
-          `;
-          offlineList.appendChild(li);
+      <!-- Tampilkan hanya untuk admin utama -->
+      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <!-- Firebase Auth -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentEmail = "";
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        currentEmail = user.email;
+
+        db.collection("terapis").doc(currentEmail).get().then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            document.getElementById("terapisNama").textContent = data.nama || user.email;
+            if (data.status) {
+              document.getElementById("statusSelect").value = data.status;
+            }
+          } else {
+            document.getElementById("terapisNama").textContent = user.email;
+          }
+
+          if (user.email.toLowerCase() === "fisiokita@gmail.com") {
+            document.getElementById("menuTambahTerapis").classList.remove("hidden");
+          }
         });
-      });
-  }
-
-  // Tab Switching
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("border-pink-500"));
-      btn.classList.add("border-pink-500");
-      currentTab = btn.dataset.tab;
-      loadData(currentTab);
+      } else {
+        window.location.href = "login.html";
+      }
     });
-  });
 
-  // Aksi tombol terima/tolak
-  offlineList.addEventListener("click", e => {
-    const id = e.target.dataset.id;
-    if (!id) return;
+    document.getElementById("statusSelect").addEventListener("change", (e) => {
+      if (!currentEmail) return;
+      db.collection("terapis").doc(currentEmail).set({
+        status: e.target.value
+      }, { merge: true });
+    });
 
-    if (e.target.classList.contains("terimaBtn")) {
-      db.collection("offline_req").doc(id).update({ status: "diterima" });
-    } else if (e.target.classList.contains("tolakBtn")) {
-      db.collection("offline_req").doc(id).update({ status: "ditolak" });
-    }
-  });
-</script>
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "login.html");
+    });
+  </script>
 </body>
 </html>

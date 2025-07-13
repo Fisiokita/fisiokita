@@ -3,57 +3,151 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login Admin - FisioSehat</title>
+  <title>Login/Register - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f472b6] min-h-screen flex items-center justify-center px-4">
+<body class="bg-[#4B6CC1] text-white min-h-screen flex items-center justify-center px-4">
 
-  <div class="bg-white rounded-lg p-6 shadow max-w-sm w-full">
-    <h1 class="text-xl font-semibold text-center mb-4 text-[#f472b6]">Login Terapis</h1>
+  <main class="bg-white text-black rounded-lg shadow-md max-w-md w-full p-6 space-y-6">
+    <h1 class="text-xl font-semibold text-center text-[#4B6CC1]">FisioKita</h1>
+
+    <!-- Toggle Tabs -->
+    <div class="flex justify-center gap-4 text-sm font-medium">
+      <button id="btnLoginTab" class="text-[#4B6CC1] underline">Login</button>
+      <button id="btnRegisterTab" class="text-gray-400">Register</button>
+    </div>
+
+    <!-- Login Form -->
     <form id="loginForm" class="space-y-4">
-      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
-      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
-      <button type="submit" class="w-full bg-[#f472b6] text-white py-2 rounded hover:bg-pink-600 transition">Masuk</button>
+      <div>
+        <label class="block text-sm font-medium">Email</label>
+        <input type="email" id="loginEmail" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Password</label>
+        <input type="password" id="loginPassword" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+        Login
+      </button>
     </form>
-    <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
-  </div>
+
+    <!-- Register Form -->
+    <form id="registerForm" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm font-medium">Email</label>
+        <input type="email" id="registerEmail" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Password</label>
+        <input type="password" id="registerPassword" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+        Daftar Akun
+      </button>
+    </form>
+
+    <!-- Divider -->
+    <div class="text-center text-sm text-gray-500">atau</div>
+
+    <!-- Google Login -->
+    <button id="googleLoginBtn" class="w-full border border-gray-300 text-sm py-2 rounded flex items-center justify-center gap-2 hover:bg-gray-100 transition">
+      <img src="https://img.icons8.com/color/16/000000/google-logo.png" />
+      Login dengan Google
+    </button>
+
+    <p id="pesan" class="text-center text-sm mt-2 text-red-600"></p>
+  </main>
 
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    const form = document.getElementById("loginForm");
-    const errorText = document.getElementById("loginError");
+    const btnLoginTab = document.getElementById("btnLoginTab");
+    const btnRegisterTab = document.getElementById("btnRegisterTab");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const pesan = document.getElementById("pesan");
 
-    form.addEventListener("submit", (e) => {
+    function tampilkanPesan(teks, warna = 'red') {
+      pesan.textContent = teks;
+      pesan.className = `text-center text-sm mt-2 text-${warna}-600`;
+    }
+
+    // Toggle Tab
+    btnLoginTab.addEventListener("click", () => {
+      btnLoginTab.classList.add("text-[#4B6CC1]", "underline");
+      btnRegisterTab.classList.remove("text-[#4B6CC1]", "underline");
+      loginForm.classList.remove("hidden");
+      registerForm.classList.add("hidden");
+      pesan.textContent = "";
+    });
+
+    btnRegisterTab.addEventListener("click", () => {
+      btnRegisterTab.classList.add("text-[#4B6CC1]", "underline");
+      btnLoginTab.classList.remove("text-[#4B6CC1]", "underline");
+      registerForm.classList.remove("hidden");
+      loginForm.classList.add("hidden");
+      pesan.textContent = "";
+    });
+
+    // Cek apakah user adalah terapis
+    async function cekDanRedirect(user) {
+      const email = user.email;
+      const doc = await db.collection("terapis").doc(email).get();
+      if (doc.exists) {
+        window.location.href = "dashboard.html";
+      } else {
+        window.location.href = "akun.html";
+      }
+    }
+
+    // Login Email
+    loginForm.addEventListener("submit", e => {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(result => cekDanRedirect(result.user))
+        .catch(err => tampilkanPesan("❌ " + err.message));
+    });
 
-      auth.signInWithEmailAndPassword(email, pass)
-        .then(() => {
-          window.location.href = "dashboard.html";
-        })
-        .catch(err => {
-          errorText.textContent = err.message;
-          errorText.classList.remove("hidden");
-        });
+    // Register Email
+    registerForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      if (password.length < 6) return tampilkanPesan("❌ Password minimal 6 karakter");
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(result => cekDanRedirect(result.user))
+        .catch(err => tampilkanPesan("❌ " + err.message));
+    });
+
+    // Google Login
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => cekDanRedirect(result.user))
+        .catch(err => tampilkanPesan("❌ " + err.message));
+    });
+
+    // Auto-redirect if already logged in
+    auth.onAuthStateChanged(user => {
+      if (user) cekDanRedirect(user);
     });
   </script>
-
 </body>
 </html>

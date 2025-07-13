@@ -22,59 +22,58 @@
   <!-- Main -->
   <main class="flex-1 p-6 max-w-md mx-auto w-full">
     <div class="text-center mb-6">
-      <h2 class="text-xl font-semibold mb-2">Halo, <span id="terapisNama" class="underline">...</span></h2>
-      <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
+      <h2 class="text-xl font-semibold mb-2 text-[#601EF9]">Halo, <span id="terapisNama" class="underline">...</span></h2>
+      <p class="text-sm text-gray-700">Silakan pilih menu layanan:</p>
     </div>
 
-    <!-- Status -->
+    <!-- Status Online -->
     <div class="bg-white p-4 rounded shadow mb-4">
-      <label class="block font-medium mb-1">Status Online:</label>
-      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
+      <label class="block font-medium mb-1 text-gray-700">Status Online:</label>
+      <select id="statusSelect" class="w-full border px-3 py-2 rounded text-sm">
         <option value="tersedia">Tersedia</option>
         <option value="tidak">Tidak Tersedia</option>
       </select>
     </div>
 
-    <!-- Menu Admin -->
+    <!-- Menu -->
     <div class="space-y-4">
-      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <a href="chat-aktif.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">💬 Chat Aktif</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <a href="riwayat-chat.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">📁 Riwayat Konsultasi</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <a href="jadwal.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">🗓️ Jadwal Terapis</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <a href="konsultasi-offline.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">🏠 Permintaan Home Visit</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <a href="pengaturan.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">⚙️ Pengaturan Akun</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
 
-      <!-- Hanya muncul jika login sebagai admin utama -->
-      <a id="menuTambahTerapis" href="tambah-terapis.html"
-         class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+      <!-- Hanya untuk admin utama -->
+      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
           <i class="fas fa-chevron-right text-gray-400"></i>
@@ -83,7 +82,7 @@
     </div>
   </main>
 
-  <!-- Firebase Script -->
+  <!-- Script -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -106,8 +105,8 @@
       }
 
       currentEmail = user.email;
-      const menuTambah = document.getElementById("menuTambahTerapis");
 
+      // Ambil nama terapis dari Firestore
       db.collection("terapis").doc(currentEmail).get().then(doc => {
         const data = doc.data() || {};
         document.getElementById("terapisNama").textContent = data.nama || currentEmail;
@@ -116,12 +115,13 @@
         }
       });
 
+      // Tampilkan menu tambah jika admin utama
       if (currentEmail.toLowerCase() === "fisiokita@gmail.com") {
-        menuTambah.classList.remove("hidden");
+        document.getElementById("menuTambahTerapis").classList.remove("hidden");
       }
     });
 
-    // Update status online
+    // Simpan status
     document.getElementById("statusSelect").addEventListener("change", (e) => {
       if (!currentEmail) return;
       db.collection("terapis").doc(currentEmail).set({

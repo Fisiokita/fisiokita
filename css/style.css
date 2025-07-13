@@ -1,101 +1,60 @@
-/* ======== THEME COLORS ======== */
+/* ===============================
+   Tema Warna Fisio Kita - Aman
+   =============================== */
 
-/* Body Background */
 body {
-  background-color: #e6d3c7; /* warna cokelat susu */
-  color: #1f1f1f; /* teks default */
+  background-color: #e6d3c7;
+  color: #1f1f1f;
   font-family: 'Inter', sans-serif;
 }
 
 /* Header */
-header {
-  background-color: #601EF9; /* Ungu tua */
-  color: #ffffff;
-}
-
-/* Buttons */
-button, .button {
-  background-color: #601EF9;
-  color: #ffffff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: background 0.3s;
-}
-
-button:hover, .button:hover {
-  background-color: #4e13cc;
-}
-
-/* White cards/boxes (ubah warna dasar putih) */
-.bg-white, .card, .box {
-  background-color: #f9f4f0 !important;  /* krem muda */
-  color: #1f1f1f;
-}
-
-/* Highlight Warna Aksen (sebelumnya pink-500) */
-.text-pink-600, .text-pink-500, .bg-pink-500 {
-  color: #601EF9 !important;
+.tema-header {
   background-color: #601EF9 !important;
+  color: white !important;
 }
 
-.hover\:bg-pink-50:hover {
-  background-color: #ede9fe !important; /* ungu muda */
+/* Tombol utama */
+.tema-tombol {
+  background-color: #601EF9 !important;
+  color: white !important;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: 0.3s;
+}
+.tema-tombol:hover {
+  background-color: #4e13cc !important;
 }
 
-/* Status Button Colors */
-.bg-green-500, .bg-green-600 {
-  background-color: #16a34a !important;
+/* Kartu atau box putih */
+.tema-kartu {
+  background-color: #f9f4f0 !important;
+  color: #1f1f1f !important;
+  border-radius: 0.5rem;
+  padding: 1rem;
 }
 
-.bg-red-500, .bg-red-600 {
-  background-color: #dc2626 !important;
+/* Untuk teks aksen (pink → ungu) */
+.tema-teks-utama {
+  color: #601EF9 !important;
 }
 
-.text-white {
-  color: #ffffff !important;
+/* Untuk latar hover item */
+.tema-hover:hover {
+  background-color: #ede9fe !important;
 }
 
-/* Utility override examples */
-.border-gray-300 {
-  border-color: #c9c9c9 !important;
-}
-
-.text-gray-600 {
-  color: #4b5563 !important;
-}
-
-.text-gray-500 {
-  color: #6b7280 !important;
-}
-
-.text-gray-400 {
-  color: #9ca3af !important;
-}
-
-/* Link underline & hover */
-a:hover {
-  opacity: 0.9;
-}
-
-/* Optional dark mode (toggle class later if dibutuhkan) */
+/* Dark mode (jika digunakan di masa depan) */
 body.dark {
   background-color: #1f1f1f;
-  color: #f9f9f9;
-}
-
-body.dark header {
-  background-color: #3c1d7e;
-}
-
-body.dark .bg-white,
-body.dark .card,
-body.dark .box {
-  background-color: #2d2d2d !important;
   color: #f0f0f0;
 }
-
-body.dark .button {
-  background-color: #764df9;
+body.dark .tema-header {
+  background-color: #3c1d7e !important;
+}
+body.dark .tema-kartu {
+  background-color: #2d2d2d !important;
+}
+body.dark .tema-tombol {
+  background-color: #764df9 !important;
 }

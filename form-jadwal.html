@@ -5,73 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Form Jadwal Konsultasi - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
+  <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
-
-  <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="index.html">
-      <img src="img/logo.png" alt="Logo" class="w-6 h-6" />
+      <img src="/img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
     <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
-  <!-- Main -->
   <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Jadwalkan Konsultasi</h1>
     <p class="text-sm text-center mb-1">Dengan: <span id="namaFisioterapis" class="font-bold text-[#E0E7FF]"></span></p>
 
     <form id="jadwalForm" class="bg-white rounded-lg p-6 text-black space-y-4 shadow-md">
       <div>
-        <label class="block text-sm font-semibold mb-1">Nama Lengkap</label>
-        <input type="text" id="namaPasien" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
+        <label class="block text-sm font-semibold mb-1">Nama Anda</label>
+        <input type="text" id="namaPasien" class="w-full border rounded-md px-3 py-2 text-sm" required />
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">No. HP</label>
-        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="noHP" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
+        <input type="text" id="noHP" class="w-full border rounded-md px-3 py-2 text-sm" required />
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>
-        <input type="text" id="keluhan" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
+        <textarea id="keluhan" class="w-full border rounded-md px-3 py-2 text-sm" required></textarea>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Pilih Hari</label>
-        <select id="hari" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
-          <option>Senin</option>
-          <option>Selasa</option>
-          <option>Rabu</option>
-          <option>Kamis</option>
-          <option>Jumat</option>
-          <option>Sabtu</option>
-          <option>Minggu</option>
+        <select id="hari" class="w-full border rounded-md px-3 py-2 text-sm">
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
         </select>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Pilih Waktu</label>
-        <select id="waktu" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+        <select id="waktu" class="w-full border rounded-md px-3 py-2 text-sm">
           <option>08.00 - 10.00</option>
           <option>10.00 - 12.00</option>
           <option>13.00 - 15.00</option>
           <option>15.00 - 17.00</option>
         </select>
       </div>
+
       <button type="submit"
-              class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 w-full hover:bg-[#1e4bb8] transition">
+        class="bg-[#2563EB] text-white font-semibold rounded-md px-4 py-2 w-full hover:bg-[#1e4bb8] transition">
         Konfirmasi Jadwal
       </button>
     </form>
-
-    <p id="statusMsg" class="text-sm text-center mt-4 text-white hidden"></p>
   </main>
 
+  <!-- Firebase -->
   <script>
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -82,54 +71,51 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+  </script>
 
-    // Ambil URL parameter
+  <!-- Script -->
+  <script>
     const params = new URLSearchParams(window.location.search);
-    const namaTerapis = params.get("nama") || "-";
-    const emailTerapis = params.get("email") || "-";
+    const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
+    const emailFisio = params.get("email") || "";
     const prov = params.get("prov") || "";
     const kab = params.get("kab") || "";
 
-    document.getElementById("namaFisioterapis").textContent = namaTerapis;
+    document.getElementById("namaFisioterapis").textContent = namaFisio;
 
-    // Form submit
     document.getElementById("jadwalForm").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const nama = document.getElementById("namaPasien").value.trim();
-      const nohp = document.getElementById("noHP").value.trim();
-      const keluhan = document.getElementById("keluhan").value.trim();
-      const hari = document.getElementById("hari").value;
-      const waktu = document.getElementById("waktu").value;
 
-      if (!emailTerapis || emailTerapis === "-") {
-        alert("Terapis tidak valid. Silakan kembali dan pilih ulang.");
-        return;
-      }
+      const data = {
+        nama: namaFisio,
+        email: emailFisio,
+        pasien: document.getElementById("namaPasien").value.trim(),
+        nohp: document.getElementById("noHP").value.trim(),
+        keluhan: document.getElementById("keluhan").value.trim(),
+        hari: document.getElementById("hari").value,
+        waktu: document.getElementById("waktu").value,
+        provinsi: prov,
+        kabupaten: kab,
+        status: "pending", // agar muncul di dashboard admin
+        dibuat: firebase.firestore.Timestamp.now()
+      };
 
-      try {
-        await db.collection("offline_req").add({
-          terapis: emailTerapis,
-          namaTerapis: namaTerapis,
-          nama: nama,
-          kontak: nohp,
-          keluhan,
-          lokasi: `${kab}, ${prov}`,
-          tanggal: `${hari}, ${waktu}`,
-          status: "pending",
-          dibuat: firebase.firestore.Timestamp.now()
-        });
+      // Simpan ke Firestore
+      await db.collection("offline_req").add(data);
 
-        document.getElementById("statusMsg").textContent = "✅ Permintaan berhasil dikirim!";
-        document.getElementById("statusMsg").classList.remove("hidden");
-        document.getElementById("jadwalForm").reset();
+      // Redirect ke tiket
+      const query = new URLSearchParams({
+        nama: data.nama,
+        pasien: data.pasien,
+        nohp: data.nohp,
+        keluhan: data.keluhan,
+        hari: data.hari,
+        waktu: data.waktu,
+        prov: data.provinsi,
+        kab: data.kabupaten
+      }).toString();
 
-        setTimeout(() => {
-          window.location.href = "tiket.html";
-        }, 1500);
-      } catch (err) {
-        alert("Gagal mengirim permintaan.");
-        console.error(err);
-      }
+      window.location.href = `tiket.html?${query}`;
     });
   </script>
 </body>

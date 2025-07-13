@@ -1,7 +1,4 @@
-/* ===============================
-   Tema Warna Fisio Kita - Aman
-   =============================== */
-
+/* Tema FisioKita - Warna aman tanpa timpa class tailwind */
 body {
   background-color: #e6d3c7;
   color: #1f1f1f;
@@ -14,47 +11,43 @@ body {
   color: white !important;
 }
 
-/* Tombol utama */
-.tema-tombol {
-  background-color: #601EF9 !important;
-  color: white !important;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  transition: 0.3s;
-}
-.tema-tombol:hover {
-  background-color: #4e13cc !important;
+/* Bubble chat dari admin */
+.tema-bubble-admin {
+  background-color: white;
+  color: black;
 }
 
-/* Kartu atau box putih */
-.tema-kartu {
-  background-color: #f9f4f0 !important;
-  color: #1f1f1f !important;
-  border-radius: 0.5rem;
+/* Bubble chat dari pasien */
+.tema-bubble-pasien {
+  background-color: #f472b6;
+  color: white;
+}
+
+/* Kotak luar chat atau box */
+.tema-box {
+  background-color: #fefefe;
+  color: #1f1f1f;
+  border-radius: 12px;
   padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Untuk teks aksen (pink → ungu) */
-.tema-teks-utama {
-  color: #601EF9 !important;
+/* Tombol kirim */
+.tema-kirim {
+  background-color: #601EF9;
+  color: white;
+}
+.tema-kirim:hover {
+  background-color: #4e13cc;
 }
 
-/* Untuk latar hover item */
+/* Hover efek item */
 .tema-hover:hover {
-  background-color: #ede9fe !important;
+  background-color: #ede9fe;
 }
 
-/* Dark mode (jika digunakan di masa depan) */
-body.dark {
-  background-color: #1f1f1f;
-  color: #f0f0f0;
-}
-body.dark .tema-header {
-  background-color: #3c1d7e !important;
-}
-body.dark .tema-kartu {
-  background-color: #2d2d2d !important;
-}
-body.dark .tema-tombol {
-  background-color: #764df9 !important;
+/* Sistem teks */
+.tema-teks-muted {
+  color: #666;
+  font-style: italic;
 }

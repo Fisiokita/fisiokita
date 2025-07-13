@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Form Jadwal Konsultasi - FisioKita</title>
+  <title>Jadwal Konsultasi - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style> body { font-family: 'Inter', sans-serif; } </style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+
+  <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="index.html">
       <img src="/img/logo.png" alt="Logo" class="w-6 h-6" />
@@ -18,48 +22,54 @@
     <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
+  <!-- Main -->
   <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Jadwalkan Konsultasi</h1>
     <p class="text-sm text-center mb-1">Dengan: <span id="namaFisioterapis" class="font-bold text-[#E0E7FF]"></span></p>
+    <p id="lokasiInfo" class="text-xs text-center text-gray-300 mb-4 hidden">Lokasi: <span id="lokasiSpan"></span></p>
 
     <form id="jadwalForm" class="bg-white rounded-lg p-6 text-black space-y-4 shadow-md">
       <div>
-        <label class="block text-sm font-semibold mb-1">Nama Anda</label>
-        <input type="text" id="namaPasien" class="w-full border rounded-md px-3 py-2 text-sm" required />
+        <label class="block text-sm font-semibold mb-1">Nama Lengkap</label>
+        <input type="text" id="namaPasien" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">No. HP</label>
-        <input type="text" id="noHP" class="w-full border rounded-md px-3 py-2 text-sm" required />
+        <input type="text" id="noHP" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Keluhan</label>
-        <textarea id="keluhan" class="w-full border rounded-md px-3 py-2 text-sm" required></textarea>
+        <input type="text" id="keluhan" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Pilih Hari</label>
-        <select id="hari" class="w-full border rounded-md px-3 py-2 text-sm">
-          <option>Senin</option><option>Selasa</option><option>Rabu</option>
-          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+        <select id="hari" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+          <option>Senin</option>
+          <option>Selasa</option>
+          <option>Rabu</option>
+          <option>Kamis</option>
+          <option>Jumat</option>
+          <option>Sabtu</option>
+          <option>Minggu</option>
         </select>
       </div>
       <div>
         <label class="block text-sm font-semibold mb-1">Pilih Waktu</label>
-        <select id="waktu" class="w-full border rounded-md px-3 py-2 text-sm">
+        <select id="waktu" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
           <option>08.00 - 10.00</option>
           <option>10.00 - 12.00</option>
           <option>13.00 - 15.00</option>
           <option>15.00 - 17.00</option>
         </select>
       </div>
-
       <button type="submit"
-        class="bg-[#2563EB] text-white font-semibold rounded-md px-4 py-2 w-full hover:bg-[#1e4bb8] transition">
+              class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 w-full hover:bg-[#1e4bb8] transition">
         Konfirmasi Jadwal
       </button>
     </form>
   </main>
 
-  <!-- Firebase -->
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -73,49 +83,48 @@
     const db = firebase.firestore();
   </script>
 
-  <!-- Script -->
+  <!-- Submit Handler -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
-    const emailFisio = params.get("email") || "";
-    const prov = params.get("prov") || "";
-    const kab = params.get("kab") || "";
+    const emailTerapis = params.get("email") || "";
+    const prov = params.get("prov");
+    const kab = params.get("kab");
 
     document.getElementById("namaFisioterapis").textContent = namaFisio;
+
+    if (prov && kab) {
+      document.getElementById("lokasiInfo").classList.remove("hidden");
+      document.getElementById("lokasiSpan").textContent = `${kab}, ${prov}`;
+    }
 
     document.getElementById("jadwalForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const data = {
         nama: namaFisio,
-        email: emailFisio,
-        pasien: document.getElementById("namaPasien").value.trim(),
-        nohp: document.getElementById("noHP").value.trim(),
-        keluhan: document.getElementById("keluhan").value.trim(),
+        pasien: document.getElementById("namaPasien").value,
+        nohp: document.getElementById("noHP").value,
+        keluhan: document.getElementById("keluhan").value,
         hari: document.getElementById("hari").value,
         waktu: document.getElementById("waktu").value,
-        provinsi: prov,
-        kabupaten: kab,
-        status: "pending", // agar muncul di dashboard admin
-        dibuat: firebase.firestore.Timestamp.now()
+        prov: prov,
+        kab: kab,
+        status: "pending",
+        dibuat: firebase.firestore.Timestamp.now(),
+        terapis: emailTerapis
       };
 
-      // Simpan ke Firestore
-      await db.collection("offline_req").add(data);
+      try {
+        await db.collection("offline_req").add(data);
 
-      // Redirect ke tiket
-      const query = new URLSearchParams({
-        nama: data.nama,
-        pasien: data.pasien,
-        nohp: data.nohp,
-        keluhan: data.keluhan,
-        hari: data.hari,
-        waktu: data.waktu,
-        prov: data.provinsi,
-        kab: data.kabupaten
-      }).toString();
-
-      window.location.href = `tiket.html?${query}`;
+        // Redirect ke tiket
+        const query = new URLSearchParams(data).toString();
+        window.location.href = `tiket.html?${query}`;
+      } catch (err) {
+        alert("Gagal menyimpan permintaan.");
+        console.error(err);
+      }
     });
   </script>
 </body>

@@ -2,70 +2,105 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kunjungan ke Rumah - FisioKita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Konsultasi Home Visit - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
+
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1] text-white">
     <img src="img/logo.png" alt="FisioKita" class="w-6 h-6" />
     <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
+  <!-- Main -->
   <main class="flex-grow px-4 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-bold mb-4">Booking Kunjungan ke Rumah</h1>
+    <h1 class="text-xl font-bold mb-4">Pilih Lokasi Anda</h1>
 
-    <form id="booking-form" class="space-y-4">
+    <form id="lokasiForm" class="space-y-4">
       <div>
         <label class="block text-sm font-medium">Provinsi</label>
-        <select id="provinsi" class="w-full border p-2 rounded">
-          <option value="">Pilih Provinsi</option>
-        </select>
+        <select id="provinsi" class="w-full border p-2 rounded" required></select>
       </div>
 
       <div>
         <label class="block text-sm font-medium">Kabupaten/Kota</label>
-        <select id="kabupaten" class="w-full border p-2 rounded">
-          <option value="">Pilih Kabupaten/Kota</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium">Tanggal</label>
-        <input type="date" id="tanggal" class="w-full border p-2 rounded" required />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium">Catatan Tambahan</label>
-        <textarea id="catatan" class="w-full border p-2 rounded" rows="3" placeholder="Keluhan atau permintaan khusus..."></textarea>
+        <select id="kabupaten" class="w-full border p-2 rounded" required></select>
       </div>
 
       <button type="submit"
               class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
-        Kirim Permintaan
+        Lihat Fisioterapis
       </button>
     </form>
 
-    <p id="status" class="mt-4 text-center text-sm font-medium"></p>
+    <p id="status" class="mt-4 text-center text-sm font-medium text-red-500 hidden">Gagal memuat data wilayah.</p>
   </main>
 
   <!-- Footer -->
-  <footer class="bg-[#f9f9f9] text-center text-xs text-gray-600 py-6 border-t mt-6">
-    <div class="flex items-center justify-center gap-2 mb-2">
-      <img src="img/logo.png" alt="FisioKita" class="w-4 h-4" />
-      <span class="font-semibold text-sm">FisioKita</span>
+  <footer class="text-center text-xs text-gray-500 py-6">
+    <div class="flex justify-center items-center gap-2 mb-1">
+      <img src="/img/logo.png" alt="Logo" class="w-4 h-4" />
+      <span>FisioKita</span>
     </div>
-    <p>&copy; 2025 FisioKita. Semua Hak Dilindungi.</p>
+    <p>&copy; 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
   </footer>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
+  <!-- Script -->
+  <script>
+    const provinsiSelect = document.getElementById("provinsi");
+    const kabupatenSelect = document.getElementById("kabupaten");
+    const statusText = document.getElementById("status");
 
-  <!-- Script Booking -->
-  <script src="js/offline-booking.js"></script>
+    let wilayahData = {};
+
+    // Load JSON wilayah
+    fetch("data/wilayah.json")
+      .then(res => res.json())
+      .then(data => {
+        wilayahData = data;
+        const provList = Object.keys(wilayahData);
+        provList.forEach(prov => {
+          const opt = document.createElement("option");
+          opt.value = prov;
+          opt.textContent = prov;
+          provinsiSelect.appendChild(opt);
+        });
+      })
+      .catch(() => {
+        statusText.classList.remove("hidden");
+      });
+
+    // Ketika provinsi berubah
+    provinsiSelect.addEventListener("change", () => {
+      const prov = provinsiSelect.value;
+      kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+      if (wilayahData[prov]) {
+        Object.keys(wilayahData[prov]).forEach(kab => {
+          const opt = document.createElement("option");
+          opt.value = kab;
+          opt.textContent = kab;
+          kabupatenSelect.appendChild(opt);
+        });
+      }
+    });
+
+    // Saat submit, redirect ke fisioterapis-daerah.html
+    document.getElementById("lokasiForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const prov = provinsiSelect.value;
+      const kab = kabupatenSelect.value;
+      if (!prov || !kab) {
+        alert("Silakan pilih provinsi dan kabupaten terlebih dahulu.");
+        return;
+      }
+      window.location.href = `fisioterapis-daerah.html?prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}`;
+    });
+  </script>
 </body>
 </html>

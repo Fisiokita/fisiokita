@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="stylesheet" href="../css/style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Riwayat Chat - FisioSehat</title>
+  <title>Riwayat Chat - FisioKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-[#e6d3c7] text-sm min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-sm min-h-screen flex flex-col">
 
 <!-- Header -->
-<header class="bg-[#f472b6] text-white px-4 py-3 shadow flex items-center justify-between">
+<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex items-center justify-between">
   <h1 class="text-lg font-semibold">📁 Riwayat Chat</h1>
   <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
 </header>
@@ -29,7 +32,7 @@
 
   <!-- Chat Box -->
   <div id="chatContainer" class="hidden">
-    <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow"></div>
+    <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow-inner border"></div>
   </div>
 </main>
 
@@ -65,7 +68,7 @@
     db.collection("sessions")
       .where("selesai", "==", true)
       .where("kepada", "==", currentEmail)
-      .orderBy("dibuat", "desc") // 🔁 pastikan index Firestore dibuat
+      .orderBy("dibuat", "desc")
       .onSnapshot(snapshot => {
         daftarRiwayat.innerHTML = "";
 
@@ -77,9 +80,9 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           const item = document.createElement("li");
-          item.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-pink-50 transition";
+          item.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-blue-100 transition";
           item.innerHTML = `
-            <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
+            <div class="font-semibold text-[#1D4ED8]">${data.namaPasien || "Pasien"}</div>
             <div class="text-xs text-gray-500">${doc.id}</div>
           `;
           item.addEventListener("click", () => {
@@ -113,14 +116,14 @@
           if (isAdmin) {
             div.className = "flex flex-col items-end max-w-[80%] ml-auto";
             div.innerHTML = `
-              <div class="bg-white text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
+              <div class="bg-gray-100 text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
                 ${data.pesan}
-                <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>
+                <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
               </div>`;
           } else {
-            div.className = "bg-[#f472b6] text-white text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
+            div.className = "bg-[#DBEAFE] text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
             div.innerHTML = `${data.pesan}
-              <span class="text-xs text-white ml-2">${jam}.${menit}</span>`;
+              <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>`;
           }
 
           chatBox.appendChild(div);

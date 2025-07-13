@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="stylesheet" href="../css/style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login Admin - FisioKita</title>
@@ -13,33 +12,37 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen flex items-center justify-center px-4">
+<body class="bg-[#f8fafc] min-h-screen flex flex-col items-center justify-center text-[#111827]">
 
-  <div class="w-full max-w-md bg-white p-6 rounded-xl shadow-lg space-y-6">
-    <div class="text-center">
-      <img src="../img/logo.png" alt="FisioKita" class="w-12 h-12 mx-auto mb-2" />
-      <h1 class="text-xl font-semibold text-[#1D4ED8]">Login Admin FisioKita</h1>
-    </div>
-
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email" required class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" required class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" />
-      </div>
-
-      <button type="submit" class="w-full bg-[#1D4ED8] text-white py-2 rounded hover:bg-[#2563EB] transition">
-        Masuk
-      </button>
-    </form>
-
-    <p id="loginStatus" class="text-center text-sm text-red-600"></p>
+  <!-- Logo -->
+  <div class="mb-6 text-center">
+    <img src="/img/logo.png" alt="FisioKita" class="w-14 h-14 mx-auto mb-2" />
+    <h1 class="text-xl font-semibold text-[#1D4ED8]">FisioKita - Login Admin</h1>
   </div>
 
+  <!-- Form Login -->
+  <form id="loginForm" class="bg-white rounded-lg shadow-md px-6 py-8 w-full max-w-sm space-y-5 border border-gray-100">
+    <div>
+      <label class="block text-sm font-medium mb-1">Email</label>
+      <input type="email" id="email" required class="w-full border border-gray-300 px-3 py-2 rounded-md text-sm" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <div class="relative">
+        <input type="password" id="password" required class="w-full border border-gray-300 px-3 py-2 rounded-md text-sm pr-10" />
+        <button type="button" id="togglePassword" class="absolute right-2 top-2 text-sm text-gray-500">👁️</button>
+      </div>
+    </div>
+
+    <button type="submit" class="w-full bg-[#1D4ED8] hover:bg-[#2563EB] text-white py-2 rounded-md font-semibold text-sm transition">
+      Login
+    </button>
+
+    <p id="loginError" class="text-red-600 text-sm text-center hidden">Email atau password salah.</p>
+  </form>
+
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -52,22 +55,24 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const form = document.getElementById("loginForm");
-    const status = document.getElementById("loginStatus");
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
 
-    form.addEventListener("submit", e => {
+    loginForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      const email = document.getElementById("email").value;
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
       auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          status.textContent = "";
-          window.location.href = "dashboard.html";
-        })
-        .catch(error => {
-          status.textContent = "Email atau password salah.";
-        });
+        .then(() => window.location.href = "dashboard.html")
+        .catch(() => loginError.classList.remove("hidden"));
+    });
+
+    // Toggle password visibility
+    document.getElementById("togglePassword").addEventListener("click", function () {
+      const input = document.getElementById("password");
+      input.type = input.type === "password" ? "text" : "password";
+      this.textContent = input.type === "password" ? "👁️" : "🙈";
     });
   </script>
 </body>

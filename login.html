@@ -109,7 +109,7 @@
       const email = user.email;
       const doc = await db.collection("terapis").doc(email).get();
       if (doc.exists) {
-        window.location.href = "dashboard.html";
+        window.location.href = "admin/dashboard.html";
       } else {
         window.location.href = "akun.html";
       }

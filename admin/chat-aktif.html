@@ -73,7 +73,7 @@
 
   function tampilkanDaftarSesi() {
     db.collection("sessions")
-  .where("selesai", "==", true)
+  .where("selesai", "==", false)
   .where("kepada", "==", currentEmail)
   .orderBy("dibuat", "desc")
       .onSnapshot(snapshot => {

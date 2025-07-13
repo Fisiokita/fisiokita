@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pengaturan Admin - FisioKita</title>
+  <title>Ganti Password - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -12,25 +12,29 @@
   </style>
 </head>
 <body class="bg-[#e6d3c7] min-h-screen flex flex-col">
-  <header class="bg-[#f472b6] text-white px-4 py-3 shadow text-lg font-semibold flex justify-between items-center">
-    Pengaturan Admin
-    <a href="dashboard.html" class="text-sm underline">Kembali</a>
+  <!-- Header -->
+  <header class="bg-[#f472b6] text-white px-4 py-3 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">⚙️ Ganti Password</h1>
+    <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
   </header>
 
-  <main class="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
-    <div class="bg-white p-4 rounded shadow">
-      <h2 class="font-semibold mb-3">Ganti Email</h2>
-      <input id="emailBaru" type="email" class="w-full border px-3 py-2 rounded mb-2" placeholder="Email baru..." />
-      <button onclick="gantiEmail()" class="bg-[#2563EB] text-white px-4 py-2 rounded w-full">Ubah Email</button>
-    </div>
-
-    <div class="bg-white p-4 rounded shadow">
-      <h2 class="font-semibold mb-3">Ganti Password</h2>
-      <input id="passwordBaru" type="password" class="w-full border px-3 py-2 rounded mb-2" placeholder="Password baru..." />
-      <button onclick="gantiPassword()" class="bg-[#2563EB] text-white px-4 py-2 rounded w-full">Ubah Password</button>
-    </div>
-
-    <div id="pesan" class="text-center text-sm font-medium mt-4"></div>
+  <!-- Main -->
+  <main class="flex-1 p-4 max-w-md mx-auto w-full">
+    <form id="passwordForm" class="bg-white p-6 rounded shadow space-y-4">
+      <div>
+        <label class="block text-sm font-semibold mb-1">Password Baru</label>
+        <input type="password" id="passwordBaru" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <div>
+        <label class="block text-sm font-semibold mb-1">Ulangi Password Baru</label>
+        <input type="password" id="konfirmasiPassword" class="w-full border rounded px-3 py-2 text-sm" required />
+      </div>
+      <button type="submit"
+              class="bg-[#f472b6] text-white w-full py-2 rounded hover:bg-pink-600 transition">
+        Simpan Password Baru
+      </button>
+      <p id="pesan" class="text-sm text-center mt-2"></p>
+    </form>
   </main>
 
   <script>
@@ -45,40 +49,47 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    const form = document.getElementById("passwordForm");
+    const pesan = document.getElementById("pesan");
+
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "login.html";
       }
     });
 
-    function gantiEmail() {
-      const emailBaru = document.getElementById("emailBaru").value;
-      const user = auth.currentUser;
-      user.updateEmail(emailBaru)
-        .then(() => {
-          tampilkanPesan("Email berhasil diubah.", false);
-        })
-        .catch(error => {
-          tampilkanPesan("❌ " + error.message, true);
-        });
-    }
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const pw1 = document.getElementById("passwordBaru").value.trim();
+      const pw2 = document.getElementById("konfirmasiPassword").value.trim();
 
-    function gantiPassword() {
-      const passwordBaru = document.getElementById("passwordBaru").value;
-      const user = auth.currentUser;
-      user.updatePassword(passwordBaru)
-        .then(() => {
-          tampilkanPesan("Password berhasil diubah.", false);
-        })
-        .catch(error => {
-          tampilkanPesan("❌ " + error.message, true);
-        });
-    }
+      if (pw1.length < 6) {
+        tampilkan("❌ Password minimal 6 karakter", true); return;
+      }
+      if (pw1 !== pw2) {
+        tampilkan("❌ Password tidak cocok", true); return;
+      }
 
-    function tampilkanPesan(teks, isError = false) {
-      const pesan = document.getElementById("pesan");
-      pesan.textContent = teks;
-      pesan.className = `text-center text-sm font-medium mt-4 ${isError ? 'text-red-600' : 'text-green-600'}`;
+      const user = auth.currentUser;
+      if (!user) return tampilkan("❌ Anda belum login", true);
+
+      user.updatePassword(pw1)
+        .then(() => {
+          tampilkan("✅ Password berhasil diubah");
+          setTimeout(() => auth.signOut(), 2000);
+        })
+        .catch(err => {
+          if (err.code === "auth/requires-recent-login") {
+            tampilkan("⚠️ Anda perlu login ulang untuk mengubah password.", true);
+          } else {
+            tampilkan("❌ Gagal: " + err.message, true);
+          }
+        });
+    });
+
+    function tampilkan(msg, error = false) {
+      pesan.textContent = msg;
+      pesan.className = `text-sm text-center mt-2 ${error ? 'text-red-600' : 'text-green-600'}`;
     }
   </script>
 </body>

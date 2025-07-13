@@ -11,7 +11,7 @@
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body class="bg-[#e6d3c7] text-gray-800 min-h-screen flex flex-col">
+<body class="bg-white text-black min-h-screen flex flex-col">
 
   <!-- Header -->
   <header class="bg-[#601EF9] text-white px-4 py-3 flex justify-between items-center shadow">
@@ -27,8 +27,8 @@
     </div>
 
     <!-- Status Online -->
-    <div class="bg-white p-4 rounded shadow mb-4">
-      <label class="block font-medium mb-1 text-gray-700">Status Online:</label>
+    <div class="bg-gray-100 p-4 rounded shadow mb-4">
+      <label class="block font-medium mb-1 text-gray-800">Status Online:</label>
       <select id="statusSelect" class="w-full border px-3 py-2 rounded text-sm">
         <option value="tersedia">Tersedia</option>
         <option value="tidak">Tidak Tersedia</option>
@@ -37,46 +37,46 @@
 
     <!-- Menu -->
     <div class="space-y-4">
-      <a href="chat-aktif.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a href="chat-aktif.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">💬 Chat Aktif</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">💬 Chat Aktif</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
 
-      <a href="riwayat-chat.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a href="riwayat-chat.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">📁 Riwayat Konsultasi</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">📁 Riwayat Konsultasi</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
 
-      <a href="jadwal.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a href="jadwal.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">🗓️ Jadwal Terapis</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">🗓️ Jadwal Terapis</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
 
-      <a href="konsultasi-offline.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a href="konsultasi-offline.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">🏠 Permintaan Home Visit</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">🏠 Permintaan Home Visit</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
 
-      <a href="pengaturan.html" class="block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a href="pengaturan.html" class="block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">⚙️ Pengaturan Akun</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">⚙️ Pengaturan Akun</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
 
       <!-- Hanya untuk admin utama -->
-      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-white rounded-lg shadow px-5 py-4 hover:bg-pink-50 transition">
+      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-pink-200 text-black rounded-lg shadow px-5 py-4 hover:bg-pink-300 transition">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
-          <i class="fas fa-chevron-right text-gray-400"></i>
+          <span class="font-semibold">👨‍⚕️ Tambah Terapis Baru</span>
+          <i class="fas fa-chevron-right text-black"></i>
         </div>
       </a>
     </div>
@@ -99,14 +99,10 @@
     let currentEmail = "";
 
     auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
+      if (!user) return window.location.href = "login.html";
 
       currentEmail = user.email;
 
-      // Ambil nama terapis dari Firestore
       db.collection("terapis").doc(currentEmail).get().then(doc => {
         const data = doc.data() || {};
         document.getElementById("terapisNama").textContent = data.nama || currentEmail;
@@ -115,13 +111,11 @@
         }
       });
 
-      // Tampilkan menu tambah jika admin utama
       if (currentEmail.toLowerCase() === "fisiokita@gmail.com") {
         document.getElementById("menuTambahTerapis").classList.remove("hidden");
       }
     });
 
-    // Simpan status
     document.getElementById("statusSelect").addEventListener("change", (e) => {
       if (!currentEmail) return;
       db.collection("terapis").doc(currentEmail).set({
@@ -129,7 +123,6 @@
       }, { merge: true });
     });
 
-    // Logout
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => window.location.href = "login.html");
     });

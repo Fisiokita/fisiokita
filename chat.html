@@ -146,6 +146,10 @@
         window.location.href = "konsultasi-online.html"; // 🔁 redirect ke awal
       }, 2000);
     });
+    if (doc.data().selesai === true) {
+  alert("Sesi ini sudah diakhiri. Silakan mulai konsultasi baru.");
+  window.location.href = "index.html";
+    }
   }
 });
 

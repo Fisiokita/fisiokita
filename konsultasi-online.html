@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Konsultasi Online - FisioSehat</title>
+  <title>Konsultasi Online - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -14,106 +14,105 @@
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
 
-<!-- Header -->
-<header class="flex items-center gap-2 px-4 py-3">
-  <a href="konsultasi-jenis.html">
-    <img src="https://placehold.co/24x24/png?text=←" alt="Kembali" class="w-6 h-6" />
-  </a>
-  <span class="font-semibold text-lg">FisioSehat</span>
-</header>
+  <!-- Header -->
+  <header class="flex items-center gap-2 px-4 py-3">
+    <a href="konsultasi-jenis.html">
+      <img src="img/logo.png" alt="Kembali" class="w-6 h-6" />
+    </a>
+    <span class="font-semibold text-lg">FisioKita</span>
+  </header>
 
-<!-- Main -->
-<main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-  <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
-  <div id="daftarTerapis" class="space-y-6">
-    <p class="text-center text-sm text-white">Memuat daftar terapis...</p>
+  <!-- Main -->
+  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
+    <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
+    <div id="daftarTerapis" class="space-y-6">
+      <p class="text-center text-sm text-white">Memuat daftar terapis...</p>
+    </div>
+  </main>
+
+  <!-- Popup Antrian -->
+  <div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
+      <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
+      <p class="text-sm mb-4">Fisioterapis sedang menangani pasien lain.<br />Anda telah masuk ke dalam antrian.</p>
+      <button onclick="closePopup()" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
+        Oke, Mengerti
+      </button>
+    </div>
   </div>
-</main>
 
-<!-- Popup Antrian -->
-<div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
-    <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
-    <p class="text-sm mb-4">Fisioterapis sedang menangani pasien lain.<br />Anda telah masuk ke dalam antrian.</p>
-    <button onclick="closePopup()" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
-      Oke, Mengerti
-    </button>
-  </div>
-</div>
+  <!-- Footer -->
+  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
+    <div class="flex items-center gap-2">
+      <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
+      <span>FisioKita</span>
+    </div>
+    <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
+  </footer>
 
-<!-- Footer -->
-<footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
-  <div class="flex items-center gap-2">
-    <img src="https://placehold.co/20x20/png?text=Logo" alt="Logo" class="w-5 h-5" />
-    <span>FisioSehat</span>
-  </div>
-  <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
-</footer>
+  <!-- Firebase & Logic -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-<!-- Firebase & Logic -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+    const daftarTerapis = document.getElementById("daftarTerapis");
 
-  const daftarTerapis = document.getElementById("daftarTerapis");
-
-  function showQueuePopup(nama) {
-    document.getElementById("queuePopup").classList.remove("hidden");
-  }
-
-  function closePopup() {
-    document.getElementById("queuePopup").classList.add("hidden");
-  }
-
-  // Ambil data terapis dari Firestore
-  db.collection("terapis").get().then(snapshot => {
-    daftarTerapis.innerHTML = ""; // Kosongkan loading
-
-    if (snapshot.empty) {
-      daftarTerapis.innerHTML = `<p class="text-center text-white text-sm italic">Belum ada terapis terdaftar.</p>`;
-      return;
+    function showQueuePopup(nama) {
+      document.getElementById("queuePopup").classList.remove("hidden");
     }
 
-    snapshot.forEach(doc => {
-  const data = doc.data();
-  const email = doc.id;
-  const nama = data.nama?.trim() && data.nama.length > 1 ? data.nama : "Terapis Tanpa Nama";
-  const status = data.status || "tidak";
-  const deskripsi = data.deskripsi || "Terapis FisioSehat";
-
-  const item = document.createElement("article");
-  item.className = "bg-white rounded-lg p-6 text-black shadow-md";
-
-  item.innerHTML = `
-    <h3 class="font-semibold text-base mb-1">${nama}</h3>
-    <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
-      ${status === 'tersedia' ? '✅ Tersedia' : '❌ Sedang Konsultasi'}
-    </p>
-    <p class="text-xs mb-3">${deskripsi}</p>
-    ${
-      status === 'tersedia'
-        ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
-            class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-            Konsultasi Sekarang
-          </a>`
-        : `<button onclick="showQueuePopup('${nama}')"
-            class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-            Masuk Antrian
-          </button>`
+    function closePopup() {
+      document.getElementById("queuePopup").classList.add("hidden");
     }
-  `;
 
-  daftarTerapis.appendChild(item);
-});
-  });
-</script>
+    db.collection("terapis").get().then(snapshot => {
+      daftarTerapis.innerHTML = "";
+
+      if (snapshot.empty) {
+        daftarTerapis.innerHTML = `<p class="text-center text-white text-sm italic">Belum ada terapis terdaftar.</p>`;
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const email = doc.id;
+        const nama = data.nama?.trim() || "Terapis Tanpa Nama";
+        const status = data.status || "tidak";
+        const deskripsi = data.deskripsi || "Terapis FisioKita";
+
+        const item = document.createElement("article");
+        item.className = "bg-white rounded-lg p-6 text-black shadow-md";
+
+        item.innerHTML = `
+          <h3 class="font-semibold text-base mb-1">${nama}</h3>
+          <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
+            ${status === 'tersedia' ? '✅ Tersedia' : '❌ Sedang Konsultasi'}
+          </p>
+          <p class="text-xs mb-3">${deskripsi}</p>
+          ${
+            status === 'tersedia'
+              ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
+                  class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+                  Konsultasi Sekarang
+                </a>`
+              : `<button onclick="showQueuePopup('${nama}')"
+                  class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
+                  Masuk Antrian
+                </button>`
+          }
+        `;
+
+        daftarTerapis.appendChild(item);
+      });
+    });
+  </script>
 </body>
 </html>

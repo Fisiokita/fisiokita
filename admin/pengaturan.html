@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pengaturan Admin - FisioKita</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-[#e6d3c7] min-h-screen flex flex-col">
+  <header class="bg-[#f472b6] text-white px-4 py-3 shadow text-lg font-semibold flex justify-between items-center">
+    Pengaturan Admin
+    <a href="dashboard.html" class="text-sm underline">Kembali</a>
+  </header>
+
+  <main class="flex-1 max-w-md mx-auto w-full p-4 space-y-6">
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold mb-3">Ganti Email</h2>
+      <input id="emailBaru" type="email" class="w-full border px-3 py-2 rounded mb-2" placeholder="Email baru..." />
+      <button onclick="gantiEmail()" class="bg-[#2563EB] text-white px-4 py-2 rounded w-full">Ubah Email</button>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="font-semibold mb-3">Ganti Password</h2>
+      <input id="passwordBaru" type="password" class="w-full border px-3 py-2 rounded mb-2" placeholder="Password baru..." />
+      <button onclick="gantiPassword()" class="bg-[#2563EB] text-white px-4 py-2 rounded w-full">Ubah Password</button>
+    </div>
+
+    <div id="pesan" class="text-center text-sm font-medium mt-4"></div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+      }
+    });
+
+    function gantiEmail() {
+      const emailBaru = document.getElementById("emailBaru").value;
+      const user = auth.currentUser;
+      user.updateEmail(emailBaru)
+        .then(() => {
+          tampilkanPesan("Email berhasil diubah.", false);
+        })
+        .catch(error => {
+          tampilkanPesan("❌ " + error.message, true);
+        });
+    }
+
+    function gantiPassword() {
+      const passwordBaru = document.getElementById("passwordBaru").value;
+      const user = auth.currentUser;
+      user.updatePassword(passwordBaru)
+        .then(() => {
+          tampilkanPesan("Password berhasil diubah.", false);
+        })
+        .catch(error => {
+          tampilkanPesan("❌ " + error.message, true);
+        });
+    }
+
+    function tampilkanPesan(teks, isError = false) {
+      const pesan = document.getElementById("pesan");
+      pesan.textContent = teks;
+      pesan.className = `text-center text-sm font-medium mt-4 ${isError ? 'text-red-600' : 'text-green-600'}`;
+    }
+  </script>
+</body>
+</html>

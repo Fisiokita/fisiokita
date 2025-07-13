@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard Terapis - Fisio Kita</title>
+  <title>Dashboard Terapis - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -14,7 +14,7 @@
 <body class="bg-[#e6d3c7] text-gray-800 min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-[#f472b6] text-white px-4 py-3 flex justify-between items-center shadow">
+  <header class="bg-[#601EF9] text-white px-4 py-3 flex justify-between items-center shadow">
     <h1 class="text-lg font-semibold">Dashboard Terapis</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
@@ -26,7 +26,7 @@
       <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
     </div>
 
-    <!-- Pilih Status -->
+    <!-- Status -->
     <div class="bg-white p-4 rounded shadow mb-4">
       <label class="block font-medium mb-1">Status Online:</label>
       <select id="statusSelect" class="w-full border px-3 py-2 rounded">
@@ -64,80 +64,75 @@
           <i class="fas fa-chevron-right text-gray-400"></i>
         </div>
       </a>
-      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-  <div class="flex items-center justify-between">
-    <span class="font-semibold text-pink-600">⚙️ Pengaturan Akun</span>
-    <i class="fas fa-chevron-right text-gray-400"></i>
-  </div>
+
+      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">⚙️ Pengaturan Akun</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
       </a>
-      <!-- Tambahkan di bagian dalam <main> atau menu -->
-<a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 text-left hover:bg-pink-50 transition">
-  <div class="flex items-center justify-between">
-    <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
-    <i class="fas fa-chevron-right text-gray-400"></i>
-  </div>
-</a>
+
+      <!-- Hanya muncul jika login sebagai admin utama -->
+      <a id="menuTambahTerapis" href="tambah-terapis.html"
+         class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-pink-50">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-pink-600">👨‍⚕️ Tambah Terapis Baru</span>
+          <i class="fas fa-chevron-right text-gray-400"></i>
+        </div>
+      </a>
     </div>
   </main>
 
-  <!-- Firebase Auth & Firestore -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  <!-- Firebase Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  let currentEmail = "";
+    let currentEmail = "";
 
-  auth.onAuthStateChanged(user => {
-    if (user) {
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
       currentEmail = user.email;
+      const menuTambah = document.getElementById("menuTambahTerapis");
+
       db.collection("terapis").doc(currentEmail).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        document.getElementById("terapisNama").textContent = data.nama || user.email;
+        const data = doc.data() || {};
+        document.getElementById("terapisNama").textContent = data.nama || currentEmail;
         if (data.status) {
           document.getElementById("statusSelect").value = data.status;
         }
-      } else {
-        document.getElementById("terapisNama").textContent = user.email
-
-      // ✅ Tampilkan menu tambah terapis jika email == admin utama
-      if (user.email.toLowerCase() === "fisiokita@gmail.com") {
-        document.getElementById("menuTambahTerapis").classList.remove("hidden");
-      }
-
-      // Load status online dari Firestore
-      db.collection("terapis").doc(currentEmail).get().then(doc => {
-        if (doc.exists && doc.data().status) {
-          document.getElementById("statusSelect").value = doc.data().status;
-        }
       });
 
-    } else {
-      window.location.href = "login.html";
-    }
-  });
+      if (currentEmail.toLowerCase() === "fisiokita@gmail.com") {
+        menuTambah.classList.remove("hidden");
+      }
+    });
 
-  // Ganti status online
-  document.getElementById("statusSelect").addEventListener("change", (e) => {
-    if (!currentEmail) return;
-    db.collection("terapis").doc(currentEmail).set({
-      status: e.target.value
-    }, { merge: true });
-  });
+    // Update status online
+    document.getElementById("statusSelect").addEventListener("change", (e) => {
+      if (!currentEmail) return;
+      db.collection("terapis").doc(currentEmail).set({
+        status: e.target.value
+      }, { merge: true });
+    });
 
-  // Logout
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    auth.signOut().then(() => window.location.href = "login.html");
-  });
-</script>
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "login.html");
+    });
+  </script>
 </body>
 </html>

@@ -99,7 +99,15 @@
   auth.onAuthStateChanged(user => {
     if (user) {
       currentEmail = user.email;
-      document.getElementById("terapisEmail").textContent = user.email;
+      db.collection("terapis").doc(currentEmail).get().then(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        document.getElementById("terapisNama").textContent = data.nama || user.email;
+        if (data.status) {
+          document.getElementById("statusSelect").value = data.status;
+        }
+      } else {
+        document.getElementById("terapisNama").textContent = user.email
 
       // ✅ Tampilkan menu tambah terapis jika email == admin utama
       if (user.email.toLowerCase() === "fisiokita@gmail.com") {

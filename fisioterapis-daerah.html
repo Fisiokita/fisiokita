@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fisioterapis Daerah - FisioKita</title>
+  <title>Fisioterapis di Daerah Anda - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -13,27 +13,36 @@
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
-  <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="konsultasi-offline.html">
-      <img src="/img/logo.png" alt="FisioKita" class="w-6 h-6" />
+      <img src="/img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">FisioKita</span>
+    <span class="font-semibold text-lg">Fisio Kita</span>
   </header>
 
-  <!-- Main -->
   <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
-    <p class="text-sm text-center mb-6" id="lokasiText">Memuat lokasi...</p>
+    <p class="text-sm text-center mb-6" id="lokasi"></p>
 
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
-    <p id="kosong" class="text-center text-sm text-white hidden">Tidak ada fisioterapis tersedia di wilayah ini.</p>
+    <p id="tidak-ada" class="text-center text-sm text-white hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
   </main>
 
-  <!-- Footer -->
   <footer class="text-white text-xs max-w-md mx-auto pb-6 mt-8 text-center">
-    <p>© 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
+    <img src="/img/logo.png" class="w-5 h-5 mx-auto mb-1" alt="Logo" />
+    <p>© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
   </footer>
+
+  <!-- Firebase config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 
   <!-- Script -->
   <script>
@@ -41,61 +50,43 @@
     const prov = params.get("prov");
     const kab = params.get("kab");
 
-    const lokasiText = document.getElementById("lokasiText");
-    const daftarTerapis = document.getElementById("daftar-terapis");
-    const kosong = document.getElementById("kosong");
+    document.getElementById("lokasi").textContent = `${kab}, ${prov}`;
+    const container = document.getElementById("daftar-terapis");
+    const tidakAda = document.getElementById("tidak-ada");
 
-    lokasiText.textContent = prov && kab ? `${kab}, ${prov}` : "Lokasi tidak ditemukan";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function loadTerapis() {
-      try {
-        const snapshot = await db.collection("terapis")
-          .where("provinsi", "==", prov)
-          .where("kabupaten", "==", kab)
-          .get();
-
+    db.collection("terapis")
+      .where("provinsi", "==", prov)
+      .where("kabupaten", "==", kab)
+      .get()
+      .then(snapshot => {
         if (snapshot.empty) {
-          kosong.classList.remove("hidden");
+          tidakAda.classList.remove("hidden");
           return;
         }
 
-        daftarTerapis.classList.remove("hidden");
-
+        container.classList.remove("hidden");
         snapshot.forEach(doc => {
-          const data = doc.data();
+          const t = doc.data();
           const html = `
             <article class="bg-white rounded-lg p-6 text-black shadow-md">
-              <h3 class="font-semibold text-base mb-1">${data.nama || doc.id}</h3>
-              <p class="text-xs text-[#4B6CC1] font-semibold mb-2">${data.spesialis || 'Fisioterapis Umum'}</p>
-              <p class="text-xs mb-2">Jadwal: ${data.jadwal || '-'}</p>
-              <p class="text-xs mb-4">Lokasi praktik: ${data.lokasi || kab}</p>
-              <a href="form-jadwal.html?nama=${encodeURIComponent(data.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
+              <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+              <p class="text-xs text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
+              <p class="text-xs mb-2">Jadwal: ${t.jadwal}</p>
+              <p class="text-xs mb-4">Lokasi praktik: ${t.lokasi}</p>
+              <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
                  class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
                 Jadwalkan Konsultasi
               </a>
             </article>
           `;
-          daftarTerapis.innerHTML += html;
+          container.innerHTML += html;
         });
-
-      } catch (error) {
-        console.error("Gagal memuat data:", error);
-        lokasiText.textContent = "Gagal memuat data fisioterapis.";
-      }
-    }
-
-    loadTerapis();
+      })
+      .catch(err => {
+        console.error("Gagal memuat:", err);
+        tidakAda.textContent = "⚠️ Gagal memuat data. Silakan coba lagi.";
+        tidakAda.classList.remove("hidden");
+      });
   </script>
 </body>
 </html>

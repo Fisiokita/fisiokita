@@ -3,25 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login Admin - FisioSehat</title>
+  <title>Login Admin - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f472b6] min-h-screen flex items-center justify-center px-4">
+<body class="bg-[#f8fafc] min-h-screen flex items-center justify-center px-4">
 
-  <div class="bg-white rounded-lg p-6 shadow max-w-sm w-full">
-    <h1 class="text-xl font-semibold text-center mb-4 text-[#f472b6]">Login Terapis</h1>
+  <div class="w-full max-w-md bg-white p-6 rounded-xl shadow-lg space-y-6">
+    <div class="text-center">
+      <img src="../img/logo.png" alt="FisioKita" class="w-12 h-12 mx-auto mb-2" />
+      <h1 class="text-xl font-semibold text-[#1D4ED8]">Login Admin FisioKita</h1>
+    </div>
+
     <form id="loginForm" class="space-y-4">
-      <input type="email" id="email" placeholder="Email" required class="w-full border px-3 py-2 rounded" />
-      <input type="password" id="password" placeholder="Password" required class="w-full border px-3 py-2 rounded" />
-      <button type="submit" class="w-full bg-[#f472b6] text-white py-2 rounded hover:bg-pink-600 transition">Masuk</button>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="email" required class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" required class="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" />
+      </div>
+
+      <button type="submit" class="w-full bg-[#1D4ED8] text-white py-2 rounded hover:bg-[#2563EB] transition">
+        Masuk
+      </button>
     </form>
-    <p id="loginError" class="text-red-600 text-sm mt-3 hidden text-center"></p>
+
+    <p id="loginStatus" class="text-center text-sm text-red-600"></p>
   </div>
 
   <script>
@@ -37,23 +52,22 @@
     const auth = firebase.auth();
 
     const form = document.getElementById("loginForm");
-    const errorText = document.getElementById("loginError");
+    const status = document.getElementById("loginStatus");
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", e => {
       e.preventDefault();
       const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
+      const password = document.getElementById("password").value;
 
-      auth.signInWithEmailAndPassword(email, pass)
+      auth.signInWithEmailAndPassword(email, password)
         .then(() => {
+          status.textContent = "";
           window.location.href = "dashboard.html";
         })
-        .catch(err => {
-          errorText.textContent = err.message;
-          errorText.classList.remove("hidden");
+        .catch(error => {
+          status.textContent = "Email atau password salah.";
         });
     });
   </script>
-
 </body>
 </html>

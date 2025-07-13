@@ -2,127 +2,167 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tambah Terapis - FisioKita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tambah Terapis - Admin FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="bg-[#e6d3c7] min-h-screen flex flex-col items-center p-4">
+<body class="bg-[#f4f4f4] min-h-screen p-4">
+  <div class="max-w-xl mx-auto space-y-6">
+    <h1 class="text-2xl font-bold text-center text-[#4B6CC1]">Tambah Terapis Baru</h1>
 
-  <div class="bg-white shadow p-6 rounded w-full max-w-md">
-    <h1 class="text-xl font-bold mb-4 text-center">Tambah Terapis Baru</h1>
-    <form id="formTerapis" class="space-y-4">
+    <!-- Form Tambah Terapis -->
+    <form id="formTerapis" class="bg-white p-4 rounded shadow space-y-4">
       <div>
-        <label class="block font-medium text-sm">Nama Lengkap</label>
-        <input type="text" id="nama" class="w-full border px-3 py-2 rounded" required />
+        <label class="block font-medium mb-1">Nama Lengkap</label>
+        <input type="text" id="nama" class="w-full border p-2 rounded" required />
       </div>
       <div>
-        <label class="block font-medium text-sm">Email</label>
-        <input type="email" id="email" class="w-full border px-3 py-2 rounded" required />
+        <label class="block font-medium mb-1">Email</label>
+        <input type="email" id="email" class="w-full border p-2 rounded" required />
       </div>
       <div>
-        <label class="block font-medium text-sm">Password</label>
-        <input type="password" id="password" class="w-full border px-3 py-2 rounded" required />
+        <label class="block font-medium mb-1">Password</label>
+        <input type="password" id="password" class="w-full border p-2 rounded" required />
       </div>
       <div>
-        <label class="block font-medium text-sm">Provinsi</label>
-        <select id="provinsi" class="w-full border px-3 py-2 rounded" required>
-          <option value="">Pilih Provinsi</option>
-        </select>
+        <label class="block font-medium mb-1">Provinsi</label>
+        <select id="provinsi" class="w-full border p-2 rounded" required></select>
       </div>
       <div>
-        <label class="block font-medium text-sm">Kabupaten/Kota</label>
-        <select id="kabupaten" class="w-full border px-3 py-2 rounded" required>
-          <option value="">Pilih Kabupaten/Kota</option>
-        </select>
+        <label class="block font-medium mb-1">Kabupaten/Kota</label>
+        <select id="kabupaten" class="w-full border p-2 rounded" required></select>
       </div>
-
-      <button type="submit" class="bg-[#2563EB] text-white w-full py-2 rounded hover:bg-blue-700">
-        Daftarkan Terapis
-      </button>
+      <button class="bg-[#4B6CC1] text-white px-4 py-2 rounded w-full hover:bg-[#3a57b0]">Daftarkan Terapis</button>
     </form>
-    <p id="status" class="text-sm text-center mt-4 text-green-600 hidden">✅ Terapis berhasil ditambahkan!</p>
+
+    <div id="suksesBox" class="hidden text-green-600 text-center font-semibold">
+      ✅ Terapis berhasil ditambahkan.
+      <button id="tambahLagi" class="block mx-auto mt-2 text-blue-600 underline text-sm">+ Tambah Lagi</button>
+    </div>
+
+    <!-- Daftar Terapis -->
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-bold text-lg mb-2 text-[#4B6CC1]">Daftar Terapis</h2>
+      <ul id="listTerapis" class="text-sm space-y-1 text-gray-700"></ul>
+    </div>
+
+    <!-- Log Aktivitas -->
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-bold text-lg mb-2 text-[#4B6CC1]">Log Pendaftaran</h2>
+      <ul id="logAdmin" class="text-xs space-y-1 text-gray-600"></ul>
+    </div>
   </div>
 
+  <script src="/js/firebase-config.js"></script>
   <script>
-    // Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
-    };
-    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let wilayahData = {};
-    const provinsiSelect = document.getElementById("provinsi");
-    const kabupatenSelect = document.getElementById("kabupaten");
+    const form = document.getElementById("formTerapis");
+    const listTerapis = document.getElementById("listTerapis");
+    const logAdmin = document.getElementById("logAdmin");
+    const suksesBox = document.getElementById("suksesBox");
+    const tambahLagi = document.getElementById("tambahLagi");
 
-    // Cek akses email
-    auth.onAuthStateChanged(user => {
-      if (!user || user.email !== "fisiokita@gmail.com") {
-        alert("Hanya admin utama yang dapat mengakses halaman ini.");
-        window.location.href = "dashboard.html";
-      }
-    });
+    const provSelect = document.getElementById("provinsi");
+    const kabSelect = document.getElementById("kabupaten");
 
-    // Load JSON wilayah
-    fetch("../data/wilayah.json")
+    // 🌐 Load Wilayah
+    fetch("/data/wilayah.json")
       .then(res => res.json())
       .then(data => {
-        wilayahData = data;
-        Object.keys(data).forEach(prov => {
+        for (const prov in data) {
           const opt = document.createElement("option");
           opt.value = prov;
           opt.textContent = prov;
-          provinsiSelect.appendChild(opt);
+          provSelect.appendChild(opt);
+        }
+
+        provSelect.addEventListener("change", () => {
+          kabSelect.innerHTML = "";
+          const selected = data[provSelect.value];
+          for (const kab in selected) {
+            const opt = document.createElement("option");
+            opt.value = kab;
+            opt.textContent = kab;
+            kabSelect.appendChild(opt);
+          }
         });
       });
 
-    provinsiSelect.addEventListener("change", () => {
-      const selectedProv = provinsiSelect.value;
-      kabupatenSelect.innerHTML = `<option value="">Pilih Kabupaten/Kota</option>`;
-      if (wilayahData[selectedProv]) {
-        Object.keys(wilayahData[selectedProv]).forEach(kab => {
-          const opt = document.createElement("option");
-          opt.value = kab;
-          opt.textContent = kab;
-          kabupatenSelect.appendChild(opt);
-        });
+    // ✅ Akses hanya untuk email utama
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        alert("Akses hanya untuk admin utama.");
+        window.location.href = "login.html";
+        return;
       }
+
+      // Ambil daftar terapis
+      db.collection("terapis").onSnapshot(snapshot => {
+        listTerapis.innerHTML = "";
+        snapshot.forEach(doc => {
+          const t = doc.data();
+          listTerapis.innerHTML += `<li>👤 ${t.nama} - ${doc.id}</li>`;
+        });
+      });
+
+      // Ambil log admin
+      db.collection("log_admin").orderBy("waktu", "desc").limit(10).onSnapshot(snapshot => {
+        logAdmin.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const waktu = d.waktu?.toDate().toLocaleString("id-ID");
+          logAdmin.innerHTML += `<li>📝 ${d.namaTerapis} oleh ${d.admin} - ${waktu}</li>`;
+        });
+      });
     });
 
-    // Submit form
-    document.getElementById("formTerapis").addEventListener("submit", async e => {
+    form.addEventListener("submit", async e => {
       e.preventDefault();
-
       const nama = document.getElementById("nama").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const provinsi = provinsiSelect.value;
-      const kabupaten = kabupatenSelect.value;
+      const prov = provSelect.value;
+      const kab = kabSelect.value;
 
       try {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        // Tambah ke collection terapis
         await db.collection("terapis").doc(email).set({
           nama,
           email,
-          status: "tidak",
-          provinsi,
-          kabupaten
+          provinsi: prov,
+          kabupaten: kab,
+          status: "tidak"
         });
-        document.getElementById("status").classList.remove("hidden");
-        document.getElementById("formTerapis").reset();
-        kabupatenSelect.innerHTML = `<option value="">Pilih Kabupaten/Kota</option>`;
-      } catch (err) {
-        alert("Gagal: " + err.message);
+
+        // Log aktivitas
+        const currentAdmin = auth.currentUser.email;
+        await db.collection("log_admin").add({
+          namaTerapis: nama,
+          emailTerapis: email,
+          provinsi: prov,
+          kabupaten: kab,
+          admin: currentAdmin,
+          waktu: firebase.firestore.Timestamp.now()
+        });
+
+        // (opsional) juga bisa buat user auth di sini kalau pakai createUserWithEmailAndPassword()
+        form.classList.add("hidden");
+        suksesBox.classList.remove("hidden");
+        form.reset();
+      } catch (e) {
+        alert("Gagal mendaftarkan: " + e.message);
       }
+    });
+
+    tambahLagi.addEventListener("click", () => {
+      suksesBox.classList.add("hidden");
+      form.classList.remove("hidden");
     });
   </script>
 </body>

@@ -1,25 +1,21 @@
 {
-  "provinsi": {
-    "Sumatera Barat": [
-      "Kota Padang",
-      "Kota Bukittinggi",
-      "Kota Padang Panjang",
-      "Kota Pariaman",
-      "Kota Payakumbuh",
-      "Kota Sawahlunto",
-      "Kota Solok",
-      "Kabupaten Agam",
-      "Kabupaten Dharmasraya",
-      "Kabupaten Kepulauan Mentawai",
-      "Kabupaten Lima Puluh Kota",
-      "Kabupaten Padang Pariaman",
-      "Kabupaten Pasaman",
-      "Kabupaten Pasaman Barat",
-      "Kabupaten Pesisir Selatan",
-      "Kabupaten Sijunjung",
-      "Kabupaten Solok",
-      "Kabupaten Solok Selatan",
-      "Kabupaten Tanah Datar"
-    ]
-  }
+  "Kota Padang": ["Padang Barat", "Padang Timur", "Koto Tangah", "Kuranji", "Lubuk Begalung", "Lubuk Kilangan", "Nanggalo", "Pauh", "Padang Selatan", "Bungus Teluk Kabung"],
+  "Kota Bukittinggi": ["Aur Birugo Tigo Baleh", "Guguk Panjang", "Mandiangin Koto Selayan"],
+  "Kota Padang Panjang": ["Padang Panjang Barat", "Padang Panjang Timur"],
+  "Kota Pariaman": ["Pariaman Tengah", "Pariaman Utara", "Pariaman Selatan", "Pariaman Timur"],
+  "Kota Payakumbuh": ["Payakumbuh Barat", "Payakumbuh Timur", "Payakumbuh Utara", "Payakumbuh Selatan", "Lamposi Tigo Nagari"],
+  "Kota Sawahlunto": ["Barangin", "Lembah Segar", "Silungkang", "Talawi"],
+  "Kota Solok": ["Lubuk Sikarah", "Tanjung Harapan"],
+  "Kabupaten Agam": ["Lubuk Basung", "Tanjung Mutiara", "Ampek Nagari", "Palembayan", "Tilatang Kamang", "Sungai Pua", "Basaman", "Matur", "Tanjung Raya", "Banuhampu", "IV Koto", "Malalak"],
+  "Kabupaten Dharmasraya": ["Pulau Punjung", "Koto Baru", "Sitiung", "Timpeh", "Koto Salak", "Padang Laweh", "Sungai Rumbai", "Asam Jujuhan"],
+  "Kabupaten Kepulauan Mentawai": ["Siberut Selatan", "Siberut Utara", "Siberut Barat", "Siberut Barat Daya", "Siberut Tengah", "Pagai Selatan", "Pagai Utara", "Sipora Selatan", "Sipora Utara"],
+  "Kabupaten Lima Puluh Kota": ["Harau", "Payakumbuh", "Situjuah Limo Nagari", "Guguak", "Suliki", "Akabiluru", "Kapur IX", "Pangkalan", "Mungka"],
+  "Kabupaten Padang Pariaman": ["Parit Malintang", "Lubuk Alung", "Batang Anai", "Sungai Limau", "Sungai Geringging", "Ulakan Tapakih", "Nan Sabaris", "2x11 Enam Lingkung", "2x11 Kayu Tanam"],
+  "Kabupaten Pasaman": ["Lubuksikaping", "Bonjol", "Duo Koto", "Tigo Nagari", "Mapat Tunggul", "Rao", "Rao Selatan"],
+  "Kabupaten Pasaman Barat": ["Simpang Empat", "Kinali", "Gunung Tuleh", "Lembah Melintang", "Sungai Aur", "Talamau", "Ranah Batahan"],
+  "Kabupaten Pesisir Selatan": ["Painan", "Batang Kapas", "Lengayang", "Sutera", "Basa Ampek Balai Tapan", "Lunang", "Bayang", "Koto XI Tarusan"],
+  "Kabupaten Sijunjung": ["Muaro Sijunjung", "Kupitan", "Lubuk Tarok", "Kamang Baru", "Sumpur Kudus", "Tanjung Gadang"],
+  "Kabupaten Solok": ["Arosuka", "Gunung Talang", "Kubung", "Lembah Gumanti", "Pantai Cermin", "Danau Kembar", "Lembang Jaya"],
+  "Kabupaten Solok Selatan": ["Sungai Pagu", "Pauh Duo", "Sangir Jujuan", "Sangir", "Sangir Batang Hari", "Koto Parik Gadang Diateh"],
+  "Kabupaten Tanah Datar": ["Batusangkar", "Rambatan", "Lima Kaum", "Sungai Tarab", "Tanjung Emas", "Padang Ganting", "Lintau Buo", "X Koto", "Salimpaung"]
 }

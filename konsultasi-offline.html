@@ -2,39 +2,39 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Konsultasi Offline - FisioKita</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kunjungan ke Rumah - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
-
   <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1] text-white">
     <img src="img/logo.png" alt="FisioKita" class="w-6 h-6" />
-    <span class="font-semibold text-lg">Konsultasi Home Visit</span>
+    <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
-  <!-- Main -->
   <main class="flex-grow px-4 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-bold mb-4 text-center">Booking Fisioterapis ke Rumah</h1>
+    <h1 class="text-xl font-bold mb-4">Booking Kunjungan ke Rumah</h1>
 
     <form id="booking-form" class="space-y-4">
       <div>
         <label class="block text-sm font-medium">Provinsi</label>
-        <input type="text" id="provinsi" value="Sumatera Barat" readonly class="w-full border p-2 rounded bg-gray-100 text-gray-700" />
+        <select id="provinsi" class="w-full border p-2 rounded">
+          <option value="">Pilih Provinsi</option>
+        </select>
       </div>
 
       <div>
         <label class="block text-sm font-medium">Kabupaten/Kota</label>
         <select id="kabupaten" class="w-full border p-2 rounded">
-          <option value="">-- Pilih Kabupaten/Kota --</option>
+          <option value="">Pilih Kabupaten/Kota</option>
         </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium">Tanggal Kunjungan</label>
-        <input type="date" id="tanggal" required class="w-full border p-2 rounded" />
+        <label class="block text-sm font-medium">Tanggal</label>
+        <input type="date" id="tanggal" class="w-full border p-2 rounded" required />
       </div>
 
       <div>
@@ -42,7 +42,8 @@
         <textarea id="catatan" class="w-full border p-2 rounded" rows="3" placeholder="Keluhan atau permintaan khusus..."></textarea>
       </div>
 
-      <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+      <button type="submit"
+              class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
         Kirim Permintaan
       </button>
     </form>
@@ -51,19 +52,20 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-[#f3f4f6] text-gray-600 text-xs text-center py-4 mt-8">
-    <div class="flex justify-center items-center gap-2 mb-1">
-      <img src="img/logo.png" alt="FisioKita" class="w-5 h-5" />
-      <span class="font-semibold">FisioKita</span>
+  <footer class="bg-[#f9f9f9] text-center text-xs text-gray-600 py-6 border-t mt-6">
+    <div class="flex items-center justify-center gap-2 mb-2">
+      <img src="img/logo.png" alt="FisioKita" class="w-4 h-4" />
+      <span class="font-semibold text-sm">FisioKita</span>
     </div>
-    <p>&copy; 2025 FisioKita. Semua hak dilindungi.</p>
+    <p>&copy; 2025 FisioKita. Semua Hak Dilindungi.</p>
   </footer>
 
-  <!-- Firebase & Script -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
   <script src="js/firebase-config.js"></script>
+
+  <!-- Script Booking -->
   <script src="js/offline-booking.js"></script>
 </body>
 </html>

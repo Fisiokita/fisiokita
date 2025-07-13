@@ -3,121 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fisioterapis di Daerah Anda - FisioSehat</title>
+  <title>Fisioterapis Daerah - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+  <!-- Header -->
   <header class="flex items-center gap-2 px-4 py-3">
     <a href="konsultasi-offline.html">
-      <img src="https://placehold.co/24x24/png?text=Logo" alt="Logo" class="w-6 h-6" />
+      <img src="/img/logo.png" alt="FisioKita" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">FisioSehat</span>
+    <span class="font-semibold text-lg">FisioKita</span>
   </header>
 
+  <!-- Main -->
   <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
     <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
-    <p class="text-sm text-center mb-6" id="lokasi"></p>
+    <p class="text-sm text-center mb-6" id="lokasiText">Memuat lokasi...</p>
 
-    <div id="daftar-terapis" class="space-y-6 hidden">
-      <!-- Terapis list, akan di-generate oleh JS -->
-    </div>
-
-    <p id="tidak-ada" class="text-center text-sm text-white hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
+    <div id="daftar-terapis" class="space-y-6 hidden"></div>
+    <p id="kosong" class="text-center text-sm text-white hidden">Tidak ada fisioterapis tersedia di wilayah ini.</p>
   </main>
 
+  <!-- Footer -->
   <footer class="text-white text-xs max-w-md mx-auto pb-6 mt-8 text-center">
-    <p>© 2025 FisioSehat. Semua hak dilindungi undang-undang.</p>
+    <p>© 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
   </footer>
 
+  <!-- Script -->
   <script>
     const params = new URLSearchParams(window.location.search);
-    const prov = params.get("prov") || "-";
-    const kab = params.get("kab") || "-";
-    const kec = params.get("kec") || "-";
+    const prov = params.get("prov");
+    const kab = params.get("kab");
 
-    document.getElementById("lokasi").textContent = `${kec}, ${kab}, ${prov}`;
+    const lokasiText = document.getElementById("lokasiText");
+    const daftarTerapis = document.getElementById("daftar-terapis");
+    const kosong = document.getElementById("kosong");
 
-    // Data fisioterapis
-    const terapistData = [
-      {
-        nama: "Dr. Ahmad Santoso",
-        spesialis: "Spesialis Ortopedi",
-        jadwal: "Senin - Rabu, 08.00 - 12.00",
-        lokasi: "Puskesmas Padang Barat",
-        kabupaten: "Kota Padang"
-      },
-      {
-        nama: "Dr. Budi Hartono",
-        spesialis: "Spesialis Pediatri",
-        jadwal: "Kamis - Sabtu, 13.00 - 16.00",
-        lokasi: "Klinik Sehat Padang",
-        kabupaten: "Kota Padang"
-      },
-      {
-        nama: "Reza Olyverdi, S. Ft, M. Kes",
-        spesialis: "Fisioterapi Umum",
-        jadwal: "Senin - Jumat, 09.00 - 13.00",
-        lokasi: "RSUP Dr. M. Djamil Padang",
-        kabupaten: "Kota Padang"
-      },
-      {
-        nama: "Irhas Syah, SKM, M. Fis",
-        spesialis: "Fisioterapi Neurologi",
-        jadwal: "Senin - Kamis, 10.00 - 14.00",
-        lokasi: "Klinik Padang Panjang",
-        kabupaten: "Kota Padang Panjang"
-      },
-      {
-        nama: "Riri Segita, SKM, M. Fis",
-        spesialis: "Fisioterapi Anak",
-        jadwal: "Selasa & Kamis, 08.00 - 11.00",
-        lokasi: "Puskesmas Batusangkar",
-        kabupaten: "Kabupaten Tanah Datar"
-      },
-      {
-        nama: "Rindu Febriyeni Utami, S. Ft, MKM",
-        spesialis: "Fisioterapi Rehabilitasi",
-        jadwal: "Rabu & Jumat, 13.00 - 16.00",
-        lokasi: "RSUD Solok",
-        kabupaten: "Kabupaten Solok"
-      },
-      {
-        nama: "Siti Munawarah, SST. MKM",
-        spesialis: "Fisioterapi Geriatri",
-        jadwal: "Senin - Jumat, 08.00 - 12.00",
-        lokasi: "Klinik Bukittinggi Sehat",
-        kabupaten: "Kota Bukittinggi"
+    lokasiText.textContent = prov && kab ? `${kab}, ${prov}` : "Lokasi tidak ditemukan";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function loadTerapis() {
+      try {
+        const snapshot = await db.collection("terapis")
+          .where("provinsi", "==", prov)
+          .where("kabupaten", "==", kab)
+          .get();
+
+        if (snapshot.empty) {
+          kosong.classList.remove("hidden");
+          return;
+        }
+
+        daftarTerapis.classList.remove("hidden");
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const html = `
+            <article class="bg-white rounded-lg p-6 text-black shadow-md">
+              <h3 class="font-semibold text-base mb-1">${data.nama || doc.id}</h3>
+              <p class="text-xs text-[#4B6CC1] font-semibold mb-2">${data.spesialis || 'Fisioterapis Umum'}</p>
+              <p class="text-xs mb-2">Jadwal: ${data.jadwal || '-'}</p>
+              <p class="text-xs mb-4">Lokasi praktik: ${data.lokasi || kab}</p>
+              <a href="form-jadwal.html?nama=${encodeURIComponent(data.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
+                 class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
+                Jadwalkan Konsultasi
+              </a>
+            </article>
+          `;
+          daftarTerapis.innerHTML += html;
+        });
+
+      } catch (error) {
+        console.error("Gagal memuat data:", error);
+        lokasiText.textContent = "Gagal memuat data fisioterapis.";
       }
-    ];
-
-    const container = document.getElementById("daftar-terapis");
-
-    const ditemukan = terapistData.filter(t => prov === "Sumatera Barat" && t.kabupaten === kab);
-
-    if (ditemukan.length > 0) {
-      container.classList.remove("hidden");
-      ditemukan.forEach(t => {
-        const html = `
-          <article class="bg-white rounded-lg p-6 text-black shadow-md">
-            <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
-            <p class="text-xs text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
-            <p class="text-xs mb-2">Jadwal: ${t.jadwal}</p>
-            <p class="text-xs mb-4">Lokasi praktik: ${t.lokasi}</p>
-            <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}"
-               class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-              Jadwalkan Konsultasi
-            </a>
-          </article>
-        `;
-        container.innerHTML += html;
-      });
-    } else {
-      document.getElementById("tidak-ada").classList.remove("hidden");
     }
+
+    loadTerapis();
   </script>
 </body>
 </html>

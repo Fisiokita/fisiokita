@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kelola Konten - Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-blue-800 text-white px-6 py-4 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">Super Admin - Konten</h1>
+    <a href="super-admin-dashboard.html" class="text-sm underline">🔙 Kembali</a>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded shadow-md space-y-10">
+    
+    <!-- Hero Home -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">🏠 Hero Beranda</h2>
+      <form id="heroForm" class="space-y-3">
+        <input type="text" id="heroJudul" placeholder="Judul Hero" class="w-full border px-3 py-2 rounded" />
+        <textarea id="heroDeskripsi" placeholder="Deskripsi Singkat" rows="3" class="w-full border px-3 py-2 rounded"></textarea>
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
+      </form>
+    </section>
+
+    <!-- Edukasi -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">📚 Artikel Edukasi</h2>
+      <div id="daftarArtikel" class="space-y-4 mb-4"></div>
+
+      <hr class="my-4" />
+
+      <form id="tambahArtikelForm" class="space-y-3">
+        <input type="text" id="judulBaru" placeholder="Judul Artikel" class="w-full border px-3 py-2 rounded" required />
+        <textarea id="deskripsiBaru" placeholder="Deskripsi Singkat" rows="2" class="w-full border px-3 py-2 rounded" required></textarea>
+        <input type="text" id="ikonBaru" placeholder="URL Gambar Icon" class="w-full border px-3 py-2 rounded" required />
+        <input type="text" id="fileHTMLBaru" placeholder="Link Halaman Artikel (misal: artikel-1.html)" class="w-full border px-3 py-2 rounded" required />
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Tambah Artikel</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Firebase Logic -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Hero content
+    const heroJudul = document.getElementById("heroJudul");
+    const heroDeskripsi = document.getElementById("heroDeskripsi");
+
+    db.collection("settings").doc("homepage").get().then(doc => {
+      if (doc.exists) {
+        const d = doc.data();
+        heroJudul.value = d.judul || "";
+        heroDeskripsi.value = d.deskripsi || "";
+      }
+    });
+
+    document.getElementById("heroForm").addEventListener("submit", e => {
+      e.preventDefault();
+      db.collection("settings").doc("homepage").set({
+        judul: heroJudul.value,
+        deskripsi: heroDeskripsi.value
+      }, { merge: true }).then(() => alert("✅ Hero diperbarui"));
+    });
+
+    // Artikel edukasi
+    const daftarArtikel = document.getElementById("daftarArtikel");
+
+    db.collection("artikel").get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const div = document.createElement("div");
+        div.className = "bg-gray-50 p-3 border rounded";
+        div.innerHTML = `
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="font-semibold">${d.judul}</p>
+              <p class="text-xs text-gray-600">${d.deskripsi}</p>
+              <p class="text-xs text-gray-400">Halaman: ${d.link}</p>
+            </div>
+            <button onclick="hapusArtikel('${doc.id}')" class="text-red-600 text-xs underline">Hapus</button>
+          </div>`;
+        daftarArtikel.appendChild(div);
+      });
+    });
+
+    function hapusArtikel(id) {
+      if (confirm("Yakin ingin menghapus artikel ini?")) {
+        db.collection("artikel").doc(id).delete().then(() => location.reload());
+      }
+    }
+
+    // Tambah artikel
+    document.getElementById("tambahArtikelForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        judul: document.getElementById("judulBaru").value,
+        deskripsi: document.getElementById("deskripsiBaru").value,
+        icon: document.getElementById("ikonBaru").value,
+        link: document.getElementById("fileHTMLBaru").value
+      };
+      db.collection("artikel").add(data).then(() => location.reload());
+    });
+  </script>
+</body>
+</html>

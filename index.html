@@ -151,16 +151,26 @@
 </footer>
   <script>
   const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  auth.onAuthStateChanged(user => {
+  auth.onAuthStateChanged(async (user) => {
     const el = document.getElementById("userGreeting");
     if (!el) return;
 
     if (user) {
-      const nama = user.displayName || user.email;
-      const namaDepan = nama.split(" ")[0];
-      el.textContent = namaDepan;
-      el.onclick = () => window.location.href = "akun.html";
+      const email = user.email;
+      try {
+        const doc = await db.collection("users").doc(email).get();
+        const namaLengkap = doc.exists ? doc.data().nama : user.email;
+        const namaDepan = namaLengkap.split(" ")[0];
+
+        el.textContent = namaDepan;
+        el.onclick = () => window.location.href = "akun.html";
+      } catch (err) {
+        el.textContent = "Akun";
+        el.onclick = () => window.location.href = "akun.html";
+        console.error("Gagal mengambil data nama:", err);
+      }
     } else {
       el.textContent = "Akun";
       el.onclick = () => window.location.href = "login.html";

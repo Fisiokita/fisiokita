@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Super Admin Dashboard - FisioKita</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .menu a { @apply block px-4 py-3 rounded hover:bg-blue-100 transition text-sm font-medium; }
+  </style>
+</head>
+<body class="bg-[#f1f5f9] text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-[#1D4ED8] text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg font-bold">Super Admin Panel</h1>
+    <button id="logoutBtn" class="bg-white text-[#1D4ED8] text-sm px-4 py-2 rounded hover:bg-gray-100 transition">
+      Keluar
+    </button>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow p-6 max-w-3xl mx-auto w-full">
+    <h2 class="text-xl font-semibold mb-4">Selamat datang, Super Admin</h2>
+    <p class="text-sm text-gray-600 mb-6">Silakan pilih fitur yang ingin dikelola:</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 menu">
+      <a href="super-admin-admin.html">👨‍⚕️ Kelola Admin Terapis</a>
+      <a href="super-admin-akun.html">🔐 Akun Super Admin</a>
+      <a href="super-admin-artikel.html">📚 Artikel Edukasi</a>
+      <a href="super-admin-banner.html">🖼 Banner / Hero</a>
+      <a href="super-admin-fitur.html">✨ Fitur Beranda</a>
+      <a href="super-admin-global.html">🌐 Pengaturan Global</a>
+      <a href="super-admin-konten.html">📝 Konten Halaman</a>
+      <a href="super-admin-setting.html">⚙️ Pengaturan Umum</a>
+      <a href="super-admin-tema.html">🎨 Tema Warna</a>
+      <a href="super-admin-user.html">👥 Data Pengguna</a>
+      <a href="super-admin-wilayah.html">🗺 Kelola Wilayah</a>
+      <a href="tambah-terapis.html">➕ Tambah Terapis Baru</a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-gray-500 pb-6 mt-8">
+    © 2025 FisioKita - Panel Super Admin
+  </footer>
+
+  <!-- Firebase & Proteksi -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "800971487968",
+      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email.toLowerCase() !== "fisiokita@gmail.com") {
+        alert("Akses ditolak. Anda bukan Super Admin.");
+        window.location.href = "login.html";
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "login.html");
+    });
+  </script>
+</body>
+</html>

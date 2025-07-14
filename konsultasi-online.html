@@ -87,7 +87,8 @@
       daftarTerapis.innerHTML = "";
 
       if (snapshot.empty) {
-        daftarTerapis.innerHTML = `<p class="text-center text-white text-sm italic">Belum ada terapis terdaftar.</p>`;
+        daftarTerapis.innerHTML = `
+        <p class="text-center text-white text-sm italic">Terapis tidak online.</p>`;
         return;
       }
 

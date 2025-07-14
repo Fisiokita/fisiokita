@@ -27,9 +27,6 @@
     <section id="profilPasien" class="hidden space-y-4">
       <h2 class="text-lg font-semibold mb-1">Profil Anda</h2>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
-        <div class="text-center">
-          <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
-        </div>
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
         <p><strong>No. HP:</strong> <span id="profilHP">-</span></p>
@@ -57,7 +54,6 @@
         </select>
         <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
         <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
-        <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
         <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">Simpan Perubahan</button>
         <p id="pesanEdit" class="text-sm text-center mt-2"></p>
       </form>
@@ -218,11 +214,6 @@
         kabupaten: document.getElementById("editKabupaten").value,
         email: user.email
       };
-      if (file) {
-        const ref = storage.ref(`foto-profil/${uid}.jpg`);
-        await ref.put(file);
-        data.foto = await ref.getDownloadURL();
-      }
       await db.collection("pengguna").doc(uid).set(data, { merge: true });
       alert("✅ Profil berhasil diperbarui");
       location.reload();

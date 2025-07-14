@@ -3,113 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pengaturan Global - Super Admin</title>
+  <title>Pengaturan Website - Super Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-50 text-black">
 
-  <!-- Header -->
   <header class="bg-blue-800 text-white px-6 py-4 shadow flex justify-between items-center">
-    <h1 class="text-lg font-semibold">Super Admin - Pengaturan Global</h1>
+    <h1 class="text-lg font-semibold">Pengaturan Tema & Tampilan</h1>
     <a href="super-admin-dashboard.html" class="text-sm underline">🔙 Kembali</a>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded shadow-md space-y-10">
-    
-    <!-- Warna Tema -->
-    <section>
-      <h2 class="text-xl font-semibold mb-3">🎨 Warna Tema</h2>
-      <form id="warnaForm" class="space-y-3">
-        <label class="block text-sm">Warna Utama (hex):</label>
-        <input type="text" id="warnaUtama" placeholder="#4B6CC1" class="w-full border px-3 py-2 rounded" />
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
-      </form>
-    </section>
+  <main class="max-w-xl mx-auto p-6 space-y-6">
+
+    <!-- Warna -->
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-semibold mb-4">🎨 Warna & Tampilan</h2>
+      <label class="block text-sm font-medium mb-1">Warna Utama</label>
+      <input type="color" id="warnaUtama" class="w-full mb-4 h-10" />
+
+      <label class="block text-sm font-medium mb-1">Warna Tombol</label>
+      <input type="color" id="warnaTombol" class="w-full h-10" />
+    </div>
+
+    <!-- Font -->
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-semibold mb-4">🔤 Font Utama</h2>
+      <select id="fontUtama" class="w-full border px-3 py-2 rounded">
+        <option value="Inter">Inter</option>
+        <option value="Poppins">Poppins</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Nunito">Nunito</option>
+      </select>
+    </div>
 
     <!-- Logo -->
-    <section>
-      <h2 class="text-xl font-semibold mb-3">🖼 Logo Website</h2>
-      <form id="logoForm" class="space-y-3">
-        <label class="block text-sm">URL Gambar Logo:</label>
-        <input type="text" id="logoURL" placeholder="img/logo.png" class="w-full border px-3 py-2 rounded" />
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
-      </form>
-    </section>
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-semibold mb-4">🖼 Upload Logo</h2>
+      <input type="file" id="logoFile" accept="image/*" />
+      <img id="previewLogo" class="mt-4 w-20" />
+    </div>
 
-    <!-- Footer -->
-    <section>
-      <h2 class="text-xl font-semibold mb-3">📄 Footer</h2>
-      <form id="footerForm" class="space-y-3">
-        <label class="block text-sm">Teks Footer:</label>
-        <input type="text" id="footerText" class="w-full border px-3 py-2 rounded" />
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
-      </form>
-    </section>
+    <!-- Judul & Footer -->
+    <div class="bg-white rounded shadow p-4">
+      <h2 class="font-semibold mb-4">📛 Judul & Footer</h2>
+      <label class="block text-sm mb-1">Judul Website</label>
+      <input type="text" id="judulWebsite" class="w-full border px-3 py-2 rounded mb-3" />
+      <label class="block text-sm mb-1">Footer Teks</label>
+      <textarea id="footerTeks" class="w-full border px-3 py-2 rounded" rows="2"></textarea>
+    </div>
 
-    <!-- Notifikasi -->
-    <section>
-      <h2 class="text-xl font-semibold mb-3">🔔 Notifikasi Global</h2>
-      <form id="notifikasiForm" class="space-y-3">
-        <label class="block text-sm">Pesan Notifikasi:</label>
-        <textarea id="pesanNotif" rows="2" class="w-full border px-3 py-2 rounded"></textarea>
-        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
-      </form>
-    </section>
+    <!-- Simpan -->
+    <div class="text-center">
+      <button onclick="simpanPengaturan()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        💾 Simpan Pengaturan
+      </button>
+    </div>
   </main>
 
-  <!-- Firebase -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const storage = firebase.storage();
+    const ref = db.collection("pengaturan").doc("global");
 
-    // Ambil data setting awal
-    const warnaInput = document.getElementById("warnaUtama");
-    const logoInput = document.getElementById("logoURL");
-    const footerInput = document.getElementById("footerText");
-    const notifInput = document.getElementById("pesanNotif");
+    async function muatPengaturan() {
+      const snap = await ref.get();
+      if (!snap.exists) return;
 
-    db.collection("settings").doc("global").get().then(doc => {
-      const d = doc.data() || {};
-      warnaInput.value = d.warna || "#4B6CC1";
-      logoInput.value = d.logo || "img/logo.png";
-      footerInput.value = d.footer || "";
-      notifInput.value = d.notifikasi || "";
-    });
+      const d = snap.data();
+      document.getElementById("warnaUtama").value = d.warnaUtama || "#4B6CC1";
+      document.getElementById("warnaTombol").value = d.warnaTombol || "#2563EB";
+      document.getElementById("fontUtama").value = d.fontUtama || "Inter";
+      document.getElementById("judulWebsite").value = d.judulWebsite || "";
+      document.getElementById("footerTeks").value = d.footerTeks || "";
+      if (d.logoUrl) document.getElementById("previewLogo").src = d.logoUrl;
+    }
 
-    // Update semua
-    document.getElementById("warnaForm").addEventListener("submit", e => {
-      e.preventDefault();
-      db.collection("settings").doc("global").set({ warna: warnaInput.value }, { merge: true });
-      alert("✅ Warna diperbarui");
-    });
+    async function simpanPengaturan() {
+      const file = document.getElementById("logoFile").files[0];
+      let logoUrl = null;
 
-    document.getElementById("logoForm").addEventListener("submit", e => {
-      e.preventDefault();
-      db.collection("settings").doc("global").set({ logo: logoInput.value }, { merge: true });
-      alert("✅ Logo diperbarui");
-    });
+      if (file) {
+        const path = "logo/" + file.name;
+        const upload = await storage.ref(path).put(file);
+        logoUrl = await upload.ref.getDownloadURL();
+      }
 
-    document.getElementById("footerForm").addEventListener("submit", e => {
-      e.preventDefault();
-      db.collection("settings").doc("global").set({ footer: footerInput.value }, { merge: true });
-      alert("✅ Footer diperbarui");
-    });
+      const data = {
+        warnaUtama: document.getElementById("warnaUtama").value,
+        warnaTombol: document.getElementById("warnaTombol").value,
+        fontUtama: document.getElementById("fontUtama").value,
+        judulWebsite: document.getElementById("judulWebsite").value,
+        footerTeks: document.getElementById("footerTeks").value
+      };
+      if (logoUrl) data.logoUrl = logoUrl;
 
-    document.getElementById("notifikasiForm").addEventListener("submit", e => {
-      e.preventDefault();
-      db.collection("settings").doc("global").set({ notifikasi: notifInput.value }, { merge: true });
-      alert("✅ Notifikasi diperbarui");
-    });
+      await ref.set(data, { merge: true });
+      alert("Pengaturan disimpan!");
+    }
+
+    window.onload = muatPengaturan;
   </script>
 </body>
 </html>

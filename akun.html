@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Akun Saya - Fisio Kita</title>
+  <title>Akun Saya - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style> body { font-family: 'Inter', sans-serif; } </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
 <body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
 
@@ -18,70 +18,52 @@
     <h1 class="text-lg font-semibold">👤 Akun Saya</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
-  <!-- Edit Form (Hidden by default) -->
-<section id="editFormSection" class="hidden p-4">
-  <h2 class="text-lg font-semibold mb-2">Ubah Profil</h2>
-  <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
-    <div>
-      <label class="block mb-1">Nama Lengkap</label>
-      <input type="text" id="editNama" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Nomor HP</label>
-      <input type="tel" id="editHP" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Tanggal Lahir</label>
-      <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Jenis Kelamin</label>
-      <select id="editGender" class="w-full border rounded px-3 py-2" required>
-        <option value="">Pilih</option>
-        <option value="Laki-laki">Laki-laki</option>
-        <option value="Perempuan">Perempuan</option>
-      </select>
-    </div>
-    <div>
-      <label class="block mb-1">Provinsi</label>
-      <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
-    </div>
-    <div>
-      <label class="block mb-1">Kabupaten/Kota</label>
-      <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
-    </div>
-    <div>
-      <label class="block mb-1">Foto Profil</label>
-      <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
-    </div>
-    <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
-      Simpan Perubahan
-    </button>
-  </form>
-</section>
 
   <!-- Main -->
-  <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-6">
-
+  <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-8">
+    
     <!-- Profil -->
     <section id="profilPasien" class="hidden">
-      <h2 class="text-lg font-semibold mb-3">Profil Anda</h2>
-      <div class="text-center">
-  <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
-      </div>
+      <h2 class="text-lg font-semibold mb-2">Profil Anda</h2>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
-        <p><strong>Nomor HP:</strong> <span id="profilHP">-</span></p>
-        <p><strong>Tanggal Lahir:</strong> <span id="profilTglLahir">-</span></p>
+        <p><strong>No. HP:</strong> <span id="profilHP">-</span></p>
+        <p><strong>Lokasi:</strong> <span id="profilLokasi">-</span></p>
         <p><strong>Jenis Kelamin:</strong> <span id="profilGender">-</span></p>
-        <p><strong>Wilayah:</strong> <span id="profilWilayah">-</span></p>
+        <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
+        <p class="text-xs text-gray-500 mt-2">📆 Login terakhir: <span id="profilLogin">-</span></p>
       </div>
+    </section>
+
+    <!-- Ganti Password -->
+    <section>
+      <h2 class="text-lg font-semibold mb-2">Ganti Kata Sandi</h2>
+      <form id="formGantiPassword" class="bg-white p-4 rounded shadow space-y-3 text-sm">
+        <input type="password" id="passwordLama" placeholder="Password Lama" class="w-full border rounded px-3 py-2" required />
+        <input type="password" id="passwordBaru" placeholder="Password Baru" class="w-full border rounded px-3 py-2" required />
+        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">Simpan Password Baru</button>
+        <p id="pesanPassword" class="text-sm text-center text-red-600"></p>
+      </form>
+    </section>
+
+    <!-- Lupa Password -->
+    <section>
+      <h2 class="text-lg font-semibold mb-2">Lupa Kata Sandi?</h2>
+      <button id="btnResetPassword" class="text-sm underline text-blue-600">Kirim Link Reset ke Email Saya</button>
+      <p id="pesanReset" class="text-sm text-center mt-2"></p>
+    </section>
+
+    <!-- Hapus Akun -->
+    <section>
+      <h2 class="text-lg font-semibold mb-2 text-red-600">Hapus Akun</h2>
+      <button id="hapusAkunBtn" class="text-sm underline text-red-600">Saya ingin menghapus akun saya</button>
+      <p id="pesanHapus" class="text-sm text-center mt-2"></p>
     </section>
 
     <!-- Riwayat -->
     <section>
-      <h2 class="text-lg font-semibold mb-3">Riwayat Konsultasi</h2>
+      <h2 class="text-lg font-semibold mb-2">Riwayat Konsultasi</h2>
       <ul id="daftarRiwayat" class="space-y-3 text-sm">
         <li class="text-gray-500 italic">Memuat riwayat...</li>
       </ul>
@@ -100,101 +82,141 @@
         <h3 class="font-semibold mb-1">Navigasi</h3>
         <ul class="space-y-1">
           <li><a href="index.html" class="hover:underline text-white">🏠 Beranda</a></li>
-          <li><a href="konsultasi-jenis.html" class="hover:underline text-white">👨‍⚕️ Konsultasi</a></li>
+          <li><a href="konsultasi-jenis.html" class="hover:underline text-white">🩺 Konsultasi</a></li>
           <li><a href="edukasi.html" class="hover:underline text-white">📚 Edukasi</a></li>
-          <li><a href="akun.html" class="hover:underline text-white">👤 Akun</a></li>
         </ul>
       </div>
-      <p class="text-center text-[10px] opacity-70">© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
+      <p class="text-center text-[10px] opacity-70">© 2025 Fisio Kita.</p>
     </div>
   </footer>
 
-  <!-- Firebase Logic -->
+  <!-- Firebase -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+  </script>
 
-    const profilSection = document.getElementById("profilPasien");
+  <!-- Logic -->
+  <script>
+    const user = auth.currentUser;
     const profilNama = document.getElementById("profilNama");
     const profilEmail = document.getElementById("profilEmail");
     const profilHP = document.getElementById("profilHP");
-    const profilTglLahir = document.getElementById("profilTglLahir");
+    const profilLokasi = document.getElementById("profilLokasi");
     const profilGender = document.getElementById("profilGender");
-    const profilWilayah = document.getElementById("profilWilayah");
+    const profilLahir = document.getElementById("profilLahir");
+    const profilLogin = document.getElementById("profilLogin");
+    const profilSection = document.getElementById("profilPasien");
     const daftarRiwayat = document.getElementById("daftarRiwayat");
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
-    auth.onAuthStateChanged(user => {
-      if (!user) return window.location.href = "login.html";
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) return location.href = "login.html";
+      const email = user.email;
+      const doc = await db.collection("terapis").doc(email).get();
+      if (doc.exists) return location.href = "admin/dashboard.html";
 
-      const email = user.email.toLowerCase();
-
-      // Jika admin, arahkan ke dashboard
-      db.collection("terapis").doc(email).get().then(doc => {
-        if (doc.exists) return window.location.href = "admin/dashboard.html";
-        tampilkanProfil(user.uid);
-        tampilkanRiwayat(email);
-      });
-    });
-
-    function tampilkanProfil(uid) {
-      db.collection("pengguna").doc(uid).get().then(doc => {
-        if (!doc.exists) return;
-
-        document.getElementById("fotoProfil").src = d.foto || "img/avatar-placeholder.png";
-
-        const d = doc.data();
+      const userDoc = await db.collection("users").doc(email).get();
+      if (userDoc.exists) {
+        const d = userDoc.data();
         profilNama.textContent = d.nama || "-";
-        profilEmail.textContent = d.email || "-";
+        profilEmail.textContent = email;
         profilHP.textContent = d.hp || "-";
-        profilTglLahir.textContent = d.tanggal_lahir || "-";
-        profilGender.textContent = d.jenis_kelamin || "-";
-        profilWilayah.textContent = `${d.kabupaten || "-"}, ${d.provinsi || "-"}`;
+        profilLokasi.textContent = d.lokasi || "-";
+        profilGender.textContent = d.gender || "-";
+        profilLahir.textContent = d.lahir || "-";
+        profilLogin.textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
         profilSection.classList.remove("hidden");
-      });
-    }
+      }
 
-    function tampilkanRiwayat(email) {
-      daftarRiwayat.innerHTML = "<li class='italic text-gray-500'>Memuat riwayat...</li>";
       db.collection("sessions")
         .where("kontak", "==", email)
         .orderBy("dibuat", "desc")
         .onSnapshot(snapshot => {
           daftarRiwayat.innerHTML = "";
           if (snapshot.empty) {
-            daftarRiwayat.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat konsultasi.</li>";
+            daftarRiwayat.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
             return;
           }
           snapshot.forEach(doc => {
             const d = doc.data();
-            const waktu = d.dibuat?.toDate();
-            const tanggal = waktu ? waktu.toLocaleDateString() : "-";
-
-            const li = document.createElement("li");
-            li.className = "bg-white p-3 rounded shadow border";
-            li.innerHTML = `
-              <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
-              <div class="text-xs text-gray-500 mb-1">${tanggal}</div>
-              <div class="text-sm mb-1">${d.keluhan || "-"}</div>
-              <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
-                ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
-              </div>`;
-            daftarRiwayat.appendChild(li);
+            const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
+            daftarRiwayat.innerHTML += `
+              <li class="bg-white p-3 rounded shadow border">
+                <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
+                <div class="text-xs text-gray-500 mb-1">${tgl}</div>
+                <div class="text-sm mb-1">${d.keluhan || "-"}</div>
+                <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
+                  ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
+                </div>
+              </li>
+            `;
           });
         });
-    }
+    });
 
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => window.location.href = "index.html");
+    // Logout
+    document.getElementById("logoutBtn").onclick = () => auth.signOut().then(() => location.href = "index.html");
+
+    // Ganti Password
+    document.getElementById("formGantiPassword").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const oldPass = document.getElementById("passwordLama").value;
+      const newPass = document.getElementById("passwordBaru").value;
+      const pesan = document.getElementById("pesanPassword");
+
+      try {
+        const user = auth.currentUser;
+        const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
+        await user.reauthenticateWithCredential(cred);
+        await user.updatePassword(newPass);
+        pesan.textContent = "✅ Password berhasil diperbarui.";
+        pesan.className = "text-green-600 text-sm text-center";
+      } catch (err) {
+        pesan.textContent = "❌ " + err.message;
+        pesan.className = "text-red-600 text-sm text-center";
+      }
+    });
+
+    // Reset Password
+    document.getElementById("btnResetPassword").addEventListener("click", () => {
+      const email = auth.currentUser.email;
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(() => {
+          document.getElementById("pesanReset").textContent = "✅ Link reset telah dikirim ke email Anda.";
+          document.getElementById("pesanReset").className = "text-green-600 text-sm text-center";
+        })
+        .catch(err => {
+          document.getElementById("pesanReset").textContent = "❌ " + err.message;
+          document.getElementById("pesanReset").className = "text-red-600 text-sm text-center";
+        });
+    });
+
+    // Hapus Akun
+    document.getElementById("hapusAkunBtn").addEventListener("click", async () => {
+      const user = auth.currentUser;
+      const email = user.email;
+      const confirm = prompt("Masukkan password Anda untuk konfirmasi:");
+      const pesan = document.getElementById("pesanHapus");
+
+      if (!confirm) return;
+
+      try {
+        const cred = firebase.auth.EmailAuthProvider.credential(email, confirm);
+        await user.reauthenticateWithCredential(cred);
+        await user.delete();
+        await db.collection("users").doc(email).delete();
+        alert("Akun Anda berhasil dihapus.");
+        location.href = "index.html";
+      } catch (err) {
+        pesan.textContent = "❌ " + err.message;
+        pesan.className = "text-red-600 text-sm text-center";
+      }
     });
   </script>
 </body>

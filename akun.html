@@ -18,6 +18,47 @@
     <h1 class="text-lg font-semibold">👤 Akun Saya</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
+  <!-- Edit Form (Hidden by default) -->
+<section id="editFormSection" class="hidden p-4">
+  <h2 class="text-lg font-semibold mb-2">Ubah Profil</h2>
+  <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
+    <div>
+      <label class="block mb-1">Nama Lengkap</label>
+      <input type="text" id="editNama" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Nomor HP</label>
+      <input type="tel" id="editHP" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Tanggal Lahir</label>
+      <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Jenis Kelamin</label>
+      <select id="editGender" class="w-full border rounded px-3 py-2" required>
+        <option value="">Pilih</option>
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">Provinsi</label>
+      <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
+    </div>
+    <div>
+      <label class="block mb-1">Kabupaten/Kota</label>
+      <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
+    </div>
+    <div>
+      <label class="block mb-1">Foto Profil</label>
+      <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
+    </div>
+    <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
+      Simpan Perubahan
+    </button>
+  </form>
+</section>
 
   <!-- Main -->
   <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-6">
@@ -25,6 +66,9 @@
     <!-- Profil -->
     <section id="profilPasien" class="hidden">
       <h2 class="text-lg font-semibold mb-3">Profil Anda</h2>
+      <div class="text-center">
+  <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
+      </div>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
@@ -87,6 +131,7 @@
     const profilGender = document.getElementById("profilGender");
     const profilWilayah = document.getElementById("profilWilayah");
     const daftarRiwayat = document.getElementById("daftarRiwayat");
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
     auth.onAuthStateChanged(user => {
       if (!user) return window.location.href = "login.html";
@@ -104,6 +149,8 @@
     function tampilkanProfil(uid) {
       db.collection("pengguna").doc(uid).get().then(doc => {
         if (!doc.exists) return;
+
+        document.getElementById("fotoProfil").src = d.foto || "img/avatar-placeholder.png";
 
         const d = doc.data();
         profilNama.textContent = d.nama || "-";

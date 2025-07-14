@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pengaturan Banner - Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-blue-800 text-white px-6 py-4 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">Pengaturan Banner</h1>
+    <a href="super-admin-dashboard.html" class="text-sm underline">🔙 Kembali</a>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-xl mx-auto p-6 space-y-6">
+
+    <div class="bg-white p-4 rounded shadow space-y-4">
+      <h2 class="text-lg font-semibold mb-2">Konten Banner</h2>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Judul</label>
+        <input type="text" id="bannerJudul" class="w-full border px-3 py-2 rounded" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Deskripsi Singkat</label>
+        <textarea id="bannerDeskripsi" class="w-full border px-3 py-2 rounded" rows="3"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Gambar Banner</label>
+        <input type="file" id="bannerGambar" accept="image/*" />
+        <div id="previewBanner" class="mt-3"></div>
+      </div>
+
+      <button onclick="simpanBanner()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        💾 Simpan Banner
+      </button>
+    </div>
+  </main>
+
+  <!-- Firebase Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const bannerRef = db.collection("global").doc("banner");
+
+    function simpanBanner() {
+      const judul = document.getElementById("bannerJudul").value;
+      const deskripsi = document.getElementById("bannerDeskripsi").value;
+      const file = document.getElementById("bannerGambar").files[0];
+
+      bannerRef.set({ judul, deskripsi }, { merge: true }).then(() => {
+        if (file) {
+          const ref = storage.ref("banner/utama.jpg");
+          ref.put(file).then(() => {
+            alert("✅ Banner berhasil disimpan!");
+            tampilkanPreview();
+          });
+        } else {
+          alert("✅ Konten banner disimpan!");
+        }
+      });
+    }
+
+    function tampilkanPreview() {
+      const ref = storage.ref("banner/utama.jpg");
+      ref.getDownloadURL().then(url => {
+        document.getElementById("previewBanner").innerHTML =
+          `<img src="${url}" class="w-full rounded-lg shadow-md" alt="Banner" />`;
+      });
+    }
+
+    // Load data awal
+    bannerRef.get().then(doc => {
+      const data = doc.data();
+      if (data) {
+        document.getElementById("bannerJudul").value = data.judul || "";
+        document.getElementById("bannerDeskripsi").value = data.deskripsi || "";
+        tampilkanPreview();
+      }
+    });
+  </script>
+</body>
+</html>

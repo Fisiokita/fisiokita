@@ -66,88 +66,96 @@
     <p id="pesan" class="text-center text-sm mt-2 text-red-600"></p>
   </main>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  <!-- ... (head & body bagian atas tetap sama) ... -->
 
-    const btnLoginTab = document.getElementById("btnLoginTab");
-    const btnRegisterTab = document.getElementById("btnRegisterTab");
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const pesan = document.getElementById("pesan");
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    function tampilkanPesan(teks, warna = 'red') {
-      pesan.textContent = teks;
-      pesan.className = `text-center text-sm mt-2 text-${warna}-600`;
+  const btnLoginTab = document.getElementById("btnLoginTab");
+  const btnRegisterTab = document.getElementById("btnRegisterTab");
+  const loginForm = document.getElementById("loginForm");
+  const registerForm = document.getElementById("registerForm");
+  const pesan = document.getElementById("pesan");
+
+  function tampilkanPesan(teks, warna = 'red') {
+    pesan.textContent = teks;
+    pesan.className = `text-center text-sm mt-2 text-${warna}-600`;
+  }
+
+  // Toggle Tab
+  btnLoginTab.addEventListener("click", () => {
+    btnLoginTab.classList.add("text-[#4B6CC1]", "underline");
+    btnRegisterTab.classList.remove("text-[#4B6CC1]", "underline");
+    loginForm.classList.remove("hidden");
+    registerForm.classList.add("hidden");
+    pesan.textContent = "";
+  });
+
+  btnRegisterTab.addEventListener("click", () => {
+    btnRegisterTab.classList.add("text-[#4B6CC1]", "underline");
+    btnLoginTab.classList.remove("text-[#4B6CC1]", "underline");
+    registerForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+    pesan.textContent = "";
+  });
+
+  // 🔐 Cek dan arahkan berdasarkan email login
+  async function cekDanRedirect(user) {
+    const email = user.email.toLowerCase();
+
+    if (email === "fisiokita@gmail.com") {
+      window.location.href = "admin/super-admin-dashboard.html";
+      return;
     }
 
-    // Toggle Tab
-    btnLoginTab.addEventListener("click", () => {
-      btnLoginTab.classList.add("text-[#4B6CC1]", "underline");
-      btnRegisterTab.classList.remove("text-[#4B6CC1]", "underline");
-      loginForm.classList.remove("hidden");
-      registerForm.classList.add("hidden");
-      pesan.textContent = "";
-    });
-
-    btnRegisterTab.addEventListener("click", () => {
-      btnRegisterTab.classList.add("text-[#4B6CC1]", "underline");
-      btnLoginTab.classList.remove("text-[#4B6CC1]", "underline");
-      registerForm.classList.remove("hidden");
-      loginForm.classList.add("hidden");
-      pesan.textContent = "";
-    });
-
-    // Cek apakah user adalah terapis
-    async function cekDanRedirect(user) {
-      const email = user.email;
-      const doc = await db.collection("terapis").doc(email).get();
-      if (doc.exists) {
-        window.location.href = "admin/dashboard.html";
-      } else {
-        window.location.href = "akun.html";
-      }
+    const doc = await db.collection("terapis").doc(email).get();
+    if (doc.exists) {
+      window.location.href = "admin/dashboard.html";
+    } else {
+      window.location.href = "akun.html";
     }
+  }
 
-    // Login Email
-    loginForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
-      auth.signInWithEmailAndPassword(email, password)
-        .then(result => cekDanRedirect(result.user))
-        .catch(err => tampilkanPesan("❌ " + err.message));
-    });
+  // Login Email
+  loginForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    auth.signInWithEmailAndPassword(email, password)
+      .then(result => cekDanRedirect(result.user))
+      .catch(err => tampilkanPesan("❌ " + err.message));
+  });
 
-    // Register Email
-    registerForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const email = document.getElementById("registerEmail").value.trim();
-      const password = document.getElementById("registerPassword").value;
-      if (password.length < 6) return tampilkanPesan("❌ Password minimal 6 karakter");
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(result => cekDanRedirect(result.user))
-        .catch(err => tampilkanPesan("❌ " + err.message));
-    });
+  // Register Email
+  registerForm.addEventListener("submit", e => {
+    e.preventDefault();
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value;
+    if (password.length < 6) return tampilkanPesan("❌ Password minimal 6 karakter");
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(result => cekDanRedirect(result.user))
+      .catch(err => tampilkanPesan("❌ " + err.message));
+  });
 
-    // Google Login
-    document.getElementById("googleLoginBtn").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => cekDanRedirect(result.user))
-        .catch(err => tampilkanPesan("❌ " + err.message));
-    });
+  // Login Google
+  document.getElementById("googleLoginBtn").addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(result => cekDanRedirect(result.user))
+      .catch(err => tampilkanPesan("❌ " + err.message));
+  });
 
-    // Auto-redirect if already logged in
-    auth.onAuthStateChanged(user => {
-      if (user) cekDanRedirect(user);
-    });
-  </script>
+  // Auto login jika sudah login sebelumnya
+  auth.onAuthStateChanged(user => {
+    if (user) cekDanRedirect(user);
+  });
+</script>
 </body>
 </html>

@@ -19,7 +19,7 @@
     <a href="konsultasi-jenis.html">
       <img src="img/logo.png" alt="Kembali" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">FisioKita</span>
+    <span class="font-semibold text-lg">Fisio Kita</span>
   </header>
 
   <!-- Main -->
@@ -41,8 +41,8 @@
   <!-- Popup Antrian -->
   <div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
-      <h2 class="font-bold text-lg mb-2">Antrian Konsultasi</h2>
-      <p class="text-sm mb-4">Fisioterapis sedang tidak menerima konsultasi.<br />Terapis Tidak Tersedia, Silahkan Pilih Terapis Lain.</p>
+      <h2 class="font-bold text-lg mb-2">Terapis Tidak Tersedia</h2>
+      <p class="text-sm mb-4">Terapis Tidak Tersedia.<br />Silahkan Pilih Terapis Lain.</p>
       <button onclick="closePopup()" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
         Oke, Mengerti
       </button>
@@ -55,7 +55,7 @@
       <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
       <span>Fisio Kita</span>
     </div>
-    <p>Pilih fisioterapis yang tersedia untuk memulai sesi konsultasi.</p>
+    <p>Pilih fisioterapis untuk memulai sesi konsultasi.</p>
   </footer>
 
   <!-- Firebase & Logic -->
@@ -81,7 +81,9 @@
       document.getElementById("queuePopup").classList.add("hidden");
     }
 
-    db.collection("terapis").get().then(snapshot => {
+    db.collection("terapis")
+  .where("status", "==", "tersedia")
+  .get().then(snapshot => {
       daftarTerapis.innerHTML = "";
 
       if (snapshot.empty) {

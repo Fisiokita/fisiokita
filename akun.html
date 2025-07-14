@@ -8,6 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
@@ -18,47 +19,6 @@
     <h1 class="text-lg font-semibold">👤 Akun Saya</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
-  <!-- Edit Form (Hidden by default) -->
-<section id="editFormSection" class="hidden p-4">
-  <h2 class="text-lg font-semibold mb-2">Ubah Profil</h2>
-  <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
-    <div>
-      <label class="block mb-1">Nama Lengkap</label>
-      <input type="text" id="editNama" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Nomor HP</label>
-      <input type="tel" id="editHP" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Tanggal Lahir</label>
-      <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
-    </div>
-    <div>
-      <label class="block mb-1">Jenis Kelamin</label>
-      <select id="editGender" class="w-full border rounded px-3 py-2" required>
-        <option value="">Pilih</option>
-        <option value="Laki-laki">Laki-laki</option>
-        <option value="Perempuan">Perempuan</option>
-      </select>
-    </div>
-    <div>
-      <label class="block mb-1">Provinsi</label>
-      <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
-    </div>
-    <div>
-      <label class="block mb-1">Kabupaten/Kota</label>
-      <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
-    </div>
-    <div>
-      <label class="block mb-1">Foto Profil</label>
-      <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
-    </div>
-    <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
-      Simpan Perubahan
-    </button>
-  </form>
-</section>
 
   <!-- Main -->
   <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-10">
@@ -68,7 +28,7 @@
       <h2 class="text-lg font-semibold mb-1">Profil Anda</h2>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
         <div class="text-center">
-  <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
+          <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
         </div>
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
@@ -77,32 +37,30 @@
         <p><strong>Jenis Kelamin:</strong> <span id="profilGender">-</span></p>
         <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
         <p class="text-xs text-gray-500 mt-2">📆 Login terakhir: <span id="profilLogin">-</span></p>
-        <class="text-right mt-2">
-        <button onclick="document.getElementById('editFormSection').classList.toggle('hidden')"
-          class="text-sm text-blue-600 hover:underline">
-    ✏️ Edit Profil
-  </button>
+        <div class="text-right mt-2">
+          <button onclick="document.getElementById('editFormSection').classList.toggle('hidden')" class="text-sm text-blue-600 hover:underline">✏️ Edit Profil</button>
+        </div>
       </div>
+    </section>
 
-      <!-- Form Edit Profil -->
-      <div class="mt-4">
-        <h3 class="text-sm font-semibold mb-2">✏️ Ubah Profil</h3>
-        <form id="formEditProfil" class="bg-white p-4 rounded shadow space-y-3 text-sm">
-          <input type="text" id="editNama" placeholder="Nama Lengkap" class="w-full border rounded px-3 py-2" />
-          <input type="text" id="editHP" placeholder="Nomor HP" class="w-full border rounded px-3 py-2" />
-          <input type="text" id="editLokasi" placeholder="Lokasi" class="w-full border rounded px-3 py-2" />
-          <select id="editGender" class="w-full border rounded px-3 py-2">
-            <option value="">Pilih Jenis Kelamin</option>
-            <option value="Laki-laki">Laki-laki</option>
-            <option value="Perempuan">Perempuan</option>
-          </select>
-          <input type="date" id="editLahir" class="w-full border rounded px-3 py-2" />
-          <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
-            Simpan Perubahan
-          </button>
-          <p id="pesanEdit" class="text-sm text-center mt-2"></p>
-        </form>
-      </div>
+    <!-- FORM EDIT -->
+    <section id="editFormSection" class="hidden">
+      <h2 class="text-lg font-semibold mb-2">✏️ Ubah Profil</h2>
+      <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
+        <input type="text" id="editNama" placeholder="Nama Lengkap" class="w-full border rounded px-3 py-2" required />
+        <input type="tel" id="editHP" placeholder="Nomor HP" class="w-full border rounded px-3 py-2" required />
+        <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
+        <select id="editGender" class="w-full border rounded px-3 py-2" required>
+          <option value="">Pilih Jenis Kelamin</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+        <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
+        <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
+        <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
+        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">Simpan Perubahan</button>
+        <p id="pesanEdit" class="text-sm text-center mt-2"></p>
+      </form>
     </section>
 
     <!-- GANTI PASSWORD -->
@@ -111,9 +69,7 @@
       <form id="formGantiPassword" class="bg-white p-4 rounded shadow space-y-3 text-sm">
         <input type="password" id="passwordLama" placeholder="Password Lama" class="w-full border rounded px-3 py-2" required />
         <input type="password" id="passwordBaru" placeholder="Password Baru" class="w-full border rounded px-3 py-2" required />
-        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
-          Simpan Password Baru
-        </button>
+        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">Simpan Password Baru</button>
         <p id="pesanPassword" class="text-sm text-center mt-2"></p>
       </form>
     </section>
@@ -161,66 +117,56 @@
     </div>
   </footer>
 
-  <!-- Firebase & Logic -->
+  <!-- Script -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
-    const profilSection = document.getElementById("profilPasien");
-    const profilNama = document.getElementById("profilNama");
-    const profilEmail = document.getElementById("profilEmail");
-    const profilHP = document.getElementById("profilHP");
-    const profilLokasi = document.getElementById("profilLokasi");
-    const profilGender = document.getElementById("profilGender");
-    const profilLahir = document.getElementById("profilLahir");
-    const profilLogin = document.getElementById("profilLogin");
-    const daftarRiwayat = document.getElementById("daftarRiwayat");
-
-    auth.onAuthStateChanged(async (user) => {
+    // Auto load user
+    auth.onAuthStateChanged(async user => {
       if (!user) return location.href = "login.html";
+      const uid = user.uid;
       const email = user.email;
-      const doc = await db.collection("terapis").doc(email).get();
-      if (doc.exists) return location.href = "admin/dashboard.html";
 
-      const userDoc = await db.collection("users").doc(email).get();
-      if (userDoc.exists) {
-        const d = userDoc.data();
-        profilNama.textContent = d.nama || "-";
-        profilEmail.textContent = email;
-        profilHP.textContent = d.hp || "-";
-        profilLokasi.textContent = d.lokasi || "-";
-        profilGender.textContent = d.gender || "-";
-        profilLahir.textContent = d.lahir || "-";
-        profilLogin.textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
+      const doc = await db.collection("pengguna").doc(uid).get();
+      if (doc.exists) {
+        const d = doc.data();
+        document.getElementById("profilNama").textContent = d.nama || "-";
+        document.getElementById("profilEmail").textContent = email;
+        document.getElementById("profilHP").textContent = d.hp || "-";
+        document.getElementById("profilLokasi").textContent = `${d.kabupaten || "-"}, ${d.provinsi || "-"}`;
+        document.getElementById("profilGender").textContent = d.jenis_kelamin || "-";
+        document.getElementById("profilLahir").textContent = d.tanggal_lahir || "-";
+        document.getElementById("profilLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
 
-        document.getElementById("editNama").value = d.nama || "";
-        document.getElementById("editHP").value = d.hp || "";
-        document.getElementById("editLokasi").value = d.lokasi || "";
-        document.getElementById("editGender").value = d.gender || "";
-        document.getElementById("editLahir").value = d.lahir || "";
-
-        profilSection.classList.remove("hidden");
+        if (d.foto) document.getElementById("fotoProfil").src = d.foto;
+        isiFormEdit(d);
+        document.getElementById("profilPasien").classList.remove("hidden");
       }
 
+      // Load riwayat
       db.collection("sessions")
         .where("kontak", "==", email)
         .orderBy("dibuat", "desc")
         .onSnapshot(snapshot => {
-          daftarRiwayat.innerHTML = "";
+          const list = document.getElementById("daftarRiwayat");
+          list.innerHTML = "";
           if (snapshot.empty) {
-            daftarRiwayat.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
+            list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
             return;
           }
           snapshot.forEach(doc => {
             const d = doc.data();
             const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
-            daftarRiwayat.innerHTML += `
+            list.innerHTML += `
               <li class="bg-white p-3 rounded shadow border">
                 <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
                 <div class="text-xs text-gray-500 mb-1">${tgl}</div>
@@ -228,148 +174,101 @@
                 <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
                   ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
                 </div>
-              </li>
-            `;
+              </li>`;
           });
         });
     });
 
-    document.getElementById("formEditProfil").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      const email = user.email;
-
-      const data = {
-        nama: document.getElementById("editNama").value,
-        hp: document.getElementById("editHP").value,
-        lokasi: document.getElementById("editLokasi").value,
-        gender: document.getElementById("editGender").value,
-        lahir: document.getElementById("editLahir").value,
-      };
-
-      db.collection("users").doc(email).set(data, { merge: true })
-        .then(() => document.getElementById("pesanEdit").textContent = "✅ Profil berhasil diperbarui.")
-        .catch(err => document.getElementById("pesanEdit").textContent = "❌ " + err.message);
+    // Form isi wilayah
+    let wilayahData = {};
+    fetch("data/wilayah.json").then(res => res.json()).then(data => {
+      wilayahData = data;
+      const prov = document.getElementById("editProvinsi");
+      Object.keys(data).forEach(p => prov.innerHTML += `<option value="${p}">${p}</option>`);
+      prov.addEventListener("change", () => {
+        const kab = document.getElementById("editKabupaten");
+        kab.innerHTML = "";
+        Object.keys(data[prov.value] || {}).forEach(k => kab.innerHTML += `<option value="${k}">${k}</option>`);
+      });
     });
 
-    document.getElementById("formGantiPassword").addEventListener("submit", async (e) => {
+    function isiFormEdit(data) {
+      document.getElementById("editNama").value = data.nama || "";
+      document.getElementById("editHP").value = data.hp || "";
+      document.getElementById("editTglLahir").value = data.tanggal_lahir || "";
+      document.getElementById("editGender").value = data.jenis_kelamin || "";
+      document.getElementById("editProvinsi").value = data.provinsi || "";
+      document.getElementById("editProvinsi").dispatchEvent(new Event("change"));
+      setTimeout(() => {
+        document.getElementById("editKabupaten").value = data.kabupaten || "";
+      }, 300);
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      const uid = user.uid;
+      const file = document.getElementById("editFoto").files[0];
+      const data = {
+        nama: document.getElementById("editNama").value.trim(),
+        hp: document.getElementById("editHP").value.trim(),
+        tanggal_lahir: document.getElementById("editTglLahir").value,
+        jenis_kelamin: document.getElementById("editGender").value,
+        provinsi: document.getElementById("editProvinsi").value,
+        kabupaten: document.getElementById("editKabupaten").value,
+        email: user.email
+      };
+      if (file) {
+        const ref = storage.ref(`foto-profil/${uid}.jpg`);
+        await ref.put(file);
+        data.foto = await ref.getDownloadURL();
+      }
+      await db.collection("pengguna").doc(uid).set(data, { merge: true });
+      alert("✅ Profil berhasil diperbarui");
+      location.reload();
+    });
+
+    document.getElementById("formGantiPassword").addEventListener("submit", async e => {
       e.preventDefault();
       const oldPass = document.getElementById("passwordLama").value;
       const newPass = document.getElementById("passwordBaru").value;
-      const pesan = document.getElementById("pesanPassword");
+      const user = auth.currentUser;
+      const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
       try {
-        const user = auth.currentUser;
-        const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
         await user.reauthenticateWithCredential(cred);
         await user.updatePassword(newPass);
-        pesan.textContent = "✅ Password berhasil diperbarui.";
-        pesan.className = "text-green-600 text-sm text-center";
+        document.getElementById("pesanPassword").textContent = "✅ Password berhasil diperbarui.";
       } catch (err) {
-        pesan.textContent = "❌ " + err.message;
-        pesan.className = "text-red-600 text-sm text-center";
+        document.getElementById("pesanPassword").textContent = "❌ " + err.message;
       }
     });
 
     document.getElementById("btnResetPassword").addEventListener("click", () => {
       const email = auth.currentUser.email;
       firebase.auth().sendPasswordResetEmail(email)
-        .then(() => {
-          document.getElementById("pesanReset").textContent = "✅ Link reset telah dikirim.";
-          document.getElementById("pesanReset").className = "text-green-600 text-sm text-center";
-        })
-        .catch(err => {
-          document.getElementById("pesanReset").textContent = "❌ " + err.message;
-          document.getElementById("pesanReset").className = "text-red-600 text-sm text-center";
-        });
+        .then(() => document.getElementById("pesanReset").textContent = "✅ Link reset telah dikirim.")
+        .catch(err => document.getElementById("pesanReset").textContent = "❌ " + err.message);
     });
 
     document.getElementById("hapusAkunBtn").addEventListener("click", async () => {
       const user = auth.currentUser;
-      const email = user.email;
-      const confirm = prompt("Masukkan password Anda untuk menghapus akun:");
+      const confirm = prompt("Masukkan password Anda untuk hapus akun:");
       if (!confirm) return;
-
-      const pesan = document.getElementById("pesanHapus");
-
+      const cred = firebase.auth.EmailAuthProvider.credential(user.email, confirm);
       try {
-        const cred = firebase.auth.EmailAuthProvider.credential(email, confirm);
         await user.reauthenticateWithCredential(cred);
+        await db.collection("pengguna").doc(user.uid).delete();
         await user.delete();
-        await db.collection("users").doc(email).delete();
-        alert("Akun Anda berhasil dihapus.");
+        alert("Akun berhasil dihapus.");
         location.href = "index.html";
       } catch (err) {
-        pesan.textContent = "❌ " + err.message;
-        pesan.className = "text-red-600 text-sm text-center";
+        document.getElementById("pesanHapus").textContent = "❌ " + err.message;
       }
     });
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => location.href = "index.html");
     });
-    const uid = auth.currentUser?.uid;
-
-// Load wilayah.json
-let wilayahData = {};
-fetch("data/wilayah.json")
-  .then(res => res.json())
-  .then(data => {
-    wilayahData = data;
-    const provinsiSelect = document.getElementById("editProvinsi");
-    Object.keys(wilayahData).forEach(prov => {
-      provinsiSelect.innerHTML += `<option value="${prov}">${prov}</option>`;
-    });
-
-    provinsiSelect.addEventListener("change", () => {
-      const kabSelect = document.getElementById("editKabupaten");
-      const prov = provinsiSelect.value;
-      kabSelect.innerHTML = "";
-      Object.keys(wilayahData[prov] || {}).forEach(kab => {
-        kabSelect.innerHTML += `<option value="${kab}">${kab}</option>`;
-      });
-    });
-  });
-
-// Isi form dari Firestore
-function isiFormEdit(data) {
-  document.getElementById("editNama").value = data.nama || "";
-  document.getElementById("editHP").value = data.hp || "";
-  document.getElementById("editTglLahir").value = data.tanggal_lahir || "";
-  document.getElementById("editGender").value = data.jenis_kelamin || "";
-  document.getElementById("editProvinsi").value = data.provinsi || "";
-  document.getElementById("editProvinsi").dispatchEvent(new Event("change"));
-  setTimeout(() => {
-    document.getElementById("editKabupaten").value = data.kabupaten || "";
-  }, 300);
-}
-
-// Simpan Profil
-document.getElementById("editForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const user = auth.currentUser;
-  if (!user) return;
-
-  const data = {
-    nama: document.getElementById("editNama").value.trim(),
-    hp: document.getElementById("editHP").value.trim(),
-    tanggal_lahir: document.getElementById("editTglLahir").value,
-    jenis_kelamin: document.getElementById("editGender").value,
-    provinsi: document.getElementById("editProvinsi").value,
-    kabupaten: document.getElementById("editKabupaten").value,
-    email: user.email
-  };
-
-  const file = document.getElementById("editFoto").files[0];
-  if (file) {
-    const storageRef = firebase.storage().ref(`foto-profil/${user.uid}.jpg`);
-    await storageRef.put(file);
-    data.foto = await storageRef.getDownloadURL();
-  }
-
-  await db.collection("pengguna").doc(user.uid).set(data, { merge: true });
-  alert("✅ Profil berhasil diperbarui");
-  window.location.reload();
-});
   </script>
 </body>
 </html>

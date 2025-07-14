@@ -11,6 +11,16 @@
       font-family: 'Inter', sans-serif;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
 </head>
 <body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
 
@@ -19,8 +29,8 @@
     <div class="flex items-center gap-2">
       <img src="img/logo.png" alt="FisioKita logo" class="w-6 h-6" />
       <span class="font-semibold text-lg">Fisio Kita</span>
-    </div>
-    <a href="akun.html" class="text-sm font-medium underline hover:text-gray-200">Akun</a>
+    </div><
+    <span id="userGreeting" class="text-sm font-medium underline hover:text-gray-200 cursor-pointer">Akun</span>
   </header>
 
   <!-- Main -->
@@ -139,5 +149,23 @@
     
   </div>
 </footer>
+  <script>
+  const auth = firebase.auth();
+
+  auth.onAuthStateChanged(user => {
+    const el = document.getElementById("userGreeting");
+    if (!el) return;
+
+    if (user) {
+      const nama = user.displayName || user.email;
+      const namaDepan = nama.split(" ")[0];
+      el.textContent = namaDepan;
+      el.onclick = () => window.location.href = "akun.html";
+    } else {
+      el.textContent = "Akun";
+      el.onclick = () => window.location.href = "login.html";
+    }
+  });
+  </script>
 </body>
 </html>

@@ -18,6 +18,47 @@
     <h1 class="text-lg font-semibold">👤 Akun Saya</h1>
     <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
   </header>
+  <!-- Edit Form (Hidden by default) -->
+<section id="editFormSection" class="hidden p-4">
+  <h2 class="text-lg font-semibold mb-2">Ubah Profil</h2>
+  <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
+    <div>
+      <label class="block mb-1">Nama Lengkap</label>
+      <input type="text" id="editNama" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Nomor HP</label>
+      <input type="tel" id="editHP" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Tanggal Lahir</label>
+      <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block mb-1">Jenis Kelamin</label>
+      <select id="editGender" class="w-full border rounded px-3 py-2" required>
+        <option value="">Pilih</option>
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+      </select>
+    </div>
+    <div>
+      <label class="block mb-1">Provinsi</label>
+      <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
+    </div>
+    <div>
+      <label class="block mb-1">Kabupaten/Kota</label>
+      <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
+    </div>
+    <div>
+      <label class="block mb-1">Foto Profil</label>
+      <input type="file" id="editFoto" accept="image/*" class="w-full text-sm" />
+    </div>
+    <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">
+      Simpan Perubahan
+    </button>
+  </form>
+</section>
 
   <!-- Main -->
   <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-10">
@@ -26,6 +67,9 @@
     <section id="profilPasien" class="hidden space-y-4">
       <h2 class="text-lg font-semibold mb-1">Profil Anda</h2>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
+        <div class="text-center">
+  <img id="fotoProfil" src="img/avatar-placeholder.png" class="w-24 h-24 mx-auto rounded-full mb-2 object-cover border" />
+        </div>
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
         <p><strong>No. HP:</strong> <span id="profilHP">-</span></p>
@@ -33,6 +77,11 @@
         <p><strong>Jenis Kelamin:</strong> <span id="profilGender">-</span></p>
         <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
         <p class="text-xs text-gray-500 mt-2">📆 Login terakhir: <span id="profilLogin">-</span></p>
+        <class="text-right mt-2">
+        <button onclick="document.getElementById('editFormSection').classList.toggle('hidden')"
+          class="text-sm text-blue-600 hover:underline">
+    ✏️ Edit Profil
+  </button>
       </div>
 
       <!-- Form Edit Profil -->
@@ -258,6 +307,69 @@
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => location.href = "index.html");
     });
+    const uid = auth.currentUser?.uid;
+
+// Load wilayah.json
+let wilayahData = {};
+fetch("data/wilayah.json")
+  .then(res => res.json())
+  .then(data => {
+    wilayahData = data;
+    const provinsiSelect = document.getElementById("editProvinsi");
+    Object.keys(wilayahData).forEach(prov => {
+      provinsiSelect.innerHTML += `<option value="${prov}">${prov}</option>`;
+    });
+
+    provinsiSelect.addEventListener("change", () => {
+      const kabSelect = document.getElementById("editKabupaten");
+      const prov = provinsiSelect.value;
+      kabSelect.innerHTML = "";
+      Object.keys(wilayahData[prov] || {}).forEach(kab => {
+        kabSelect.innerHTML += `<option value="${kab}">${kab}</option>`;
+      });
+    });
+  });
+
+// Isi form dari Firestore
+function isiFormEdit(data) {
+  document.getElementById("editNama").value = data.nama || "";
+  document.getElementById("editHP").value = data.hp || "";
+  document.getElementById("editTglLahir").value = data.tanggal_lahir || "";
+  document.getElementById("editGender").value = data.jenis_kelamin || "";
+  document.getElementById("editProvinsi").value = data.provinsi || "";
+  document.getElementById("editProvinsi").dispatchEvent(new Event("change"));
+  setTimeout(() => {
+    document.getElementById("editKabupaten").value = data.kabupaten || "";
+  }, 300);
+}
+
+// Simpan Profil
+document.getElementById("editForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const data = {
+    nama: document.getElementById("editNama").value.trim(),
+    hp: document.getElementById("editHP").value.trim(),
+    tanggal_lahir: document.getElementById("editTglLahir").value,
+    jenis_kelamin: document.getElementById("editGender").value,
+    provinsi: document.getElementById("editProvinsi").value,
+    kabupaten: document.getElementById("editKabupaten").value,
+    email: user.email
+  };
+
+  const file = document.getElementById("editFoto").files[0];
+  if (file) {
+    const storageRef = firebase.storage().ref(`foto-profil/${user.uid}.jpg`);
+    await storageRef.put(file);
+    data.foto = await storageRef.getDownloadURL();
+  }
+
+  await db.collection("pengguna").doc(user.uid).set(data, { merge: true });
+  alert("✅ Profil berhasil diperbarui");
+  window.location.reload();
+});
   </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
 <body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
@@ -20,11 +20,11 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-8">
-    
-    <!-- Profil -->
-    <section id="profilPasien" class="hidden">
-      <h2 class="text-lg font-semibold mb-2">Profil Anda</h2>
+  <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-10">
+
+    <!-- PROFIL -->
+    <section id="profilPasien" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold mb-1">Profil Anda</h2>
       <div class="bg-white p-4 rounded shadow text-sm space-y-2">
         <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
         <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
@@ -34,36 +34,58 @@
         <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
         <p class="text-xs text-gray-500 mt-2">📆 Login terakhir: <span id="profilLogin">-</span></p>
       </div>
+
+      <!-- Form Edit Profil -->
+      <div class="mt-4">
+        <h3 class="text-sm font-semibold mb-2">✏️ Ubah Profil</h3>
+        <form id="formEditProfil" class="bg-white p-4 rounded shadow space-y-3 text-sm">
+          <input type="text" id="editNama" placeholder="Nama Lengkap" class="w-full border rounded px-3 py-2" />
+          <input type="text" id="editHP" placeholder="Nomor HP" class="w-full border rounded px-3 py-2" />
+          <input type="text" id="editLokasi" placeholder="Lokasi" class="w-full border rounded px-3 py-2" />
+          <select id="editGender" class="w-full border rounded px-3 py-2">
+            <option value="">Pilih Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+          <input type="date" id="editLahir" class="w-full border rounded px-3 py-2" />
+          <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+            Simpan Perubahan
+          </button>
+          <p id="pesanEdit" class="text-sm text-center mt-2"></p>
+        </form>
+      </div>
     </section>
 
-    <!-- Ganti Password -->
+    <!-- GANTI PASSWORD -->
     <section>
-      <h2 class="text-lg font-semibold mb-2">Ganti Kata Sandi</h2>
+      <h2 class="text-lg font-semibold mb-2">🔐 Ganti Kata Sandi</h2>
       <form id="formGantiPassword" class="bg-white p-4 rounded shadow space-y-3 text-sm">
         <input type="password" id="passwordLama" placeholder="Password Lama" class="w-full border rounded px-3 py-2" required />
         <input type="password" id="passwordBaru" placeholder="Password Baru" class="w-full border rounded px-3 py-2" required />
-        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">Simpan Password Baru</button>
-        <p id="pesanPassword" class="text-sm text-center text-red-600"></p>
+        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+          Simpan Password Baru
+        </button>
+        <p id="pesanPassword" class="text-sm text-center mt-2"></p>
       </form>
     </section>
 
-    <!-- Lupa Password -->
+    <!-- LUPA PASSWORD -->
     <section>
-      <h2 class="text-lg font-semibold mb-2">Lupa Kata Sandi?</h2>
-      <button id="btnResetPassword" class="text-sm underline text-blue-600">Kirim Link Reset ke Email Saya</button>
+      <h2 class="text-lg font-semibold mb-2">📧 Lupa Kata Sandi?</h2>
+      <button id="btnResetPassword" class="text-sm underline text-blue-600">Kirim Link Reset ke Email</button>
       <p id="pesanReset" class="text-sm text-center mt-2"></p>
     </section>
 
-    <!-- Hapus Akun -->
+    <!-- HAPUS AKUN -->
     <section>
-      <h2 class="text-lg font-semibold mb-2 text-red-600">Hapus Akun</h2>
-      <button id="hapusAkunBtn" class="text-sm underline text-red-600">Saya ingin menghapus akun saya</button>
+      <h2 class="text-lg font-semibold mb-2 text-red-600">⚠️ Hapus Akun</h2>
+      <button id="hapusAkunBtn" class="text-sm underline text-red-600">Hapus akun secara permanen</button>
       <p id="pesanHapus" class="text-sm text-center mt-2"></p>
     </section>
 
-    <!-- Riwayat -->
+    <!-- RIWAYAT -->
     <section>
-      <h2 class="text-lg font-semibold mb-2">Riwayat Konsultasi</h2>
+      <h2 class="text-lg font-semibold mb-2">📁 Riwayat Konsultasi</h2>
       <ul id="daftarRiwayat" class="space-y-3 text-sm">
         <li class="text-gray-500 italic">Memuat riwayat...</li>
       </ul>
@@ -90,7 +112,7 @@
     </div>
   </footer>
 
-  <!-- Firebase -->
+  <!-- Firebase & Logic -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -100,11 +122,8 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-  </script>
 
-  <!-- Logic -->
-  <script>
-    const user = auth.currentUser;
+    const profilSection = document.getElementById("profilPasien");
     const profilNama = document.getElementById("profilNama");
     const profilEmail = document.getElementById("profilEmail");
     const profilHP = document.getElementById("profilHP");
@@ -112,7 +131,6 @@
     const profilGender = document.getElementById("profilGender");
     const profilLahir = document.getElementById("profilLahir");
     const profilLogin = document.getElementById("profilLogin");
-    const profilSection = document.getElementById("profilPasien");
     const daftarRiwayat = document.getElementById("daftarRiwayat");
 
     auth.onAuthStateChanged(async (user) => {
@@ -131,6 +149,13 @@
         profilGender.textContent = d.gender || "-";
         profilLahir.textContent = d.lahir || "-";
         profilLogin.textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
+
+        document.getElementById("editNama").value = d.nama || "";
+        document.getElementById("editHP").value = d.hp || "";
+        document.getElementById("editLokasi").value = d.lokasi || "";
+        document.getElementById("editGender").value = d.gender || "";
+        document.getElementById("editLahir").value = d.lahir || "";
+
         profilSection.classList.remove("hidden");
       }
 
@@ -160,16 +185,29 @@
         });
     });
 
-    // Logout
-    document.getElementById("logoutBtn").onclick = () => auth.signOut().then(() => location.href = "index.html");
+    document.getElementById("formEditProfil").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      const email = user.email;
 
-    // Ganti Password
+      const data = {
+        nama: document.getElementById("editNama").value,
+        hp: document.getElementById("editHP").value,
+        lokasi: document.getElementById("editLokasi").value,
+        gender: document.getElementById("editGender").value,
+        lahir: document.getElementById("editLahir").value,
+      };
+
+      db.collection("users").doc(email).set(data, { merge: true })
+        .then(() => document.getElementById("pesanEdit").textContent = "✅ Profil berhasil diperbarui.")
+        .catch(err => document.getElementById("pesanEdit").textContent = "❌ " + err.message);
+    });
+
     document.getElementById("formGantiPassword").addEventListener("submit", async (e) => {
       e.preventDefault();
       const oldPass = document.getElementById("passwordLama").value;
       const newPass = document.getElementById("passwordBaru").value;
       const pesan = document.getElementById("pesanPassword");
-
       try {
         const user = auth.currentUser;
         const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
@@ -183,12 +221,11 @@
       }
     });
 
-    // Reset Password
     document.getElementById("btnResetPassword").addEventListener("click", () => {
       const email = auth.currentUser.email;
       firebase.auth().sendPasswordResetEmail(email)
         .then(() => {
-          document.getElementById("pesanReset").textContent = "✅ Link reset telah dikirim ke email Anda.";
+          document.getElementById("pesanReset").textContent = "✅ Link reset telah dikirim.";
           document.getElementById("pesanReset").className = "text-green-600 text-sm text-center";
         })
         .catch(err => {
@@ -197,14 +234,13 @@
         });
     });
 
-    // Hapus Akun
     document.getElementById("hapusAkunBtn").addEventListener("click", async () => {
       const user = auth.currentUser;
       const email = user.email;
-      const confirm = prompt("Masukkan password Anda untuk konfirmasi:");
-      const pesan = document.getElementById("pesanHapus");
-
+      const confirm = prompt("Masukkan password Anda untuk menghapus akun:");
       if (!confirm) return;
+
+      const pesan = document.getElementById("pesanHapus");
 
       try {
         const cred = firebase.auth.EmailAuthProvider.credential(email, confirm);
@@ -217,6 +253,10 @@
         pesan.textContent = "❌ " + err.message;
         pesan.className = "text-red-600 text-sm text-center";
       }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => location.href = "index.html");
     });
   </script>
 </body>

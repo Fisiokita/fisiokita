@@ -77,6 +77,13 @@
           const newAktif = !aktif;
           db.collection("terapis").doc(email).set({ aktif: newAktif }, { merge: true }).then(muatTerapis);
         });
+        auth.onAuthStateChanged(user => {
+      if (!user || user.email.toLowerCase() !== "fisiokita@gmail.com") {
+        alert("Akses ditolak!");
+        window.location.href = "login.html";
+      } else {
+        document.getElementById("adminName").textContent = user.email;
+      }
 
         list.appendChild(div);
       });

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Admin - Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Manajemen Admin & Terapis</h1>
+    <a href="super-admin-dashboard.html" class="text-sm underline">🔙 Kembali</a>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-2xl mx-auto p-6">
+    <div id="listAdmin" class="space-y-4">Memuat data...</div>
+  </main>
+
+  <!-- Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const list = document.getElementById("listAdmin");
+
+    async function muatTerapis() {
+      const snapshot = await db.collection("terapis").get();
+      list.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const email = doc.id;
+        const nama = data.nama || "Tanpa Nama";
+        const role = data.role || "terapis";
+        const aktif = data.aktif !== false;
+
+        const div = document.createElement("div");
+        div.className = "bg-white rounded shadow p-4";
+
+        div.innerHTML = `
+          <div class="flex justify-between items-center mb-2">
+            <div>
+              <h2 class="font-semibold text-sm">${nama}</h2>
+              <p class="text-xs text-gray-500">${email}</p>
+            </div>
+            <select class="roleSelect border rounded px-2 py-1 text-sm">
+              <option value="terapis" ${role === "terapis" ? "selected" : ""}>Terapis</option>
+              <option value="admin" ${role === "admin" ? "selected" : ""}>Admin</option>
+              <option value="superadmin" ${role === "superadmin" ? "selected" : ""}>Super Admin</option>
+            </select>
+          </div>
+          <div class="text-right">
+            <button class="toggleBtn text-xs px-3 py-1 rounded ${aktif ? 'bg-green-500' : 'bg-red-500'} text-white">
+              ${aktif ? "Aktif" : "Nonaktif"}
+            </button>
+          </div>
+        `;
+
+        const roleSelect = div.querySelector(".roleSelect");
+        const toggleBtn = div.querySelector(".toggleBtn");
+
+        roleSelect.addEventListener("change", () => {
+          db.collection("terapis").doc(email).set({ role: roleSelect.value }, { merge: true });
+        });
+
+        toggleBtn.addEventListener("click", () => {
+          const newAktif = !aktif;
+          db.collection("terapis").doc(email).set({ aktif: newAktif }, { merge: true }).then(muatTerapis);
+        });
+
+        list.appendChild(div);
+      });
+    }
+
+    window.onload = muatTerapis;
+  </script>
+</body>
+</html>

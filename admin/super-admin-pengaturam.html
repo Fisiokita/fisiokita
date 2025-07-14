@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pengaturan Global - Super Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-blue-800 text-white px-6 py-4 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">Super Admin - Pengaturan Global</h1>
+    <a href="super-admin-dashboard.html" class="text-sm underline">🔙 Kembali</a>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded shadow-md space-y-10">
+    
+    <!-- Warna Tema -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">🎨 Warna Tema</h2>
+      <form id="warnaForm" class="space-y-3">
+        <label class="block text-sm">Warna Utama (hex):</label>
+        <input type="text" id="warnaUtama" placeholder="#4B6CC1" class="w-full border px-3 py-2 rounded" />
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
+      </form>
+    </section>
+
+    <!-- Logo -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">🖼 Logo Website</h2>
+      <form id="logoForm" class="space-y-3">
+        <label class="block text-sm">URL Gambar Logo:</label>
+        <input type="text" id="logoURL" placeholder="img/logo.png" class="w-full border px-3 py-2 rounded" />
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
+      </form>
+    </section>
+
+    <!-- Footer -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">📄 Footer</h2>
+      <form id="footerForm" class="space-y-3">
+        <label class="block text-sm">Teks Footer:</label>
+        <input type="text" id="footerText" class="w-full border px-3 py-2 rounded" />
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
+      </form>
+    </section>
+
+    <!-- Notifikasi -->
+    <section>
+      <h2 class="text-xl font-semibold mb-3">🔔 Notifikasi Global</h2>
+      <form id="notifikasiForm" class="space-y-3">
+        <label class="block text-sm">Pesan Notifikasi:</label>
+        <textarea id="pesanNotif" rows="2" class="w-full border px-3 py-2 rounded"></textarea>
+        <button type="submit" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Simpan</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Ambil data setting awal
+    const warnaInput = document.getElementById("warnaUtama");
+    const logoInput = document.getElementById("logoURL");
+    const footerInput = document.getElementById("footerText");
+    const notifInput = document.getElementById("pesanNotif");
+
+    db.collection("settings").doc("global").get().then(doc => {
+      const d = doc.data() || {};
+      warnaInput.value = d.warna || "#4B6CC1";
+      logoInput.value = d.logo || "img/logo.png";
+      footerInput.value = d.footer || "";
+      notifInput.value = d.notifikasi || "";
+    });
+
+    // Update semua
+    document.getElementById("warnaForm").addEventListener("submit", e => {
+      e.preventDefault();
+      db.collection("settings").doc("global").set({ warna: warnaInput.value }, { merge: true });
+      alert("✅ Warna diperbarui");
+    });
+
+    document.getElementById("logoForm").addEventListener("submit", e => {
+      e.preventDefault();
+      db.collection("settings").doc("global").set({ logo: logoInput.value }, { merge: true });
+      alert("✅ Logo diperbarui");
+    });
+
+    document.getElementById("footerForm").addEventListener("submit", e => {
+      e.preventDefault();
+      db.collection("settings").doc("global").set({ footer: footerInput.value }, { merge: true });
+      alert("✅ Footer diperbarui");
+    });
+
+    document.getElementById("notifikasiForm").addEventListener("submit", e => {
+      e.preventDefault();
+      db.collection("settings").doc("global").set({ notifikasi: notifInput.value }, { merge: true });
+      alert("✅ Notifikasi diperbarui");
+    });
+  </script>
+</body>
+</html>

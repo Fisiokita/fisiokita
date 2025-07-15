@@ -5,48 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daftar Terapis - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1]">
-    <a href="konsultasi-jenis.html">
-      <img src="img/logo.png" alt="FisioKita Logo" class="w-6 h-6" />
-    </a>
-    <span class="font-semibold text-lg">FisioKita</span>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="img/logo.png" alt="Fisio Kita Logo" class="w-6 h-6" />
+        <span class="font-semibold text-xl">Fisio Kita</span>
+      </a>
+    </div>
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-4 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-4">Daftar Fisioterapis</h1>
+  <main class="flex-grow px-6 pt-10 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Daftar Fisioterapis</h1>
 
     <!-- Search box -->
     <div class="mb-6">
       <input id="searchInput" type="text" placeholder="Cari nama, spesialis, lokasi..."
-        class="w-full px-4 py-2 rounded-md border text-black placeholder-gray-400" />
+        class="w-full px-4 py-3 rounded-lg border text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4B6CC1]" />
     </div>
 
+    <!-- Daftar Terapis -->
     <div id="listTerapis" class="space-y-6">
-      <p class="text-center text-sm text-white">Memuat data terapis...</p>
+      <p class="text-center text-sm text-gray-500 italic">Memuat data terapis...</p>
     </div>
 
-    <div class="mt-8 text-center">
+    <!-- Tombol kembali -->
+    <div class="mt-10 text-center">
       <a href="konsultasi-jenis.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+         class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali
       </a>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="text-white text-xs max-w-md mx-auto text-center pb-6 mt-8">
-    <p>© 2025 FisioKita. Informasi terapis disajikan untuk transparansi layanan.</p>
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+
+      <!-- Logo dan Deskripsi -->
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
+
+      <!-- Navigasi -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        </div>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <!-- Jam Operasional -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
+    </div>
   </footer>
 
   <!-- Firebase & Script -->
@@ -61,23 +109,22 @@
 
     const listTerapis = document.getElementById("listTerapis");
     const searchInput = document.getElementById("searchInput");
-
     let semuaTerapis = [];
 
     function renderTerapis(filteredList) {
       if (filteredList.length === 0) {
-        listTerapis.innerHTML = `<p class="text-center text-white text-sm italic">Tidak ditemukan hasil yang cocok.</p>`;
+        listTerapis.innerHTML = `<p class="text-center text-gray-500 text-sm italic">Tidak ditemukan hasil yang cocok.</p>`;
         return;
       }
 
       listTerapis.innerHTML = "";
       filteredList.forEach(t => {
         const html = `
-          <article class="bg-white text-black rounded-lg p-6 shadow-md">
+          <article class="bg-white text-[#1E2A44] rounded-xl p-6 shadow-md border">
             <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
             <p class="text-sm text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
             <p class="text-sm mb-1">📍 ${t.lokasi}</p>
-            <p class="text-xs mb-1 text-gray-700 italic">${t.deskripsi}</p>
+            <p class="text-xs mb-1 text-gray-600 italic">${t.deskripsi}</p>
           </article>
         `;
         listTerapis.innerHTML += html;
@@ -86,7 +133,6 @@
 
     db.collection("terapis").get().then(snapshot => {
       semuaTerapis = [];
-
       snapshot.forEach(doc => {
         const t = doc.data();
         semuaTerapis.push({
@@ -96,7 +142,6 @@
           deskripsi: t.deskripsi || "Belum ada deskripsi."
         });
       });
-
       renderTerapis(semuaTerapis);
     });
 

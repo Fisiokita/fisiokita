@@ -14,14 +14,14 @@
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
 <!-- Header -->
-<header class="header-main">
-  <h1 class="text-white text-lg font-semibold">🗓️ Jadwal Kerja</h1>
+<header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow-md">
+  <h1 class="text-lg font-semibold">🗓️ Jadwal Kerja</h1>
   <a href="dashboard.html" class="btn-white text-sm">Kembali</a>
 </header>
 
 <!-- Main -->
-<main class="flex-1 max-w-md w-full mx-auto px-4 py-6">
-  <form id="jadwalForm" class="bg-white border border-gray-200 rounded-xl p-4 shadow space-y-3 mb-6">
+<main class="flex-1 max-w-md w-full mx-auto px-6 py-6">
+  <form id="jadwalForm" class="bg-white border border-gray-200 rounded-xl p-4 shadow space-y-4 mb-6">
     <div>
       <label class="block font-medium mb-1">Hari</label>
       <select id="hariSelect" class="w-full border border-gray-300 px-3 py-2 rounded text-sm">
@@ -44,35 +44,41 @@
 </main>
 
 <!-- Footer -->
-<footer class="footer-dark mt-12">
-  <div class="flex items-center gap-3">
-    <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-    <span class="font-bold text-2xl">Fisio Kita</span>
-  </div>
-  <p class="footer-muted">Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.</p>
-
-  <div>
-    <h3 class="footer-heading">Navigasi</h3>
-    <div class="grid grid-cols-2 gap-3">
-      <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
-      <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
-      <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
-      <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+<footer class="bg-[#141C2F] text-white text-base mt-12">
+  <div class="max-w-md mx-auto px-6 py-10 space-y-8">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+      <span class="font-bold text-2xl">Fisio Kita</span>
     </div>
-  </div>
+    <p class="text-white/90 leading-relaxed">
+      Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.
+    </p>
 
-  <div>
-    <h3 class="footer-heading">Kontak Admin</h3>
-    <ul class="footer-muted space-y-1 text-sm">
-      <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
-      <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
-    </ul>
-  </div>
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
+        <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
+        <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
+        <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+      </div>
+    </div>
 
-  <p class="footer-copy">© 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
+      <ul class="text-white/90 space-y-1 text-sm">
+        <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+        <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <p class="text-center text-sm text-white/50 pt-6">
+      © 2025 FisioKita. Semua hak dilindungi undang-undang.
+    </p>
+  </div>
 </footer>
 
-<!-- Firebase & Logic -->
+<!-- Firebase Logic -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -128,7 +134,7 @@
       jadwalList.innerHTML = "";
       const data = doc.data();
       if (data) {
-        const urutanHari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"];
+        const urutanHari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
         urutanHari.forEach(hari => {
           if (data[hari]) {
             const li = document.createElement("li");

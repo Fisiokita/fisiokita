@@ -49,7 +49,7 @@
       </div>
     </section>
 
-    <!-- Edit Form -->
+    <!-- Form Edit & Password -->
     <section id="formEditWrapper" class="hidden space-y-6">
       <form id="formEditProfil" class="bg-white p-4 rounded shadow space-y-3 text-sm">
         <h3 class="font-semibold mb-2">✏️ Edit Profil</h3>
@@ -96,53 +96,20 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-[#141C2F] text-white mt-20 text-base">
-    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-      <!-- Logo dan Deskripsi -->
+  <footer class="bg-[#141C2F] text-white text-sm mt-20">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-8">
       <div class="flex items-center gap-3">
         <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
         <span class="font-bold text-xl">Fisio Kita</span>
       </div>
-      <p class="text-white/90 leading-relaxed">
-        Layanan fisioterapi profesional ke rumah Anda. Pesan konsultasi offline langsung melalui Fisio Kita.
-      </p>
-
-      <!-- Navigasi -->
-      <div>
-        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-        <div class="grid grid-cols-2 gap-4">
-          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
-        </div>
+      <p>Layanan fisioterapi terpercaya – pesan konsultasi online & offline langsung dengan terapis terbaik kami.</p>
+      <div class="grid grid-cols-2 gap-4">
+        <a href="index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+        <a href="edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+        <a href="akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
       </div>
-
-      <!-- Kontak -->
-      <div>
-        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-        <ul class="space-y-2 text-white/90">
-          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
-          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
-          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
-        </ul>
-      </div>
-
-      <!-- Jam Operasional -->
-      <div>
-        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-        <ul class="text-white/90 space-y-1">
-          <li>Senin – Jumat: 08.00 – 18.00</li>
-          <li>Sabtu: 08.00 – 16.00</li>
-          <li>Minggu: Tutup</li>
-        </ul>
-      </div>
-
-      <!-- Copyright -->
-      <p class="text-center text-sm text-white/50 pt-8">
-        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-      </p>
+      <p class="text-center text-white/50 text-xs mt-4">© 2025 Fisio Kita</p>
     </div>
   </footer>
 
@@ -150,6 +117,7 @@
   <script>
     const auth = firebase.auth();
     const db = firebase.firestore();
+    let wilayahData = {};
 
     auth.onAuthStateChanged(async user => {
       if (!user) return location.href = "login.html";
@@ -198,19 +166,26 @@
       document.getElementById("editHP").value = d.hp || "";
       document.getElementById("editTglLahir").value = d.tanggal_lahir || "";
       document.getElementById("editGender").value = d.jenis_kelamin || "";
-      document.getElementById("editProvinsi").value = d.provinsi || "";
       setTimeout(() => {
-        document.getElementById("editKabupaten").value = d.kabupaten || "";
-      }, 300);
+        document.getElementById("editProvinsi").value = d.provinsi || "";
+        document.getElementById("editProvinsi").dispatchEvent(new Event("change"));
+        setTimeout(() => {
+          document.getElementById("editKabupaten").value = d.kabupaten || "";
+        }, 300);
+      }, 200);
     }
 
     fetch("data/wilayah.json")
       .then(res => res.json())
       .then(data => {
+        wilayahData = data;
         const prov = document.getElementById("editProvinsi");
         const kab = document.getElementById("editKabupaten");
 
-        Object.keys(data).forEach(p => prov.innerHTML += `<option value="${p}">${p}</option>`);
+        Object.keys(data).forEach(p => {
+          prov.innerHTML += `<option value="${p}">${p}</option>`;
+        });
+
         prov.addEventListener("change", () => {
           kab.innerHTML = `<option value="">Pilih Kabupaten</option>`;
           Object.keys(data[prov.value] || {}).forEach(k => {
@@ -232,18 +207,16 @@
         email: user.email
       };
       await db.collection("users").doc(user.email).set(data, { merge: true });
-      document.getElementById("pesanEdit").textContent = "✅ Profil berhasil diperbarui";
+      document.getElementById("pesanEdit").textContent = "✅ Profil berhasil diperbarui.";
     });
 
     document.getElementById("formGantiPassword").addEventListener("submit", async e => {
       e.preventDefault();
       const user = auth.currentUser;
-      const oldPass = passwordLama.value;
-      const newPass = passwordBaru.value;
+      const cred = firebase.auth.EmailAuthProvider.credential(user.email, passwordLama.value);
       try {
-        const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
         await user.reauthenticateWithCredential(cred);
-        await user.updatePassword(newPass);
+        await user.updatePassword(passwordBaru.value);
         document.getElementById("pesanPassword").textContent = "✅ Password berhasil diperbarui.";
       } catch (err) {
         document.getElementById("pesanPassword").textContent = "❌ " + err.message;
@@ -258,10 +231,10 @@
     });
 
     document.getElementById("hapusAkunBtn").addEventListener("click", async () => {
-      const konfirmasi = prompt("Masukkan password untuk hapus akun:");
-      if (!konfirmasi) return;
+      const pass = prompt("Masukkan password untuk hapus akun:");
+      if (!pass) return;
       const user = auth.currentUser;
-      const cred = firebase.auth.EmailAuthProvider.credential(user.email, konfirmasi);
+      const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass);
       try {
         await user.reauthenticateWithCredential(cred);
         await db.collection("users").doc(user.email).delete();

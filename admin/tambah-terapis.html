@@ -37,125 +37,142 @@
     </div>
     <p class="text-white/80 mb-1">Admin panel untuk registrasi terapis baru.</p>
     <p class="text-white/40 text-xs">© 2025 Fisio Kita. All rights reserved.</p>
-  </footer>  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  </footer> 
+  <!-- Tambah Terapis -->
+<script>
+  const form = document.getElementById("formTerapis");
 
-    fetch("../data/wilayah.json").then(res => res.json()).then(data => {
-      const provSelect = document.getElementById("provinsi");
-      const kabSelect = document.getElementById("kabupaten");
-      Object.keys(data).forEach(prov => {
-        const opt = document.createElement("option");
-        opt.value = prov;
-        opt.textContent = prov;
-        provSelect.appendChild(opt);
-      });
-      provSelect.addEventListener("change", () => {
-        kabSelect.innerHTML = `<option value="">Pilih Kabupaten</option>`;
-        const kabList = data[provSelect.value];
-        Object.keys(kabList).forEach(kab => {
-          const opt = document.createElement("option");
-          opt.value = kab;
-          opt.textContent = kab;
-          kabSelect.appendChild(opt);
-        });
-      });
-    });
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return window.location.href = "login.html";
 
-    auth.onAuthStateChanged(user => {
-      if (!user || user.email !== "fisiokita@gmail.com") {
-        alert("Akses hanya untuk admin utama.");
-        window.location.href = "dashboard.html";
+    // Cek apakah admin utama
+    if (user.email !== "fisiokita@gmail.com") {
+      alert("Akses hanya untuk admin utama.");
+      window.location.href = "dashboard.html";
+      return;
+    }
+
+    // Tambahkan admin ke koleksi "admin" jika belum ada
+    const adminDoc = await db.collection("admin").doc(user.email).get();
+    if (!adminDoc.exists) {
+      await db.collection("admin").doc(user.email).set({
+        nama: "Admin Utama",
+        role: "admin"
+      });
+    }
+
+    tampilkanDaftarTerapis();
+  });
+
+  function tampilkanDaftarTerapis() {
+    const daftarDiv = document.getElementById("daftarTerapis");
+    db.collection("terapis").get().then(snapshot => {
+      daftarDiv.innerHTML = "";
+      if (snapshot.empty) {
+        daftarDiv.innerHTML = "<p class='italic text-gray-500'>Belum ada terapis terdaftar.</p>";
         return;
       }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-xl border border-gray-200 p-4 shadow flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4";
+
+        div.innerHTML = `
+          <div class="flex-1 space-y-1">
+            <div><strong>Nama:</strong> ${data.nama || "-"}</div>
+            <div><strong>Email:</strong> ${doc.id}</div>
+            <div><strong>Spesialisasi:</strong> ${data.spesialis || "-"}</div>
+            <div><strong>Provinsi:</strong> ${data.provinsi || "-"}</div>
+            <div><strong>Kabupaten:</strong> ${data.kabupaten || "-"}</div>
+            <div><strong>Status:</strong> <span class="font-medium ${data.status === "tersedia" ? "text-green-600" : "text-red-600"}">${data.status}</span></div>
+          </div>
+          <div class="flex flex-col gap-2 text-sm">
+            <button onclick="toggleStatus('${doc.id}', '${data.status}')" class="px-3 py-1 bg-yellow-500 text-white rounded">Ubah Status</button>
+            <button onclick="editTerapis('${doc.id}')" class="px-3 py-1 bg-blue-600 text-white rounded">Edit</button>
+            <button onclick="hapusTerapis('${doc.id}')" class="px-3 py-1 bg-red-600 text-white rounded">Hapus</button>
+          </div>
+        `;
+        daftarDiv.appendChild(div);
+      });
+    });
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const nama = document.getElementById("nama").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const spesialis = document.getElementById("spesialis").value.trim();
+    const provinsi = document.getElementById("provinsi").value;
+    const kabupaten = document.getElementById("kabupaten").value;
+
+    // Cegah admin utama didaftarkan sebagai terapis
+    if (email === "fisiokita@gmail.com") {
+      alert("Email ini khusus admin dan tidak bisa didaftarkan sebagai terapis.");
+      return;
+    }
+
+    if (!nama || !email || !password || !spesialis || !provinsi || !kabupaten) {
+      alert("Mohon lengkapi semua data.");
+      return;
+    }
+
+    try {
+      // Buat akun Firebase Auth baru
+      await auth.createUserWithEmailAndPassword(email, password);
+
+      // Simpan data ke koleksi terpisah
+      await db.collection("terapis").doc(email).set({
+        nama,
+        spesialis,
+        provinsi,
+        kabupaten,
+        status: "tidak tersedia"
+      });
+
+      alert("Terapis berhasil ditambahkan.");
+      form.reset();
       tampilkanDaftarTerapis();
-    });
-
-    function tampilkanDaftarTerapis() {
-      const daftarDiv = document.getElementById("daftarTerapis");
-      db.collection("terapis").get().then(snapshot => {
-        daftarDiv.innerHTML = "";
-        snapshot.forEach(doc => {
-          const d = doc.data();
-          const div = document.createElement("div");
-          div.className = "bg-white border rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2";
-          div.innerHTML = `
-            <div>
-              <div><strong>${d.nama}</strong></div>
-              <div>${doc.id} | ${d.spesialis}</div>
-              <div>${d.provinsi}, ${d.kabupaten}</div>
-              <div class="text-xs">Status: <span class="font-semibold">${d.status}</span></div>
-            </div>
-            <div class="flex flex-col gap-1">
-              <button onclick="ubahStatus('${doc.id}', '${d.status}')" class="text-blue-600 text-sm">Ubah Status</button>
-              <button onclick="editTerapis('${doc.id}')" class="text-yellow-600 text-sm">Edit</button>
-              <button onclick="hapusTerapis('${doc.id}')" class="text-red-600 text-sm">Hapus</button>
-            </div>
-          `;
-          daftarDiv.appendChild(div);
-        });
-      });
+    } catch (error) {
+      console.error(error);
+      alert("Gagal mendaftarkan terapis: " + error.message);
     }
+  });
 
-    function ubahStatus(email, current) {
-      const statusBaru = current === "tersedia" ? "tidak" : "tersedia";
-      db.collection("terapis").doc(email).update({ status: statusBaru }).then(() => tampilkanDaftarTerapis());
+  async function toggleStatus(email, currentStatus) {
+    const newStatus = currentStatus === "tersedia" ? "tidak tersedia" : "tersedia";
+    await db.collection("terapis").doc(email).update({ status: newStatus });
+    tampilkanDaftarTerapis();
+  }
+
+  async function hapusTerapis(email) {
+    const konfirmasi = confirm("Yakin ingin menghapus terapis ini?");
+    if (!konfirmasi) return;
+
+    await db.collection("terapis").doc(email).delete();
+    tampilkanDaftarTerapis();
+  }
+
+  async function editTerapis(email) {
+    const doc = await db.collection("terapis").doc(email).get();
+    if (!doc.exists) {
+      alert("Data tidak ditemukan.");
+      return;
     }
-
-    function hapusTerapis(email) {
-      if (confirm("Yakin ingin menghapus terapis ini?")) {
-        db.collection("terapis").doc(email).delete().then(() => tampilkanDaftarTerapis());
-      }
-    }
-
-    function editTerapis(email) {
-      db.collection("terapis").doc(email).get().then(doc => {
-        const d = doc.data();
-        document.getElementById("editEmail").value = email;
-        document.getElementById("nama").value = d.nama;
-        document.getElementById("email").value = email;
-        document.getElementById("email").disabled = true;
-        document.getElementById("spesialis").value = d.spesialis;
-        document.getElementById("provinsi").value = d.provinsi;
-        document.getElementById("kabupaten").innerHTML = `<option value="${d.kabupaten}">${d.kabupaten}</option>`;
-        document.getElementById("kabupaten").value = d.kabupaten;
-        document.getElementById("passwordDiv").style.display = "none";
-      });
-    }
-
-    document.getElementById("formTerapis").addEventListener("submit", async e => {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const editEmail = document.getElementById("editEmail").value.trim();
-      const data = {
-        nama: document.getElementById("nama").value.trim(),
-        spesialis: document.getElementById("spesialis").value.trim(),
-        provinsi: document.getElementById("provinsi").value,
-        kabupaten: document.getElementById("kabupaten").value,
-        status: "tidak"
-      };
-      if (editEmail) {
-        await db.collection("terapis").doc(email).update(data);
-        alert("Terapis berhasil diperbarui.");
-        document.getElementById("formTerapis").reset();
-        document.getElementById("email").disabled = false;
-        document.getElementById("editEmail").value = "";
-        document.getElementById("passwordDiv").style.display = "block";
-        tampilkanDaftarTerapis();
-      } else {
-        const password = document.getElementById("password").value;
-        await auth.createUserWithEmailAndPassword(email, password);
-        await db.collection("terapis").doc(email).set(data);
-        alert("Terapis berhasil ditambahkan.");
-        document.getElementById("formTerapis").reset();
-        tampilkanDaftarTerapis();
-      }
-    });
-  </script></body>
+    const data = doc.data();
+    document.getElementById("nama").value = data.nama;
+    document.getElementById("email").value = email;
+    document.getElementById("email").disabled = true; // jangan ubah email
+    document.getElementById("password").value = ""; // tidak ditampilkan
+    document.getElementById("spesialis").value = data.spesialis;
+    document.getElementById("provinsi").value = data.provinsi;
+    document.getElementById("kabupaten").innerHTML = `<option>${data.kabupaten}</option>`;
+  }
+</script>
+      
+  
+  
+</body>
 </html>

@@ -3,43 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Konsultasi Home Visit - FisioKita</title>
+  <title>Konsultasi Home Visit - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3 bg-[#4B6CC1] text-white shadow">
-    <img src="img/logo.png" alt="FisioKita" class="w-6 h-6" />
-    <span class="font-semibold text-lg">FisioKita</span>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex items-center gap-3 shadow-md">
+    <img src="img/logo.png" alt="Fisio Kita" class="w-6 h-6" />
+    <span class="font-semibold text-xl">Fisio Kita</span>
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-4 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-bold mb-4 text-center">Pilih Lokasi Anda</h1>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Pilih Lokasi Anda</h1>
 
-    <form id="lokasiForm" class="space-y-4">
+    <form id="lokasiForm" class="space-y-6">
       <div>
-        <label class="block text-sm font-medium mb-1">Provinsi</label>
-        <select id="provinsi" class="w-full border border-gray-300 rounded px-3 py-2" required>
+        <label class="block text-sm font-semibold mb-2">Provinsi</label>
+        <select id="provinsi" class="w-full border border-gray-300 rounded-md px-4 py-2 text-sm" required>
           <option value="">Pilih Provinsi</option>
         </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium mb-1">Kabupaten/Kota</label>
-        <select id="kabupaten" class="w-full border border-gray-300 rounded px-3 py-2" required>
+        <label class="block text-sm font-semibold mb-2">Kabupaten/Kota</label>
+        <select id="kabupaten" class="w-full border border-gray-300 rounded-md px-4 py-2 text-sm" required>
           <option value="">Pilih Kabupaten/Kota</option>
         </select>
       </div>
 
       <button type="submit"
-              class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">
+        class="bg-[#2970F2] text-white w-full py-3 text-sm font-semibold rounded-full hover:bg-[#1e4bb8] transition shadow">
         Lihat Fisioterapis
       </button>
     </form>
@@ -48,36 +48,55 @@
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#4B6CC1] text-white text-xs mt-12">
-  <div class="max-w-md mx-auto px-4 py-6 space-y-4">
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
 
-    <!-- Logo dan Nama -->
-    <div class="flex items-center gap-2">
-      <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
-      <span class="font-semibold">Fisio Kita</span>
+      <!-- Logo dan Deskripsi -->
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi profesional ke rumah Anda. Pesan konsultasi offline langsung melalui Fisio Kita.
+      </p>
+
+      <!-- Navigasi -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        </div>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <!-- Jam Operasional -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
-
-    <!-- Deskripsi Singkat -->
-    <p class="text-sm">Layanan fisioterapi terpercaya - Pilih fisioterapis dan pesan janji temu online.</p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold mb-1">Navigasi</h3>
-      <ul class="space-y-1">
-        <li><a href="index.html" class="hover:underline text-white">🏠 Beranda</a></li>
-        <li><a href="konsultasi-jenis.html" class="hover:underline text-white">👨‍⚕️ Pilih Konsultasi</a></li>
-        <li><a href="edukasi.html" class="hover:underline text-white">📚 Edukasi Kesehatan</a></li>
-        <li><a href="akun.html" class="hover:underline text-white">👤 Akun</a></li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-[10px] opacity-70">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-    
-  </div>
-</footer>
+  </footer>
 
   <!-- Script -->
   <script>

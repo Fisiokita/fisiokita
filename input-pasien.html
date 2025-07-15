@@ -138,41 +138,33 @@
     // Cek status login dan isi otomatis nama + hp
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        // Ganti tombol jadi nama user
-        try {
-          const snap = await db.collection("users").doc(user.email).get();
-          const data = snap.data() || {};
-          const nama = data.nama || user.email;
-          const hp = data.hp || "";
-
-          const namaDepan = nama.split(" ")[0];
-          userGreeting.textContent = namaDepan;
-          userGreeting.classList.add("font-semibold", "hover:opacity-90");
-          userGreeting.onclick = () => window.location.href = "akun.html";
-
-          if (data.nama) {
-            namaInput.value = data.nama;
-            namaInput.setAttribute("readonly", true);
-            namaInput.classList.add("bg-gray-100", "cursor-not-allowed");
-          }
-
-          if (data.hp) {
-            kontakInput.value = data.hp;
-            kontakInput.setAttribute("readonly", true);
-            kontakInput.classList.add("bg-gray-100", "cursor-not-allowed");
-          }
-        } catch (err) {
-          console.error("Gagal ambil data user:", err);
-          userGreeting.textContent = "Pengguna";
-          userGreeting.onclick = () => window.location.href = "akun.html";
-        }
+    try {
+      const userDoc = await db.collection("users").doc(user.email).get();
+      if (userDoc.exists) {
+        const nama = userDoc.data().nama || user.email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "akun.html";
       } else {
-        // Belum login
-        userGreeting.textContent = "Masuk";
-        userGreeting.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        userGreeting.onclick = () => window.location.href = "login.html";
+        const terapisDoc = await db.collection("terapis").doc(user.email).get();
+        if (terapisDoc.exists) {
+          const nama = terapisDoc.data().nama || user.email;
+          el.textContent = nama.split(" ")[0];
+          el.onclick = () => window.location.href = "admin/dashboard.html";
+        } else {
+          el.textContent = user.email;
+          el.onclick = () => window.location.href = "akun.html";
+        }
       }
-    });
+    } catch (err) {
+      el.textContent = "Pengguna";
+      el.onclick = () => window.location.href = "akun.html";
+    }
+  } else {
+    el.textContent = "Masuk";
+    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+    el.onclick = () => window.location.href = "login.html";
+  }
+});
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();

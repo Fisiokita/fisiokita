@@ -8,157 +8,156 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    body { font-family: 'Inter', sans-serif; }
     #chatBox::-webkit-scrollbar { width: 6px; }
     #chatBox::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.2); border-radius: 3px; }
   </style>
 </head>
-<body class="bg-[#f8fafc] min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col text-[#1E2A44]">
 
-<!-- Header -->
-<header class="bg-[#2563EB] text-white px-4 py-3 font-semibold text-center shadow">
-  Chat Fisioterapis
-</header>
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-4 py-4 font-semibold text-center shadow header-main">
+    Chat Fisioterapis
+  </header>
 
-<!-- Chat Area -->
-<main id="chatBox" class="flex-1 overflow-y-auto px-3 py-4 space-y-3 max-w-md mx-auto w-full"></main>
+  <!-- Chat Area -->
+  <main id="chatBox" class="flex-1 overflow-y-auto px-4 py-5 space-y-4 max-w-md mx-auto w-full text-sm"></main>
 
-<!-- Input + Akhiri -->
-<footer class="bg-white px-4 py-3 shadow max-w-md mx-auto w-full flex flex-col gap-2" id="footerArea">
-  <div class="flex items-center space-x-2">
-    <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border rounded-full outline-none" placeholder="Ketik pesan..." />
-    <button id="kirimBtn" class="bg-[#2563EB] w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-[#1E40AF] transition">
-      <i class="fas fa-paper-plane text-sm"></i>
-    </button>
-  </div>
-  <button id="btnAkhiri" class="text-xs text-red-600 underline hover:text-red-800 self-end">Akhiri Chat</button>
-</footer>
+  <!-- Input -->
+  <footer class="bg-white px-4 py-3 shadow max-w-md mx-auto w-full flex flex-col gap-2 border-t">
+    <div class="flex items-center gap-2">
+      <input id="inputPesan" class="flex-1 text-sm px-4 py-2 border border-gray-300 rounded-full outline-none" placeholder="Ketik pesan..." />
+      <button id="kirimBtn" class="bg-[#2970F2] w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-[#1e56c3] transition">
+        <i class="fas fa-paper-plane text-sm"></i>
+      </button>
+    </div>
+    <button id="btnAkhiri" class="text-xs text-red-600 underline hover:text-red-800 self-end">Akhiri Chat</button>
+  </footer>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  const params = new URLSearchParams(window.location.search);
-  const sessionId = params.get("sessionId");
-  const emailTerapis = params.get("email");
-  const pasien = params.get("pasien");
-  const keluhan = params.get("keluhan") || "";
-  const kontak = params.get("kontak") || "";
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("sessionId");
+    const emailTerapis = params.get("email");
+    const pasien = params.get("pasien");
+    const keluhan = params.get("keluhan") || "";
+    const kontak = params.get("kontak") || "";
 
-  const chatBox = document.getElementById("chatBox");
-  const inputPesan = document.getElementById("inputPesan");
-  const kirimBtn = document.getElementById("kirimBtn");
-  const btnAkhiri = document.getElementById("btnAkhiri");
+    const chatBox = document.getElementById("chatBox");
+    const inputPesan = document.getElementById("inputPesan");
+    const kirimBtn = document.getElementById("kirimBtn");
+    const btnAkhiri = document.getElementById("btnAkhiri");
 
-  const sesiRef = db.collection("sessions").doc(sessionId);
+    const sesiRef = db.collection("sessions").doc(sessionId);
 
-  sesiRef.get().then(doc => {
-    if (!doc.exists) {
-      sesiRef.set({
-        kepada: emailTerapis,
-        selesai: false,
-        dibuat: firebase.firestore.Timestamp.now()
-      });
-    } else if (doc.data().selesai === true) {
-      tampilkanPesanSystem("⚠️ Sesi ini sudah diakhiri.");
-      matikanInput();
-    }
-  });
-
-  db.collection("chats")
-    .where("sessionId", "==", sessionId)
-    .get().then(snapshot => {
-      if (snapshot.empty && keluhan) {
-        db.collection("chats").add({
-          dari: pasien,
+    sesiRef.get().then(doc => {
+      if (!doc.exists) {
+        sesiRef.set({
           kepada: emailTerapis,
-          pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
-          sessionId,
-          waktu: firebase.firestore.Timestamp.now()
+          selesai: false,
+          dibuat: firebase.firestore.Timestamp.now()
+        });
+      } else if (doc.data().selesai === true) {
+        tampilkanPesanSystem("⚠️ Sesi ini sudah diakhiri.");
+        matikanInput();
+      }
+    });
+
+    db.collection("chats")
+      .where("sessionId", "==", sessionId)
+      .get().then(snapshot => {
+        if (snapshot.empty && keluhan) {
+          db.collection("chats").add({
+            dari: pasien,
+            kepada: emailTerapis,
+            pesan: `📝 Keluhan:\n${keluhan}\n📞 Kontak: ${kontak}`,
+            sessionId,
+            waktu: firebase.firestore.Timestamp.now()
+          });
+        }
+      });
+
+    db.collection("chats")
+      .where("sessionId", "==", sessionId)
+      .orderBy("waktu", "asc")
+      .onSnapshot(snapshot => {
+        chatBox.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.waktu?.toDate();
+          const jam = waktu?.getHours().toString().padStart(2, "0");
+          const menit = waktu?.getMinutes().toString().padStart(2, "0");
+          const isPasien = data.dari === pasien;
+
+          const bubble = document.createElement("div");
+          if (isPasien) {
+            bubble.className = "flex flex-col items-end max-w-[80%] ml-auto space-y-1";
+            bubble.innerHTML = `
+              <div class="bg-[#DBEAFE] text-black rounded-xl rounded-br-none px-4 py-2 break-words shadow">
+                ${data.pesan.replace(/\n/g, "<br>")}
+                <div class="text-xs text-gray-500 text-right mt-1">${jam}.${menit} <i class="fas fa-check-double ml-1"></i></div>
+              </div>`;
+          } else {
+            bubble.className = "flex flex-col items-start max-w-[80%] mr-auto space-y-1";
+            bubble.innerHTML = `
+              <div class="bg-white text-black rounded-xl rounded-tl-none px-4 py-2 break-words shadow">
+                ${data.pesan.replace(/\n/g, "<br>")}
+                <div class="text-xs text-gray-500 text-right mt-1">${jam}.${menit}</div>
+              </div>`;
+          }
+          chatBox.appendChild(bubble);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+
+    kirimBtn.addEventListener("click", () => {
+      const pesan = inputPesan.value.trim();
+      if (!pesan) return;
+      db.collection("chats").add({
+        dari: pasien,
+        kepada: emailTerapis,
+        pesan,
+        sessionId,
+        waktu: firebase.firestore.Timestamp.now()
+      });
+      inputPesan.value = "";
+    });
+
+    btnAkhiri.addEventListener("click", () => {
+      if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
+        sesiRef.update({ selesai: true }).then(() => {
+          tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
+          matikanInput();
+          localStorage.removeItem("chatSessionId");
+          setTimeout(() => {
+            window.location.href = "konsultasi-online.html";
+          }, 2000);
         });
       }
     });
 
-  db.collection("chats")
-    .where("sessionId", "==", sessionId)
-    .orderBy("waktu", "asc")
-    .onSnapshot(snapshot => {
-      chatBox.innerHTML = "";
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const waktu = data.waktu?.toDate();
-        const jam = waktu?.getHours().toString().padStart(2, "0");
-        const menit = waktu?.getMinutes().toString().padStart(2, "0");
-        const isPasien = data.dari === pasien;
-
-        const bubble = document.createElement("div");
-        if (isPasien) {
-          bubble.className = "flex flex-col items-end max-w-[80%] ml-auto space-y-1";
-          bubble.innerHTML = `
-            <div class="bg-[#DBEAFE] text-black text-sm rounded-xl rounded-br-none px-3 py-2 break-words shadow">
-              ${data.pesan}
-              <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
-              <i class="fas fa-check-double text-xs text-gray-400 ml-1"></i>
-            </div>`;
-        } else {
-          bubble.className = "bg-white text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
-          bubble.innerHTML = `${data.pesan}
-            <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>`;
-        }
-        chatBox.appendChild(bubble);
-      });
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-
-  kirimBtn.addEventListener("click", () => {
-    const pesan = inputPesan.value.trim();
-    if (!pesan) return;
-    db.collection("chats").add({
-      dari: pasien,
-      kepada: emailTerapis,
-      pesan,
-      sessionId,
-      waktu: firebase.firestore.Timestamp.now()
-    });
-    inputPesan.value = "";
-  });
-
-  btnAkhiri.addEventListener("click", () => {
-    if (confirm("Yakin ingin mengakhiri sesi chat ini?")) {
-      sesiRef.update({ selesai: true }).then(() => {
-        tampilkanPesanSystem("✅ Sesi konsultasi telah diakhiri.");
-        matikanInput();
-        localStorage.removeItem("chatSessionId");
-        setTimeout(() => {
-          window.location.href = "konsultasi-online.html";
-        }, 2000);
-      });
+    function matikanInput() {
+      inputPesan.disabled = true;
+      kirimBtn.disabled = true;
+      inputPesan.classList.add("opacity-50", "cursor-not-allowed");
+      kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
     }
-  });
 
-  function matikanInput() {
-    inputPesan.disabled = true;
-    kirimBtn.disabled = true;
-    inputPesan.classList.add("opacity-50", "cursor-not-allowed");
-    kirimBtn.classList.add("opacity-50", "cursor-not-allowed");
-  }
-
-  function tampilkanPesanSystem(pesan) {
-    const div = document.createElement("div");
-    div.className = "text-center text-xs text-gray-500 italic";
-    div.textContent = pesan;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-</script>
+    function tampilkanPesanSystem(pesan) {
+      const div = document.createElement("div");
+      div.className = "text-center text-xs text-gray-500 italic";
+      div.textContent = pesan;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
 </body>
 </html>

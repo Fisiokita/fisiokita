@@ -107,7 +107,7 @@
         if (terapisDoc.exists) {
           const nama = terapisDoc.data().nama || user.email;
           el.textContent = nama.split(" ")[0];
-          el.onclick = () => window.location.href = "admin-dashboard.html";
+          el.onclick = () => window.location.href = "admin/dashboard.html";
         } else {
           el.textContent = user.email;
           el.onclick = () => window.location.href = "akun.html";

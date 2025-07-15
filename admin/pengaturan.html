@@ -4,10 +4,11 @@
   <link rel="stylesheet" href="../css/style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ganti Password - FisioKita</title>
+  <title>Pengaturan Akun - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -21,16 +22,38 @@
     }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex justify-between items-center">
-    <h1 class="text-lg font-semibold">⚙️ Ganti Password</h1>
-    <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
-  </header>
+<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col font-['Inter']">
 
-  <!-- Main -->
-  <main class="flex-1 p-4 max-w-md mx-auto w-full">
-    <form id="passwordForm" class="bg-white p-6 rounded shadow space-y-4 relative">
+<!-- Header -->
+<header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow">
+  <h1 class="text-lg font-semibold">⚙️ Pengaturan Akun</h1>
+  <a href="dashboard.html" class="text-sm underline hover:text-gray-200">Kembali</a>
+</header>
+
+<!-- Main -->
+<main class="flex-1 max-w-md mx-auto w-full px-4 py-6 space-y-8">
+
+  <!-- Profil Terapis -->
+  <section class="bg-white p-4 rounded-xl shadow border space-y-2">
+    <h2 class="font-semibold text-lg mb-2">👤 Profil Terapis</h2>
+    <p><strong>Nama:</strong> <span id="namaTerapis">...</span></p>
+    <p><strong>Email:</strong> <span id="emailTerapis">...</span></p>
+  </section>
+
+  <!-- Form Edit Nama -->
+  <section class="bg-white p-4 rounded-xl shadow border space-y-3">
+    <h2 class="font-semibold text-lg">✏️ Ubah Nama Terapis</h2>
+    <form id="formEditNama" class="space-y-2">
+      <input type="text" id="inputNamaBaru" class="w-full border rounded px-3 py-2 text-sm" required placeholder="Nama lengkap baru" />
+      <button class="btn-primary w-full">Simpan Perubahan</button>
+      <p id="pesanNama" class="text-sm text-center mt-2"></p>
+    </form>
+  </section>
+
+  <!-- Ganti Password -->
+  <section class="bg-white p-4 rounded-xl shadow border space-y-3 relative">
+    <h2 class="font-semibold text-lg">🔐 Ganti Password</h2>
+    <form id="passwordForm" class="space-y-4">
       <div class="relative">
         <label class="block text-sm font-semibold mb-1">Password Baru</label>
         <input type="password" id="passwordBaru" class="w-full border rounded px-3 py-2 text-sm" required />
@@ -41,76 +64,121 @@
         <input type="password" id="konfirmasiPassword" class="w-full border rounded px-3 py-2 text-sm" required />
         <i class="fas fa-eye eye-toggle text-gray-500" onclick="togglePassword('konfirmasiPassword', this)"></i>
       </div>
-      <button type="submit"
-              class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white w-full py-2 rounded transition font-medium">
-        Simpan Password Baru
-      </button>
+      <button type="submit" class="btn-primary w-full">Simpan Password Baru</button>
       <p id="pesan" class="text-sm text-center mt-2"></p>
     </form>
-  </main>
+  </section>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  <!-- Hapus Akun -->
+  <section class="bg-white p-4 rounded-xl shadow border text-center">
+    <h2 class="font-semibold text-lg mb-3">❌ Hapus Akun</h2>
+    <button id="hapusAkunBtn" class="text-red-600 underline text-sm hover:text-red-800">Hapus akun ini secara permanen</button>
+    <p id="pesanHapus" class="text-sm mt-2"></p>
+  </section>
 
-    const form = document.getElementById("passwordForm");
-    const pesan = document.getElementById("pesan");
+</main>
 
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "login.html";
-      }
+<!-- Firebase Logic -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1",
+    storageBucket: "fisiosehat-af9f1.appspot.com",
+    messagingSenderId: "800971487968",
+    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  const namaTerapis = document.getElementById("namaTerapis");
+  const emailTerapis = document.getElementById("emailTerapis");
+  const pesan = document.getElementById("pesan");
+  const pesanNama = document.getElementById("pesanNama");
+  const pesanHapus = document.getElementById("pesanHapus");
+
+  auth.onAuthStateChanged(user => {
+    if (!user) return window.location.href = "login.html";
+
+    emailTerapis.textContent = user.email;
+    db.collection("terapis").doc(user.email).get().then(doc => {
+      namaTerapis.textContent = doc.exists ? doc.data().nama : "Tidak diketahui";
     });
+  });
 
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const pw1 = document.getElementById("passwordBaru").value.trim();
-      const pw2 = document.getElementById("konfirmasiPassword").value.trim();
+  // Edit Nama Terapis
+  document.getElementById("formEditNama").addEventListener("submit", e => {
+    e.preventDefault();
+    const namaBaru = document.getElementById("inputNamaBaru").value.trim();
+    if (!namaBaru) return;
 
-      if (pw1.length < 6) {
-        tampilkan("❌ Password minimal 6 karakter", true); return;
-      }
-      if (pw1 !== pw2) {
-        tampilkan("❌ Password tidak cocok", true); return;
-      }
+    const user = auth.currentUser;
+    if (!user) return;
 
-      const user = auth.currentUser;
-      if (!user) return tampilkan("❌ Anda belum login", true);
-
-      user.updatePassword(pw1)
-        .then(() => {
-          tampilkan("✅ Password berhasil diubah");
-          setTimeout(() => auth.signOut(), 2000);
-        })
-        .catch(err => {
-          if (err.code === "auth/requires-recent-login") {
-            tampilkan("⚠️ Anda perlu login ulang untuk mengubah password.", true);
-          } else {
-            tampilkan("❌ Gagal: " + err.message, true);
-          }
-        });
+    db.collection("terapis").doc(user.email).set({ nama: namaBaru }, { merge: true }).then(() => {
+      namaTerapis.textContent = namaBaru;
+      pesanNama.textContent = "✅ Nama berhasil diperbarui.";
+      pesanNama.className = "text-green-600 text-sm text-center mt-2";
     });
+  });
 
-    function tampilkan(msg, error = false) {
-      pesan.textContent = msg;
-      pesan.className = `text-sm text-center mt-2 ${error ? 'text-red-600' : 'text-green-600'}`;
-    }
+  // Ganti Password
+  document.getElementById("passwordForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const pw1 = document.getElementById("passwordBaru").value.trim();
+    const pw2 = document.getElementById("konfirmasiPassword").value.trim();
 
-    function togglePassword(id, icon) {
-      const input = document.getElementById(id);
-      const type = input.type === "password" ? "text" : "password";
-      input.type = type;
-      icon.classList.toggle("fa-eye");
-      icon.classList.toggle("fa-eye-slash");
-    }
-  </script>
+    if (pw1.length < 6) return tampilkan("❌ Password minimal 6 karakter", true);
+    if (pw1 !== pw2) return tampilkan("❌ Password tidak cocok", true);
+
+    const user = auth.currentUser;
+    user.updatePassword(pw1)
+      .then(() => {
+        tampilkan("✅ Password berhasil diubah");
+        setTimeout(() => auth.signOut(), 2000);
+      })
+      .catch(err => {
+        if (err.code === "auth/requires-recent-login") {
+          tampilkan("⚠️ Anda perlu login ulang untuk ubah password.", true);
+        } else {
+          tampilkan("❌ Gagal: " + err.message, true);
+        }
+      });
+  });
+
+  function tampilkan(msg, error = false) {
+    pesan.textContent = msg;
+    pesan.className = `text-sm text-center mt-2 ${error ? 'text-red-600' : 'text-green-600'}`;
+  }
+
+  // Toggle Password
+  function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    const type = input.type === "password" ? "text" : "password";
+    input.type = type;
+    icon.classList.toggle("fa-eye");
+    icon.classList.toggle("fa-eye-slash");
+  }
+
+  // Hapus Akun
+  document.getElementById("hapusAkunBtn").addEventListener("click", () => {
+    if (!confirm("Yakin ingin menghapus akun ini secara permanen?")) return;
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    db.collection("terapis").doc(user.email).delete().then(() => {
+      user.delete().then(() => {
+        pesanHapus.textContent = "✅ Akun berhasil dihapus.";
+        pesanHapus.className = "text-green-600 text-sm text-center mt-2";
+        setTimeout(() => window.location.href = "../index.html", 2000);
+      }).catch(err => {
+        pesanHapus.textContent = "❌ Gagal hapus akun: " + err.message;
+        pesanHapus.className = "text-red-600 text-sm text-center mt-2";
+      });
+    });
+  });
+</script>
 </body>
 </html>

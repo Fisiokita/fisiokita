@@ -3,65 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fisioterapis di Daerah Anda - FisioKita</title>
+  <title>Fisioterapis di Daerah Anda - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-[#111827] min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3 bg-[#2563EB] text-white shadow">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex items-center gap-3 shadow-md">
     <a href="konsultasi-offline.html">
       <img src="img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">Fisio Kita</span>
+    <span class="font-semibold text-xl">Fisio Kita</span>
   </header>
 
-  <!-- Main Content -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-4">Fisioterapis di Wilayah Anda</h1>
-    <p class="text-sm text-center text-gray-600 mb-6" id="lokasi">Memuat lokasi...</p>
+  <!-- Main -->
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-2">Fisioterapis Daerah</h1>
+    <p id="lokasi" class="text-sm text-center text-gray-600 mb-6">Memuat lokasi...</p>
 
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
-    <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden">Tidak ada fisioterapis yang tersedia di wilayah ini.</p>
+    <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden">Tidak ada fisioterapis tersedia di wilayah ini.</p>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#4B6CC1] text-white text-xs mt-12">
-  <div class="max-w-md mx-auto px-4 py-6 space-y-4">
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
 
-    <!-- Logo dan Nama -->
-    <div class="flex items-center gap-2">
-      <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
-      <span class="font-semibold">Fisio Kita</span>
+      <!-- Logo dan Deskripsi -->
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90 leading-relaxed">
+        Temukan fisioterapis terbaik sesuai lokasi Anda dan jadwalkan konsultasi dengan mudah.
+      </p>
+
+      <!-- Navigasi -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        </div>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <!-- Jam Operasional -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
-
-    <!-- Deskripsi Singkat -->
-    <p class="text-sm">Layanan fisioterapi terpercaya - Pilih fisioterapis dan pesan janji temu online.</p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold mb-1">Navigasi</h3>
-      <ul class="space-y-1">
-        <li><a href="index.html" class="hover:underline text-white">🏠 Beranda</a></li>
-        <li><a href="konsultasi-jenis.html" class="hover:underline text-white">👨‍⚕️ Pilih Konsultasi</a></li>
-        <li><a href="edukasi.html" class="hover:underline text-white">📚 Edukasi Kesehatan</a></li>
-        <li><a href="akun.html" class="hover:underline text-white">👤 Akun</a></li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-[10px] opacity-70">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-    
-  </div>
-</footer>
+  </footer>
 
   <!-- Firebase Config -->
   <script>
@@ -74,7 +93,7 @@
     const db = firebase.firestore();
   </script>
 
-  <!-- Script untuk Menampilkan Terapis -->
+  <!-- Logic -->
   <script>
     const params = new URLSearchParams(window.location.search);
     const prov = params.get("prov");
@@ -98,13 +117,13 @@
         snapshot.forEach(doc => {
           const t = doc.data();
           const html = `
-            <article class="bg-white rounded-lg p-5 shadow text-sm space-y-1 text-[#111827]">
-              <h3 class="font-semibold text-base">${t.nama}</h3>
-              <p class="text-[#2563EB] font-medium">${t.spesialis}</p>
-              <p>🗓️ Jadwal: ${t.jadwal || '-'}</p>
-              <p>📍 Lokasi praktik: ${t.lokasi || '-'}</p>
+            <article class="bg-white rounded-xl p-5 shadow-md text-sm text-[#1E2A44]">
+              <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+              <p class="text-[#2970F2] font-medium mb-1">${t.spesialis}</p>
+              <p class="mb-1">🗓️ Jadwal: ${t.jadwal || '-'}</p>
+              <p class="mb-3">📍 Lokasi praktik: ${t.lokasi || '-'}</p>
               <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
-                 class="block mt-3 bg-[#2563EB] text-white text-xs font-semibold rounded px-4 py-2 text-center hover:bg-[#1e40af] transition">
+                 class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
                 Jadwalkan Konsultasi
               </a>
             </article>

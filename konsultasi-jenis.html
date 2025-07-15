@@ -6,88 +6,101 @@
   <title>Pilih Jenis Konsultasi - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3">
-    <a href="index.html">
-      <img src="img/logo.png" alt="Fisio Kita Logo" class="w-6 h-6" />
-    </a>
-    <span class="font-semibold text-lg">Fisio Kita</span>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="img/logo.png" alt="Fisio Kita Logo" class="w-6 h-6" />
+        <span class="font-semibold text-xl">Fisio Kita</span>
+      </a>
+    </div>
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-8 pb-12 max-w-md mx-auto w-full text-center">
-    <h1 class="text-xl font-semibold mb-6">Pilih Jenis Konsultasi</h1>
+  <main class="flex-grow px-6 pt-10 pb-16 max-w-md mx-auto w-full text-center">
+    <h1 class="text-2xl font-bold mb-8">Pilih Jenis Konsultasi</h1>
 
     <div class="space-y-6">
       <!-- Online -->
-      <a href="konsultasi-online.html"
-         class="block bg-white text-[#2563EB] font-semibold text-sm rounded-lg px-6 py-4 hover:bg-gray-100 transition shadow-md">
-         Konsultasi Online
-        <p class="text-xs font-normal text-[#333] mt-1">Chat langsung dengan fisioterapis dari rumah</p>
+      <a href="konsultasi-online.html" class="block bg-white text-[#2970F2] font-semibold text-base rounded-xl px-6 py-5 hover:bg-gray-100 transition shadow-md border">
+        Konsultasi Online
+        <p class="text-sm font-normal text-[#333] mt-1">Chat langsung dengan fisioterapis dari rumah</p>
       </a>
 
       <!-- Offline -->
-      <a href="konsultasi-offline.html"
-         class="block bg-white text-[#2563EB] font-semibold text-sm rounded-lg px-6 py-4 hover:bg-gray-100 transition shadow-md">
-         Konsultasi Langsung (Offline)
-        <p class="text-xs font-normal text-[#333] mt-1">Fisioterapis datang ke lokasi Anda</p>
+      <a href="konsultasi-offline.html" class="block bg-white text-[#2970F2] font-semibold text-base rounded-xl px-6 py-5 hover:bg-gray-100 transition shadow-md border">
+        Konsultasi Langsung (Offline)
+        <p class="text-sm font-normal text-[#333] mt-1">Fisioterapis datang ke lokasi Anda</p>
       </a>
 
       <!-- Lihat Daftar Terapis -->
-      <a href="daftar-terapis.html"
-         class="block bg-white text-[#2563EB] font-semibold text-sm rounded-lg px-6 py-4 hover:bg-gray-100 transition shadow-md">
-         Lihat Daftar Terapis
-        <p class="text-xs font-normal text-[#333] mt-1">Kenali profil dan spesialisasi terapis kami</p>
+      <a href="daftar-terapis.html" class="block bg-white text-[#2970F2] font-semibold text-base rounded-xl px-6 py-5 hover:bg-gray-100 transition shadow-md border">
+        Lihat Daftar Terapis
+        <p class="text-sm font-normal text-[#333] mt-1">Kenali profil dan spesialisasi terapis kami</p>
       </a>
 
       <!-- Tombol kembali -->
-      <div class="mt-8 text-center">
-        <a href="index.html"
-           class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-          Kembali ke Beranda
+      <div class="mt-10 text-center">
+        <a href="index.html" class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+          ← Kembali ke Beranda
         </a>
       </div>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#4B6CC1] text-white text-xs mt-12">
-  <div class="max-w-md mx-auto px-4 py-6 space-y-4">
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
 
-    <!-- Logo dan Nama -->
-    <div class="flex items-center gap-2">
-      <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
-      <span class="font-semibold">Fisio Kita</span>
+      <!-- Logo dan Deskripsi -->
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
+
+      <!-- Navigasi -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        </div>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <!-- Jam Operasional -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
-
-    <!-- Deskripsi Singkat -->
-    <p class="text-sm">Layanan fisioterapi terpercaya - Pilih fisioterapis dan pesan janji temu online.</p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold mb-1">Navigasi</h3>
-      <ul class="space-y-1">
-        <li><a href="index.html" class="hover:underline text-white">🏠 Beranda</a></li>
-        <li><a href="konsultasi-jenis.html" class="hover:underline text-white">👨‍⚕️ Pilih Konsultasi</a></li>
-        <li><a href="edukasi.html" class="hover:underline text-white">📚 Edukasi Kesehatan</a></li>
-        <li><a href="akun.html" class="hover:underline text-white">👤 Akun</a></li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-[10px] opacity-70">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-    
-  </div>
-</footer>
+  </footer>
 </body>
 </html>

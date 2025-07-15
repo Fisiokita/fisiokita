@@ -104,119 +104,114 @@
 
 <script>
   // Konfigurasi Firebase
+
+      
+
+        // ✅ Inisialisasi Firebase Dulu
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
     projectId: "fisiosehat-af9f1"
   };
-
-  // Inisialisasi Firebase
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // Status Login
-  auth.onAuthStateChanged(async (user) => {
-    const el = document.getElementById("userGreeting");
-    if (!el) return;
+  // ✅ Tunggu DOM Siap
+  document.addEventListener("DOMContentLoaded", () => {
+    const userGreeting = document.getElementById("userGreeting");
+    const daftarTerapis = document.getElementById("daftarTerapis");
+    const langsungBtn = document.getElementById("langsungMulaiBtn");
+    const infoLangsung = document.getElementById("infoLangsung");
+    const popup = document.getElementById("queuePopup");
 
-    if (user) {
-      try {
-        const doc = await db.collection("users").doc(user.email).get();
-        const nama = doc.exists ? doc.data().nama : user.email;
-        const namaDepan = nama.split(" ")[0];
-        el.textContent = namaDepan;
-        el.onclick = () => window.location.href = "akun.html";
-      } catch (err) {
-        el.textContent = "Pengguna";
-        el.onclick = () => window.location.href = "akun.html";
+    // ✅ Autentikasi User
+    auth.onAuthStateChanged(async (user) => {
+      if (!userGreeting) return;
+      if (user) {
+        try {
+          const doc = await db.collection("users").doc(user.email).get();
+          const nama = doc.exists ? doc.data().nama : user.email;
+          userGreeting.textContent = nama.split(" ")[0];
+          userGreeting.onclick = () => window.location.href = "akun.html";
+        } catch (err) {
+          userGreeting.textContent = "Pengguna";
+          userGreeting.onclick = () => window.location.href = "akun.html";
+        }
+      } else {
+        userGreeting.textContent = "Masuk";
+        userGreeting.classList.add(
+          "bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full",
+          "text-sm", "font-semibold", "hover:bg-gray-100", "transition"
+        );
+        userGreeting.onclick = () => window.location.href = "login.html";
       }
-    } else {
-      el.textContent = "Masuk";
-      el.classList.add(
-        "bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", 
-        "text-sm", "font-semibold", "hover:bg-gray-100", "transition"
-      );
-      el.onclick = () => window.location.href = "login.html";
-    }
-  });
+    });
 
-  // Elemen DOM
-  const daftarTerapis = document.getElementById("daftarTerapis");
-  const langsungBtn = document.getElementById("langsungMulaiBtn");
-  const infoLangsung = document.getElementById("infoLangsung");
-  const popup = document.getElementById("queuePopup");
+    // ✅ Tampilkan Terapis
+    let terapisTersedia = [];
 
-  // Fungsi popup antrian
-  function showQueuePopup() {
-    if (popup) popup.classList.remove("hidden");
-  }
+    db.collection("terapis")
+      .where("status", "==", "tersedia")
+      .get()
+      .then(snapshot => {
+        if (!daftarTerapis) return;
 
-  function closePopup() {
-    if (popup) popup.classList.add("hidden");
-  }
+        daftarTerapis.innerHTML = "";
+        terapisTersedia = [];
 
-  // Daftar Terapis Tersedia
-  let terapisTersedia = [];
+        if (snapshot.empty) {
+          daftarTerapis.innerHTML = `
+            <p class="text-center text-sm text-gray-500 italic">Terapis tidak tersedia saat ini.</p>`;
+          return;
+        }
 
-  db.collection("terapis")
-    .where("status", "==", "tersedia")
-    .get()
-    .then(snapshot => {
-      if (!daftarTerapis) return;
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const email = doc.id;
+          if (email === "fisiokita@gmail.com") return;
 
-      daftarTerapis.innerHTML = "";
-      terapisTersedia = [];
+          const nama = data.nama || "Terapis Tanpa Nama";
+          const spesialis = data.spesialis || "Umum";
+          const deskripsi = data.deskripsi || "-";
 
-      if (snapshot.empty) {
-        daftarTerapis.innerHTML = `
-          <p class="text-center text-gray-500 text-sm italic">Terapis tidak tersedia saat ini.</p>`;
-        return;
-      }
+          terapisTersedia.push({ email, nama });
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const email = doc.id;
-        if (email === "fisiokita@gmail.com") return;
-
-        terapisTersedia.push({ email, nama: data.nama });
-
-        const nama = data.nama || "Terapis Tanpa Nama";
-        const spesialis = data.spesialis || "Umum";
-        const deskripsi = data.deskripsi || "-";
-
-        const item = document.createElement("article");
-        item.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
-        item.innerHTML = `
-          <h3 class="font-semibold text-base mb-1">${nama}</h3>
-          <p class="text-[#2970F2] font-medium mb-1">${spesialis}</p>
-          <p class="text-xs text-gray-600 mb-3">${deskripsi}</p>
-          <a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
-            class="block bg-[#2970F2] text-white text-xs font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e4bb8] transition shadow">
-            Konsultasi Sekarang
-          </a>
-        `;
-        daftarTerapis.appendChild(item);
+          const card = document.createElement("article");
+          card.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
+          card.innerHTML = `
+            <h3 class="font-semibold text-base mb-1">${nama}</h3>
+            <p class="text-[#2970F2] font-medium mb-1">${spesialis}</p>
+            <p class="text-xs text-gray-600 mb-3">${deskripsi}</p>
+            <a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
+              class="block bg-[#2970F2] text-white text-xs font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e4bb8] transition shadow">
+              Konsultasi Sekarang
+            </a>`;
+          daftarTerapis.appendChild(card);
+        });
       });
-    });
 
-  // Tombol "Langsung Mulai Konsultasi" → pilih acak
-  if (langsungBtn) {
-    langsungBtn.addEventListener("click", () => {
-      if (infoLangsung) infoLangsung.classList.remove("hidden");
+    // ✅ Tombol "Langsung Mulai Konsultasi"
+    if (langsungBtn) {
+      langsungBtn.addEventListener("click", () => {
+        if (infoLangsung) infoLangsung.classList.remove("hidden");
 
-      if (terapisTersedia.length === 0) {
-        alert("Terapis belum tersedia saat ini.");
-        if (infoLangsung) infoLangsung.classList.add("hidden");
-        return;
-      }
+        if (terapisTersedia.length === 0) {
+          alert("Terapis belum tersedia saat ini.");
+          if (infoLangsung) infoLangsung.classList.add("hidden");
+          return;
+        }
 
-      const randomIndex = Math.floor(Math.random() * terapisTersedia.length);
-      const t = terapisTersedia[randomIndex];
+        const acak = Math.floor(Math.random() * terapisTersedia.length);
+        const t = terapisTersedia[acak];
+        window.location.href = `input-pasien.html?email=${encodeURIComponent(t.email)}&nama=${encodeURIComponent(t.nama)}`;
+      });
+    }
 
-      window.location.href = `input-pasien.html?email=${encodeURIComponent(t.email)}&nama=${encodeURIComponent(t.nama)}`;
-    });
-  }
+    // ✅ Fungsi Popup (jika ada)
+    window.showQueuePopup = () => popup?.classList.remove("hidden");
+    window.closePopup = () => popup?.classList.add("hidden");
+  });
 </script>
 </body>
 </html>

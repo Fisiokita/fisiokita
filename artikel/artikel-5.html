@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Edukasi Fisioterapi Anak - Fisio Kita</title>
+  <title>Fisioterapi Anak - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -23,9 +19,9 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
@@ -35,148 +31,131 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Edukasi Kesehatan</h1>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Fisioterapi Anak: Dukung Tumbuh Kembang Optimal</h1>
 
-    <div class="space-y-8 text-black">
-      <!-- Artikel -->
-      <article class="bg-white rounded-lg p-6 shadow-md">
-  <h2 class="font-bold text-base mb-3"> Fisioterapi Anak: Dukung Tumbuh Kembang Optimal</h2>
+    <article class="bg-white p-6 rounded-xl shadow-md text-sm leading-relaxed space-y-5 border border-gray-200">
+      <p>Fisioterapi anak membantu bayi dan anak-anak yang mengalami keterlambatan perkembangan, gangguan gerak, atau kondisi neurologis seperti cerebral palsy. Fokus terapi adalah memperbaiki kemampuan motorik dan kemandirian sejak dini.</p>
 
-  <p class="text-sm leading-relaxed mb-3">
-    Fisioterapi anak adalah bentuk terapi khusus yang dirancang untuk membantu bayi dan anak-anak yang mengalami keterlambatan perkembangan, gangguan gerak, atau kondisi neurologis seperti cerebral palsy. Tujuan utamanya adalah meningkatkan kemampuan motorik dan kemandirian anak sejak dini.
-  </p>
+      <div>
+        <h2 class="font-semibold mb-1">🧒 Kapan Anak Perlu Fisioterapi?</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Keterlambatan tengkurap, duduk, merangkak, atau berjalan</li>
+          <li>Gerakan tubuh kaku/lemas saat digendong</li>
+          <li>Berjalan jinjit atau bentuk kaki tidak simetris</li>
+          <li>Diagnosis seperti cerebral palsy, down syndrome, dll</li>
+          <li>Gangguan koordinasi, keseimbangan, atau postur tubuh</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Kapan Anak Perlu Fisioterapi?</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Belum bisa tengkurap, duduk, merangkak, atau berjalan sesuai usia.</li>
-    <li>Terlihat kaku atau lemas saat digendong atau bergerak.</li>
-    <li>Berjalan jinjit, kaki mengarah ke dalam/luar, atau sering jatuh.</li>
-    <li>Diagnosis seperti cerebral palsy, down syndrome, atau keterlambatan motorik.</li>
-    <li>Masalah koordinasi, keseimbangan, atau postur tubuh yang tidak simetris.</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🎯 Manfaat Fisioterapi Anak:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Stimulasi tumbuh kembang optimal sesuai usia</li>
+          <li>Memperkuat otot dan meningkatkan keseimbangan</li>
+          <li>Melatih kemampuan dasar: duduk, berdiri, berjalan</li>
+          <li>Menurunkan risiko cedera & kelainan postur</li>
+          <li>Pembinaan orang tua untuk latihan di rumah</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Manfaat Fisioterapi Anak:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Membantu anak mencapai tahap tumbuh kembang yang sesuai.</li>
-    <li>Meningkatkan kekuatan otot, keseimbangan, dan koordinasi gerak.</li>
-    <li>Meningkatkan kemampuan duduk, berdiri, merangkak, dan berjalan.</li>
-    <li>Menurunkan risiko cedera dan membentuk postur tubuh yang baik.</li>
-    <li>Memberikan edukasi kepada orang tua untuk latihan di rumah.</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🎲 Jenis Terapi yang Diberikan:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Latihan motorik kasar dan halus</li>
+          <li>Latihan keseimbangan dan koordinasi tubuh</li>
+          <li>Stimulasi sensorik & latihan postural</li>
+          <li>Terapi bermain untuk meningkatkan interaksi</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Jenis Terapi yang Bisa Dilakukan:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Latihan motorik kasar dan halus (duduk, berdiri, jalan, memegang).</li>
-    <li>Latihan keseimbangan dan koordinasi tubuh.</li>
-    <li>Stimulasi sensorik dan latihan postur.</li>
-    <li>Latihan dalam bentuk permainan untuk meningkatkan partisipasi anak.</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🩺 Layanan FisioKita untuk Anak:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Evaluasi perkembangan & fungsi gerak anak</li>
+          <li>Terapi anak via kunjungan ke rumah (home visit)</li>
+          <li>Penanganan kasus seperti cerebral palsy, dsb</li>
+          <li>Pembimbingan orang tua di rumah</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Layanan FisioKita untuk Anak:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1">
-    <li> Evaluasi tumbuh kembang dan fungsi motorik anak.</li>
-    <li> Terapi anak langsung di rumah (home visit).</li>
-    <li> Penanganan anak dengan cerebral palsy, down syndrome, dll.</li>
-    <li> Edukasi & panduan latihan untuk orang tua di rumah.</li>
-  </ul>
+      <p>Intervensi sejak dini berdampak besar pada kualitas hidup anak ke depan. Fisioterapis kami akan merancang terapi yang menyenangkan dan sesuai kebutuhan anak Anda.</p>
 
-  <p class="text-sm leading-relaxed mt-3">
-    Intervensi sejak dini sangat penting untuk hasil yang optimal. Fisioterapis anak akan membantu merancang program yang sesuai dan menyenangkan untuk mendukung kemandirian anak.
-  </p>
+      <p class="font-semibold">
+        Cek tumbuh kembang si kecil sekarang juga. <a href="../konsultasi-offline.html" class="underline text-blue-600">Jadwalkan sesi fisioterapi anak bersama FisioKita</a>.
+      </p>
+    </article>
 
-  <p class="text-sm leading-relaxed mt-3 font-semibold">
-    Cek perkembangan si kecil sekarang juga. <a href="konsultasi-offline.html" class="underline text-blue-600">Jadwalkan sesi fisioterapi anak bersama FisioKita</a>!
-  </p>
-   </article>
-      
-    </div>
-
-    <!-- Tombol kembali -->
-    <div class="mt-8 text-center">
-      <a href="index.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+    <div class="mt-10 text-center">
+      <a href="../edukasi.html" class="inline-block bg-[#2970F2] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali ke Edukasi
       </a>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white mt-20 text-base">
-  <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-    <!-- Logo dan Deskripsi -->
-    <div class="flex items-center gap-3">
-      <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
-    </p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="../index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="../edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="../akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 text-sm space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
+  </footer>
 
-    <!-- Kontak -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-      <ul class="space-y-2 text-white/90">
-        <li>📞 <a href="https://wa.me/6285179792319" >0851-7979-2319</a></li>
-        <li>  📧 <a href="mailto:fisiokita.cs@gmail.com" >fisiokita.cs@gmail.com</a></li>
-        <li>📍 Jl. Soekarno Hatta No.11, Manggis Ganting, Bukittinggi</li>
-      </ul>
-    </div>
-
-    <!-- Jam Operasional -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-      <ul class="text-white/90 space-y-1">
-        <li>Senin – Jumat: 08.00 – 18.00</li>
-        <li>Sabtu: 08.00 – 16.00</li>
-        <li>Minggu: Tutup</li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-sm text-white/50 pt-8">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
-  
-<script>
-  const auth = firebase.auth();
+  <!-- Auth -->
+  <script>
+    const auth = firebase.auth();
     const db = firebase.firestore();
-
     auth.onAuthStateChanged(async (user) => {
       const el = document.getElementById("userGreeting");
       if (!el) return;
-
       if (user) {
         try {
           const doc = await db.collection("users").doc(user.email).get();
-          const nama = doc.exists ? doc.data().nama : user.email;
-          const namaDepan = nama.split(" ")[0];
-          el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
+          el.textContent = (doc.exists ? doc.data().nama : user.email).split(" ")[0];
+          el.onclick = () => window.location.href = "../akun.html";
+        } catch {
           el.textContent = "Pengguna";
-          el.onclick = () => window.location.href = "akun.html";
+          el.onclick = () => window.location.href = "../akun.html";
         }
       } else {
         el.textContent = "Masuk";
         el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
+        el.onclick = () => window.location.href = "../login.html";
       }
     });
-</script>
+  </script>
 </body>
 </html>

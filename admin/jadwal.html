@@ -1,51 +1,78 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <link rel="stylesheet" href="../css/style.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Jadwal Terapis - FisioKita</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
 <!-- Header -->
-<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex justify-between items-center">
-  <h1 class="text-lg font-semibold">🗓️ Jadwal Kerja</h1>
-  <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+<header class="header-main">
+  <h1 class="text-white text-lg font-semibold">🗓️ Jadwal Kerja</h1>
+  <a href="dashboard.html" class="btn-white text-sm">Kembali</a>
 </header>
 
 <!-- Main -->
-<main class="flex-1 max-w-md w-full mx-auto p-4">
-  <form id="jadwalForm" class="bg-white rounded p-4 shadow space-y-3 mb-6">
+<main class="flex-1 max-w-md w-full mx-auto px-4 py-6">
+  <form id="jadwalForm" class="bg-white border border-gray-200 rounded-xl p-4 shadow space-y-3 mb-6">
     <div>
       <label class="block font-medium mb-1">Hari</label>
-      <select id="hariSelect" class="w-full border border-gray-300 px-3 py-2 rounded">
+      <select id="hariSelect" class="w-full border border-gray-300 px-3 py-2 rounded text-sm">
         <option value="">-- Pilih Hari --</option>
         <option>Senin</option><option>Selasa</option><option>Rabu</option>
         <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
       </select>
     </div>
     <div class="flex gap-2">
-      <input type="time" id="jamMulai" class="flex-1 border border-gray-300 px-3 py-2 rounded" />
-      <input type="time" id="jamSelesai" class="flex-1 border border-gray-300 px-3 py-2 rounded" />
+      <input type="time" id="jamMulai" class="flex-1 border border-gray-300 px-3 py-2 rounded text-sm" />
+      <input type="time" id="jamSelesai" class="flex-1 border border-gray-300 px-3 py-2 rounded text-sm" />
     </div>
-    <button class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white px-4 py-2 rounded w-full font-medium transition">Simpan Jadwal</button>
+    <button class="btn-primary w-full">Simpan Jadwal</button>
   </form>
 
   <section>
-    <h2 class="font-semibold mb-2">📋 Jadwal Anda:</h2>
-    <ul id="jadwalList" class="space-y-2 text-sm"></ul>
+    <h2 class="font-semibold mb-2 text-base">📋 Jadwal Anda:</h2>
+    <ul id="jadwalList" class="space-y-2 text-sm text-gray-700"></ul>
   </section>
 </main>
 
+<!-- Footer -->
+<footer class="footer-dark mt-12">
+  <div class="flex items-center gap-3">
+    <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+    <span class="font-bold text-2xl">Fisio Kita</span>
+  </div>
+  <p class="footer-muted">Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.</p>
+
+  <div>
+    <h3 class="footer-heading">Navigasi</h3>
+    <div class="grid grid-cols-2 gap-3">
+      <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
+      <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
+      <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
+      <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+    </div>
+  </div>
+
+  <div>
+    <h3 class="footer-heading">Kontak Admin</h3>
+    <ul class="footer-muted space-y-1 text-sm">
+      <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+      <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+    </ul>
+  </div>
+
+  <p class="footer-copy">© 2025 FisioKita. Semua hak dilindungi undang-undang.</p>
+</footer>
+
+<!-- Firebase & Logic -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -72,7 +99,7 @@
       currentEmail = user.email;
       tampilkanJadwal();
     } else {
-      window.location.href = "login.html";
+      window.location.href = "../login.html";
     }
   });
 

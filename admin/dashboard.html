@@ -4,89 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Terapis - FisioKita</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="bg-[#1D4ED8] text-white px-4 py-3 flex justify-between items-center shadow">
-    <h1 class="text-lg font-semibold">Dashboard Terapis</h1>
-    <button id="logoutBtn" class="bg-white text-[#1D4ED8] text-sm font-medium px-3 py-1 rounded hover:bg-gray-100 transition">
-      Logout
-    </button>
+  <header class="header-main">
+    <h1 class="text-white text-lg font-semibold">Dashboard Terapis</h1>
+    <button id="logoutBtn" class="btn-white text-sm">Logout</button>
   </header>
 
   <!-- Main -->
-  <main class="flex-1 p-6 max-w-md mx-auto w-full">
+  <main class="flex-1 max-w-md w-full mx-auto px-4 py-6">
     <div class="text-center mb-6">
       <h2 class="text-xl font-semibold mb-2">Halo, <span id="terapisNama" class="underline">...</span></h2>
-      <p class="text-sm text-gray-600">Silakan pilih menu layanan:</p>
+      <p class="text-paragraf">Silakan pilih menu layanan di bawah ini:</p>
     </div>
 
-    <!-- Pilih Status -->
-    <div class="bg-white text-black p-4 rounded shadow mb-4">
-      <label class="block font-medium mb-1">Status Online:</label>
-      <select id="statusSelect" class="w-full border px-3 py-2 rounded">
+    <!-- Status Terapis -->
+    <section class="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow">
+      <label class="block font-medium mb-2">Status Online:</label>
+      <select id="statusSelect" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
         <option value="tersedia">Tersedia</option>
         <option value="tidak">Tidak Tersedia</option>
       </select>
-    </div>
+    </section>
 
-    <!-- Menu -->
-    <div class="space-y-4">
-      <a href="chat-aktif.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+    <!-- Menu Navigasi -->
+    <section class="space-y-4">
+      <a href="chat-aktif.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">💬 Chat Aktif</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
-      <a href="riwayat-chat.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+      <a href="riwayat-chat.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">📁 Riwayat Konsultasi</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
-      <a href="jadwal.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+      <a href="jadwal.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">🗓️ Jadwal Terapis</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
-      <a href="konsultasi-offline.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+      <a href="konsultasi-offline.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">🏠 Permintaan Home Visit</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
-      <a href="pengaturan.html" class="block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+      <a href="pengaturan.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">⚙️ Pengaturan Akun</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
-      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block w-full bg-white shadow rounded-lg px-5 py-4 hover:bg-[#DBEAFE] transition">
+      <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">👨‍⚕️ Tambah Terapis Baru</span>
           <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
-    </div>
+    </section>
   </main>
 
-  <!-- Firebase Auth & Firestore -->
+  <!-- Firebase Logic -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",

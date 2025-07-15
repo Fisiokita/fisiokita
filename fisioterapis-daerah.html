@@ -10,12 +10,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-black min-h-screen flex flex-col">
 
   <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
@@ -33,16 +31,18 @@
 
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
     <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden"></p>
+
     <div id="rekomendasi-terdekat" class="hidden mt-8 space-y-4">
-      <h3 class="text-sm font-semibold text-center text-gray-600 mb-2"> Rekomendasi Terapis Terdekat:</h3>
+      <h3 class="text-sm font-semibold text-center text-gray-600 mb-2">Rekomendasi Terapis Terdekat:</h3>
     </div>
+
     <!-- Tombol kembali -->
-      <div class="mt-10 text-center">
-        <a href="konsultasi-offline.html" class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
-          Kembali
-        </a>
-      </div>
-    </main>
+    <div class="mt-10 text-center">
+      <a href="konsultasi-offline.html" class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+        Kembali
+      </a>
+    </div>
+  </main>
 
   <!-- Footer -->
   <footer class="bg-[#141C2F] text-white mt-20 text-base">
@@ -51,9 +51,7 @@
         <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
         <span class="font-bold text-xl">Fisio Kita</span>
       </div>
-      <p class="text-white/90 leading-relaxed">
-        Temukan fisioterapis terbaik sesuai lokasi Anda dan jadwalkan konsultasi dengan mudah.
-      </p>
+      <p class="text-white/90 leading-relaxed">Temukan fisioterapis terbaik sesuai lokasi Anda dan jadwalkan konsultasi dengan mudah.</p>
       <div>
         <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
         <div class="grid grid-cols-2 gap-4">
@@ -71,21 +69,13 @@
           <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
         </ul>
       </div>
-      <div>
-        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-        <ul class="text-white/90 space-y-1">
-          <li>Senin – Jumat: 08.00 – 18.00</li>
-          <li>Sabtu: 08.00 – 16.00</li>
-          <li>Minggu: Tutup</li>
-        </ul>
-      </div>
       <p class="text-center text-sm text-white/50 pt-8">
         © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
       </p>
     </div>
   </footer>
 
-  <!-- Firebase Logic -->
+  <!-- Firebase Script -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -123,69 +113,85 @@
       }
     });
 
-    // Ambil terapis di lokasi yang dipilih
+    // Tampilkan daftar terapis berdasarkan kabupaten dan provinsi
     db.collection("terapis")
       .where("provinsi", "==", prov)
       .where("kabupaten", "==", kab)
       .get()
-      .then(snapshot => {
+      .then(async snapshot => {
         container.innerHTML = "";
         if (snapshot.empty) {
           tidakAda.classList.remove("hidden");
-          tidakAda.textContent = " Tidak ada fisioterapis tersedia di wilayah ini.";
+          tidakAda.textContent = "Tidak ada fisioterapis tersedia di wilayah ini.";
 
-          // Cari rekomendasi terapis di provinsi yang sama
-          db.collection("terapis")
-            .where("provinsi", "==", prov)
-            .limit(3)
-            .get()
-            .then(res => {
-              if (!res.empty) {
-                rekomendasi.classList.remove("hidden");
-                res.forEach(doc => {
-                  const t = doc.data();
-                  const card = document.createElement("div");
-                  card.className = "bg-white p-4 rounded-xl shadow border text-sm text-[#1E2A44]";
-                  card.innerHTML = `
-                    <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
-                    <p class="text-[#2970F2] font-medium mb-1">${t.spesialis || 'Umum'}</p>
-                    <p class="mb-1">🗓️ Jadwal: ${t.jadwal || '-'}</p>
-                    <p class="mb-3">📍 ${t.kabupaten}, ${t.provinsi}</p>
-                    <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(t.provinsi)}&kab=${encodeURIComponent(t.kabupaten)}"
-                      class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
-                      Lihat Terapis
-                    </a>
-                  `;
-                  rekomendasi.appendChild(card);
-                });
+          // Tampilkan rekomendasi di provinsi yang sama
+          const rekom = await db.collection("terapis").where("provinsi", "==", prov).limit(3).get();
+          if (!rekom.empty) {
+            rekomendasi.classList.remove("hidden");
+            for (const doc of rekom.docs) {
+              const t = doc.data();
+              const email = doc.id;
+
+              let jadwalText = "-";
+              const jadwalDoc = await db.collection("jadwal").doc(email).get();
+              if (jadwalDoc.exists) {
+                const data = jadwalDoc.data();
+                const urutanHari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+                jadwalText = urutanHari.filter(h => data[h]).map(h => `${h}: ${data[h]}`).join("<br>") || "-";
               }
-            });
+
+              const card = document.createElement("div");
+              card.className = "bg-white p-4 rounded-xl shadow border text-sm text-[#1E2A44]";
+              card.innerHTML = `
+                <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+                <p class="text-[#2970F2] font-medium mb-1">${t.spesialis || 'Umum'}</p>
+                <p class="mb-1">🗓️ Jadwal:<br>${jadwalText}</p>
+                <p class="mb-3">📍 ${t.kabupaten}, ${t.provinsi}</p>
+                <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(email)}&prov=${encodeURIComponent(t.provinsi)}&kab=${encodeURIComponent(t.kabupaten)}"
+                  class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
+                  Lihat Terapis
+                </a>
+              `;
+              rekomendasi.appendChild(card);
+            }
+          }
 
           return;
         }
 
         container.classList.remove("hidden");
-        snapshot.forEach(doc => {
+
+        for (const doc of snapshot.docs) {
           const t = doc.data();
+          const email = doc.id;
+
+          let jadwalText = "-";
+          const jadwalDoc = await db.collection("jadwal").doc(email).get();
+          if (jadwalDoc.exists) {
+            const data = jadwalDoc.data();
+            const urutanHari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+            jadwalText = urutanHari.filter(h => data[h]).map(h => `${h}: ${data[h]}`).join("<br>") || "-";
+          }
+
           const html = `
             <article class="bg-white rounded-xl p-5 shadow-md text-sm text-[#1E2A44]">
               <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
               <p class="text-[#2970F2] font-medium mb-1">${t.spesialis}</p>
-              <p class="mb-1">🗓️ Jadwal: ${t.jadwal || '-'}</p>
+              <p class="mb-1">🗓️ Jadwal:<br>${jadwalText}</p>
               <p class="mb-3">📍 ${t.kabupaten}, ${t.provinsi}</p>
-              <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
+              <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(email)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
                  class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
                 Jadwalkan Konsultasi
               </a>
             </article>
           `;
           container.innerHTML += html;
-        });
+        }
       })
       .catch(err => {
         console.error("Gagal memuat:", err);
         tidakAda.classList.remove("hidden");
-        tidakAda.textContent = " Terjadi kesalahan saat memuat data.";
+        tidakAda.textContent = "Terjadi kesalahan saat memuat data.";
       });
   </script>
 </body>

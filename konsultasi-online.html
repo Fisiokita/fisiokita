@@ -108,7 +108,7 @@
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
     projectId: "fisiosehat-af9f1"
   };
-  firebase.initializeApp(firebaseConfig);
+  
  
 
   const auth = firebase.auth();
@@ -135,6 +135,7 @@
         el.onclick = () => window.location.href = "login.html";
       }
     });
+  firebase.initializeApp(firebaseConfig);
   
    
 

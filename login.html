@@ -4,173 +4,78 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login / Daftar - FisioKita</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #4B6CC1;
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-    .card {
-      background-color: white;
-      color: black;
-      border-radius: 1rem;
-      padding: 2rem;
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .tabs button {
-      font-weight: 600;
-      font-size: 0.9rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    .tabs .active {
-      color: #4B6CC1;
-      text-decoration: underline;
-    }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      margin-bottom: 0.3rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.9rem;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-    }
-    .btn-primary {
-      background-color: #4B6CC1;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      width: 100%;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-primary:hover {
-      background-color: #3a57b0;
-    }
-    .btn-outline {
-      background: none;
-      border: 1px solid #ccc;
-      padding: 0.5rem 1rem;
-      width: 100%;
-      text-align: center;
-      border-radius: 0.5rem;
-      font-size: 0.9rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-    .divider {
-      text-align: center;
-      font-size: 0.8rem;
-      margin-top: 1rem;
-      color: #666;
-    }
-    #pesan {
-      color: red;
-      font-size: 0.85rem;
-      text-align: center;
-      margin-top: 0.5rem;
-    }
+    body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body>
+<body class="bg-gradient-to-b from-[#7F3CE0] to-[#4B6CC1] min-h-screen flex items-center justify-center px-4">
 
-  <main class="card">
-    <h1 class="text-center" style="color: #4B6CC1; font-size: 1.5rem; font-weight: bold;">FisioKita</h1>
+  <main class="bg-white text-black rounded-2xl shadow-xl w-full max-w-md px-6 py-8 space-y-6">
+    <div class="text-center">
+      <img src="img/logo.png" alt="Logo" class="mx-auto w-10 h-10 mb-2" />
+      <h1 class="text-2xl font-bold text-[#4B6CC1]">FisioKita</h1>
+    </div>
 
     <!-- Tabs -->
-    <div class="tabs">
-      <button id="btnLoginTab" class="active">Login</button>
-      <button id="btnRegisterTab">Register</button>
+    <div class="flex justify-center gap-6 text-sm font-semibold">
+      <button id="btnLoginTab" class="text-[#4B6CC1] underline">Login</button>
+      <button id="btnRegisterTab" class="text-gray-400">Register</button>
     </div>
 
     <!-- Login Form -->
-    <form id="loginForm">
-      <div class="form-group">
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" required />
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input type="email" id="loginEmail" class="w-full border rounded-lg px-4 py-2 text-sm" required />
       </div>
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" required />
+      <div>
+        <label class="block text-sm font-medium mb-1">Password</label>
+        <input type="password" id="loginPassword" class="w-full border rounded-lg px-4 py-2 text-sm" required />
       </div>
-      <button type="submit" class="btn-primary">Masuk</button>
+      <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
+        Masuk
+      </button>
     </form>
 
     <!-- Register Form -->
-    <form id="registerForm" class="hidden">
-      <div class="form-group">
-        <label>Nama Lengkap</label>
-        <input type="text" id="regNama" required />
-      </div>
-      <div class="form-group">
-        <label>No. HP</label>
-        <input type="tel" id="regHP" required />
-      </div>
-      <div class="form-group">
-        <label>Tanggal Lahir</label>
-        <input type="date" id="regTanggalLahir" required />
-      </div>
-      <div class="form-group">
-        <label>Jenis Kelamin</label>
-        <select id="regGender" required>
-          <option value="">Pilih</option>
-          <option value="Laki-laki">Laki-laki</option>
-          <option value="Perempuan">Perempuan</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Provinsi</label>
-        <select id="regProvinsi" required></select>
-      </div>
-      <div class="form-group">
-        <label>Kabupaten/Kota</label>
-        <select id="regKabupaten" required></select>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="registerEmail" required />
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="registerPassword" required />
-      </div>
-      <button type="submit" class="btn-primary">Daftar</button>
+    <form id="registerForm" class="space-y-4 hidden">
+      <input type="text" id="regNama" placeholder="Nama Lengkap" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      <input type="tel" id="regHP" placeholder="Nomor HP" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      <input type="date" id="regTanggalLahir" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      <select id="regGender" class="w-full border rounded-lg px-4 py-2 text-sm" required>
+        <option value="">Jenis Kelamin</option>
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+      </select>
+      <select id="regProvinsi" class="w-full border rounded-lg px-4 py-2 text-sm" required></select>
+      <select id="regKabupaten" class="w-full border rounded-lg px-4 py-2 text-sm" required></select>
+      <input type="email" id="registerEmail" placeholder="Email" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      <input type="password" id="registerPassword" placeholder="Password" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
+        Daftar
+      </button>
     </form>
 
-    <div class="divider">atau</div>
+    <div class="text-center text-sm text-gray-500">atau</div>
 
-    <button id="googleLoginBtn" class="btn-outline">Masuk dengan Google</button>
+    <!-- Google Button -->
+    <button id="googleLoginBtn"
+      class="w-full border border-gray-300 text-sm py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-100 transition">
+      <img src="https://img.icons8.com/color/16/000000/google-logo.png" />
+      Login dengan Google
+    </button>
 
-    <a href="index.html" class="btn-outline">Kembali ke Beranda</a>
+    <a href="index.html"
+      class="block w-full text-center mt-4 text-sm text-[#4B6CC1] font-semibold underline hover:text-[#3a57b0] transition">
+      Kembali ke Beranda
+    </a>
 
-    <p id="pesan"></p>
+    <p id="pesan" class="text-center text-sm text-red-600 mt-2"></p>
   </main>
 
   <script>
@@ -192,15 +97,15 @@
     btnLoginTab.onclick = () => {
       loginForm.classList.remove("hidden");
       registerForm.classList.add("hidden");
-      btnLoginTab.classList.add("active");
-      btnRegisterTab.classList.remove("active");
+      btnLoginTab.classList.add("text-[#4B6CC1]", "underline");
+      btnRegisterTab.classList.remove("text-[#4B6CC1]", "underline");
       pesan.textContent = "";
     };
     btnRegisterTab.onclick = () => {
       registerForm.classList.remove("hidden");
       loginForm.classList.add("hidden");
-      btnRegisterTab.classList.add("active");
-      btnLoginTab.classList.remove("active");
+      btnRegisterTab.classList.add("text-[#4B6CC1]", "underline");
+      btnLoginTab.classList.remove("text-[#4B6CC1]", "underline");
       pesan.textContent = "";
     };
 

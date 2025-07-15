@@ -103,6 +103,13 @@
   <!-- Script -->
 
 <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1"
+  };
+  firebase.initializeApp(firebaseConfig);
+ 
 
   const auth = firebase.auth();
     const db = firebase.firestore();
@@ -129,13 +136,7 @@
       }
     });
   
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  
+   
 
   const daftarTerapis = document.getElementById("daftarTerapis");
   const langsungBtn = document.getElementById("langsungMulaiBtn");

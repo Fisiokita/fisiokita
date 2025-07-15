@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Edukasi Nyeri Punggung - Fisio Kita</title>
+  <title>Nyeri Punggung - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -23,9 +19,9 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
@@ -35,133 +31,136 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Mengatasi dan Mencegah Nyeri Punggung</h1>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Mengatasi & Mencegah Nyeri Punggung</h1>
 
-    <div class="space-y-8 text-black">
-      <!-- Artikel -->
-      <article class="bg-white rounded-lg p-6 shadow-md">
-        
+    <article class="bg-white p-6 rounded-xl shadow-md text-sm leading-relaxed space-y-5 border border-gray-200">
 
-        <h3 class="font-semibold mb-1"> Apa Itu Nyeri Punggung?</h3>
-        <p class="text-sm leading-relaxed mb-3">
-          Nyeri punggung adalah keluhan umum yang dirasakan di bagian belakang tubuh, terutama di daerah pinggang (<i>low back pain</i>). Bisa bersifat ringan atau berat, sementara atau kronis.
-        </p>
+      <div>
+        <h2 class="font-semibold mb-1">Apa Itu Nyeri Punggung?</h2>
+        <p>Nyeri punggung adalah keluhan umum di bagian belakang tubuh, terutama pinggang (low back pain). Bisa ringan atau berat, sementara atau kronis.</p>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Penyebab Umum Nyeri Punggung:</h3>
-        <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-          <li>Postur duduk yang salah.</li>
-          <li>Mengangkat beban berat tanpa teknik yang benar.</li>
-          <li>Kurang aktivitas fisik atau terlalu lama duduk.</li>
-          <li>Stres dan ketegangan otot.</li>
-          <li>Cedera atau gangguan pada tulang belakang.</li>
+      <div>
+        <h2 class="font-semibold mb-1">Penyebab Umum:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Postur duduk yang salah</li>
+          <li>Angkat beban tanpa teknik benar</li>
+          <li>Kurang aktivitas fisik / duduk lama</li>
+          <li>Stres dan ketegangan otot</li>
+          <li>Cedera atau gangguan tulang belakang</li>
         </ul>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Cara Mengatasi Nyeri Punggung:</h3>
-        <ul class="list-decimal text-sm pl-5 space-y-1 mb-3">
-          <li>Istirahat secukupnya, hindari berbaring terlalu lama.</li>
-          <li>Kompres hangat/dingin.</li>
-          <li>Peregangan ringan sesuai anjuran fisioterapis.</li>
-          <li>Perhatikan postur tubuh saat duduk/berdiri.</li>
-          <li>Konsultasikan ke fisioterapis.</li>
-        </ul>
+      <div>
+        <h2 class="font-semibold mb-1">Cara Mengatasi Nyeri:</h2>
+        <ol class="list-decimal pl-5 space-y-1">
+          <li>Istirahat secukupnya</li>
+          <li>Kompres hangat/dingin</li>
+          <li>Peregangan ringan (dengan arahan fisioterapis)</li>
+          <li>Perbaiki postur duduk & berdiri</li>
+          <li>Konsultasi ke fisioterapis</li>
+        </ol>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Latihan Ringan untuk Meredakan Nyeri:</h3>
-        <p class="text-sm italic mb-2"> Lakukan perlahan, hentikan jika nyeri bertambah</p>
-        <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
+      <div>
+        <h2 class="font-semibold mb-1">Latihan Ringan:</h2>
+        <p class="italic mb-2">Lakukan perlahan dan hentikan jika nyeri meningkat.</p>
+        <ul class="list-disc pl-5 space-y-1">
           <li>Pelvic tilt</li>
           <li>Child’s pose</li>
           <li>Knee-to-chest stretch</li>
           <li>Cat-cow stretch</li>
         </ul>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Tips Mencegah Nyeri Kembali:</h3>
-        <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-          <li>Gunakan kursi ergonomis saat bekerja.</li>
-          <li>Lakukan peregangan tiap 30–60 menit.</li>
-          <li>Angkat beban dengan tekuk lutut, bukan pinggang.</li>
-          <li>Posisi tidur netral.</li>
-          <li>Jaga berat badan ideal.</li>
+      <div>
+        <h2 class="font-semibold mb-1">Pencegahan:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Gunakan kursi ergonomis</li>
+          <li>Peregangan setiap 30–60 menit</li>
+          <li>Angkat beban dengan lutut (bukan pinggang)</li>
+          <li>Jaga posisi tidur netral</li>
+          <li>Jaga berat badan ideal</li>
         </ul>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Kapan ke Fisioterapis?</h3>
-        <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-          <li>Nyeri tidak membaik dalam 3–7 hari.</li>
-          <li>Mati rasa/nyeri menjalar ke kaki.</li>
-          <li>Sulit bergerak normal.</li>
+      <div>
+        <h2 class="font-semibold mb-1">Kapan ke Fisioterapis?</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Nyeri tidak membaik 3–7 hari</li>
+          <li>Nyeri menjalar ke kaki / mati rasa</li>
+          <li>Kesulitan bergerak normal</li>
         </ul>
+      </div>
 
-        <h3 class="font-semibold mb-1"> Layanan FisioKita:</h3>
-        <ul class="list-disc text-sm pl-5 space-y-1">
-          <li> Konsultasi Online</li>
-          <li> Kunjungan Home Visit</li>
-          <li> Evaluasi & Program Latihan Personal</li>
-          <li> Edukasi & Latihan Mandiri</li>
+      <div>
+        <h2 class="font-semibold mb-1">Layanan FisioKita:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Konsultasi Online</li>
+          <li>Kunjungan Home Visit</li>
+          <li>Evaluasi & Latihan Personal</li>
+          <li>Edukasi & Latihan Mandiri</li>
         </ul>
-      </article>
-    </div>
+      </div>
+    </article>
 
-    <!-- Tombol kembali -->
-    <div class="mt-8 text-center">
-      <a href="../index.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+    <div class="mt-10 text-center">
+      <a href="../edukasi.html" class="inline-block bg-[#2970F2] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali ke Edukasi
       </a>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white mt-20 text-base">
-  <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
 
-    <!-- Logo dan Deskripsi -->
-    <div class="flex items-center gap-3">
-      <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
-    </p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="../index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="../edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="../akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
-    </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
 
-    <!-- Kontak -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-      <ul class="space-y-2 text-white/90">
-        <li>📞 <a href="https://wa.me/6285179792319" >0851-7979-2319</a></li>
-        <li>  📧 <a href="mailto:fisiokita.cs@gmail.com" >fisiokita.cs@gmail.com</a></li>
-        <li>📍 Jl. Soekarno Hatta No.11, Manggis Ganting, Bukittinggi</li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="../index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="../edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="../akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
+        </div>
+      </div>
 
-    <!-- Jam Operasional -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-      <ul class="text-white/90 space-y-1">
-        <li>Senin – Jumat: 08.00 – 18.00</li>
-        <li>Sabtu: 08.00 – 16.00</li>
-        <li>Minggu: Tutup</li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
 
-    <!-- Copyright -->
-    <p class="text-center text-sm text-white/50 pt-8">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 text-sm space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Login State -->
   <script>
-  const auth = firebase.auth();
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     auth.onAuthStateChanged(async (user) => {
@@ -175,7 +174,7 @@
           const namaDepan = nama.split(" ")[0];
           el.textContent = namaDepan;
           el.onclick = () => window.location.href = "../akun.html";
-        } catch (err) {
+        } catch {
           el.textContent = "Pengguna";
           el.onclick = () => window.location.href = "../akun.html";
         }

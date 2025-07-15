@@ -103,7 +103,7 @@
 
     <!-- Tombol kembali -->
     <div class="mt-8 text-center">
-      <a href="index.html"
+      <a href="../index.html"
          class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
         Kembali
       </a>
@@ -127,10 +127,10 @@
     <div>
       <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
       <div class="grid grid-cols-2 gap-4">
-        <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        <a href="../index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+        <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+        <a href="../edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+        <a href="../akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
       </div>
     </div>
 
@@ -174,15 +174,15 @@
           const nama = doc.exists ? doc.data().nama : user.email;
           const namaDepan = nama.split(" ")[0];
           el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
+          el.onclick = () => window.location.href = "../akun.html";
         } catch (err) {
           el.textContent = "Pengguna";
-          el.onclick = () => window.location.href = "akun.html";
+          el.onclick = () => window.location.href = "../akun.html";
         }
       } else {
         el.textContent = "Masuk";
         el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
+        el.onclick = () => window.location.href = "../login.html";
       }
     });
   </script>

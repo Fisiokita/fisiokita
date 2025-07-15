@@ -1,53 +1,170 @@
-/* Tema FisioKita - Warna aman tanpa timpa class tailwind */
+/* Font dasar & background */
 body {
-  background-color: #e6d3c7;
-  color: #1f1f1f;
   font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  color: #1E2A44;
+  min-height: 100vh;
 }
 
-/* Header */
-.tema-header {
-  background-color: #601EF9 !important;
-  color: white !important;
+/* --- TYPOGRAPHY --- */
+
+.heading-title {
+  font-size: 1.5rem;         /* text-2xl */
+  font-weight: 700;          /* font-bold */
+  color: #1E2A44;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-/* Bubble chat dari admin */
-.tema-bubble-admin {
+.text-paragraf {
+  font-size: 0.875rem;       /* text-sm */
+  color: #4B5563;            /* text-gray-600 */
+  line-height: 1.625;
+}
+
+/* --- BUTTONS --- */
+
+.btn-primary {
+  display: inline-block;
+  background-color: #2970F2;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;       /* text-sm */
+  padding: 0.5rem 1.5rem;    /* py-2 px-6 */
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #1e56c3;
+}
+
+.btn-white {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #141C2F;
+  font-weight: 600;
+  font-size: 1rem;           /* text-base */
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-white:hover {
+  background-color: #f3f4f6;
+}
+
+/* --- NAVIGATION FOOTER BUTTONS --- */
+
+.nav-footer-btn {
   background-color: white;
-  color: black;
+  color: #141C2F;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s ease;
 }
 
-/* Bubble chat dari pasien */
-.tema-bubble-pasien {
-  background-color: #f472b6;
+.nav-footer-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* --- ARTIKEL CARD --- */
+
+.card-artikel {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* Ikon bulat */
+.icon-bulat {
+  width: 3rem;
+  height: 3rem;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 9999px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* --- HEADER --- */
+.header-main {
+  background: linear-gradient(to right, #7F3CE0, #4B6CC1);
   color: white;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Kotak luar chat atau box */
-.tema-box {
-  background-color: #fefefe;
-  color: #1f1f1f;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* Tombol kirim */
-.tema-kirim {
-  background-color: #601EF9;
+/* --- HERO SECTION --- */
+.hero-section {
+  background: linear-gradient(to bottom, #7F3CE0, #4B6CC1);
   color: white;
-}
-.tema-kirim:hover {
-  background-color: #4e13cc;
-}
-
-/* Hover efek item */
-.tema-hover:hover {
-  background-color: #ede9fe;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
 }
 
-/* Sistem teks */
-.tema-teks-muted {
-  color: #666;
-  font-style: italic;
+.hero-section h1 {
+  font-size: 2.5rem;         /* text-5xl */
+  font-weight: 800;          /* font-extrabold */
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.hero-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 2rem;
+}
+
+/* --- FOOTER --- */
+.footer-dark {
+  background-color: #141C2F;
+  color: white;
+  font-size: 1rem;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.footer-muted {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+.footer-heading {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.footer-copy {
+  text-align: center;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding-top: 2rem;
 }

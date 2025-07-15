@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Postur Tubuh - Fisio Kita</title>
+  <title>Edukasi Kesehatan - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -23,166 +23,166 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
-      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
       <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
     </div>
     <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
   </header>
 
   <!-- Main -->
-  <!-- EDUKASI KESEHATAN -->
-<section class="bg-white py-10 px-6">
-  <div class="max-w-md mx-auto">
-    <h2 class="text-2xl font-bold text-[#1E2A44] text-center mb-6">Edukasi Kesehatan</h2>
-    
-    <div class="space-y-6">
-      <!-- Artikel 1 -->
-      <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start mb-6 border">
-      <div class="w-12 h-12 min-w-[48px] min-h-[48px] bg-[#E0E7FF] rounded-full flex items-center justify-center overflow-hidden">
-        <img src="img/icon-1.png" class="w-12 h-12 object-contain" />
+  <main class="flex-grow bg-white py-10 px-6">
+    <div class="max-w-md mx-auto">
+      <h2 class="text-2xl font-bold text-center mb-6">Edukasi Kesehatan</h2>
+
+      <!-- Artikel Edukasi -->
+      <div class="space-y-6">
+
+        <!-- Artikel 1 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#E0E7FF] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-1.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Latihan untuk Nyeri Punggung</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Latihan ringan seperti cat-cow & child’s pose bantu kurangi nyeri punggung bawah akibat posisi duduk yang salah.
+            </p>
+            <a href="artikel/artikel-1.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
+
+        <!-- Artikel 2 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#E0E7FF] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-2.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Postur Tubuh yang Benar</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Jaga postur duduk dan berdiri untuk cegah nyeri leher & punggung. Gunakan kursi ergonomis & posisi layar sejajar mata.
+            </p>
+            <a href="artikel/artikel-2.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
+
+        <!-- Artikel 3 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#FEF3C7] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-3.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Rehabilitasi Cedera</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Terapi pasca cedera bertujuan kembalikan fungsi dan mobilitas. Dimulai dari istirahat hingga penguatan bertahap.
+            </p>
+            <a href="artikel/artikel-3.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
+
+        <!-- Artikel 4 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#DBEAFE] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-4.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Fisioterapi Neurologi</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Untuk pasien stroke, Parkinson, cedera otak. Membantu koordinasi, keseimbangan, dan kontrol motorik.
+            </p>
+            <a href="artikel/artikel-4.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
+
+        <!-- Artikel 5 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#E0E7FF] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-5.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Fisioterapi Anak</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Membantu perkembangan motorik anak melalui terapi bermain. Efektif untuk anak berkebutuhan khusus.
+            </p>
+            <a href="artikel/artikel-5.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
+
+        <!-- Artikel 6 -->
+        <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start border">
+          <div class="w-12 h-12 min-w-[48px] bg-[#FCE7F3] rounded-full flex items-center justify-center overflow-hidden">
+            <img src="img/icon-6.png" class="w-10 h-10 object-contain" />
+          </div>
+          <div>
+            <h3 class="font-semibold text-base mb-1">Terapi di Rumah</h3>
+            <p class="text-sm text-gray-600 mb-2 leading-relaxed">
+              Layanan home visit untuk pasien lansia, pasca operasi, atau keterbatasan mobilitas. Nyaman & personal.
+            </p>
+            <a href="artikel/artikel-6.html" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+          </div>
+        </article>
       </div>
-      
-        <div>
-          <h3 class="font-semibold text-base text-[#1E2A44] mb-1">Latihan untuk Nyeri Punggung</h2>
-          <p class="text-sm text-gray-600 mb-2 leading-relaxed">
-            Nyeri punggung bawah sering terjadi akibat posisi duduk yang salah atau kurangnya aktivitas fisik. Latihan peregangan ringan seperti knee-to-chest stretch, cat-cow, dan child’s pose dapat membantu mengurangi ketegangan otot dan meningkatkan fleksibilitas.
-          </p>
-          <a href="artikel/artikel-1.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
 
-      <!-- Artikel 2 -->
-      <article class="card-artikel">
-        <div>
-          <h2 class="font-semibold text-base mb-2">Postur Tubuh yang Benar</h2>
-          <p class="text-paragraf">
-            Menjaga postur tubuh saat duduk, berdiri, dan tidur sangat penting untuk mencegah nyeri punggung dan leher. Gunakan kursi dengan sandaran punggung yang baik dan pastikan layar sejajar dengan mata.
-          </p>
-          <a href="artikel/artikel-2.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
-
-      <!-- Artikel 3 -->
-      <article class="card-artikel">
-        <div>
-          <h2 class="font-semibold text-base mb-2">Rehabilitasi Cedera</h2>
-          <p class="text-paragraf">
-            Rehabilitasi pasca cedera bertujuan mengembalikan fungsi, kekuatan, dan mobilitas. Terapi diawali dengan istirahat lalu penguatan bertahap sesuai jenis cedera.
-          </p>
-          <a href="artikel/artikel-3.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
-
-      <!-- Artikel 4 -->
-      <article class="card-artikel">
-        <div>
-          <h2 class="font-semibold text-base mb-2">Fisioterapi Neurologi</h2>
-          <p class="text-paragraf">
-            Fisioterapi neurologi ditujukan untuk pasien stroke, Parkinson, atau cedera otak agar meningkatkan keseimbangan dan koordinasi.
-          </p>
-          <a href="artikel/artikel-4.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
-
-      <!-- Artikel 5 -->
-      <article class="card-artikel">
-        <div>
-          <h2 class="font-semibold text-base mb-2">Fisioterapi Anak</h2>
-          <p class="text-paragraf">
-            Untuk mendukung tumbuh kembang anak, terapi diberikan secara menyenangkan dan aman, terutama bagi anak dengan keterlambatan motorik atau postural.
-          </p>
-          <a href="artikel/artikel-5.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
-
-      <!-- Artikel 6 -->
-      <article class="card-artikel">
-        <div>
-          <h2 class="font-semibold text-base mb-2">Terapi di Rumah</h2>
-          <p class="text-paragraf">
-            Layanan home visit membantu pasien mendapatkan terapi langsung di rumah. Ideal untuk lansia, pasien pascaoperasi, atau sulit mobilisasi.
-          </p>
-          <a href="artikel/artikel-6.html" class="text-[#2970F2] text-sm font-medium hover:underline">
-          Baca Selengkapnya →
-          </a>
-        </div>
-      </article>
-    </div>
-
-    <!-- Tombol kembali -->
-    <div class="mt-10 text-center">
-      <a href="index.html" class="btn-primary">← Kembali ke Beranda</a>
+      <!-- Tombol Kembali -->
+      <div class="mt-10 text-center">
+        <a href="index.html" class="inline-block bg-[#2970F2] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1e4bb8] transition shadow">
+          ← Kembali ke Beranda
+        </a>
+      </div>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white mt-20 text-base">
-  <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
 
-    <!-- Logo dan Deskripsi -->
-    <div class="flex items-center gap-3">
-      <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
-    </p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
-    </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
 
-    <!-- Kontak -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-      <ul class="space-y-2 text-white/90">
-        <li>📞 <a href="https://wa.me/6285179792319" >0851-7979-2319</a></li>
-        <li>  📧 <a href="mailto:fisiokita.cs@gmail.com" >fisiokita.cs@gmail.com</a></li>
-        <li>📍 Jl. Soekarno Hatta No.11, Manggis Ganting, Bukittinggi</li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
+        </div>
+      </div>
 
-    <!-- Jam Operasional -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-      <ul class="text-white/90 space-y-1">
-        <li>Senin – Jumat: 08.00 – 18.00</li>
-        <li>Sabtu: 08.00 – 16.00</li>
-        <li>Minggu: Tutup</li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
 
-    <!-- Copyright -->
-    <p class="text-center text-sm text-white/50 pt-8">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
-  
-<script>
-  const auth = firebase.auth();
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <p class="text-center text-sm text-white/50 pt-8">© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
+    </div>
+  </footer>
+
+  <!-- Login Status -->
+  <script>
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     auth.onAuthStateChanged(async (user) => {
@@ -196,7 +196,7 @@
           const namaDepan = nama.split(" ")[0];
           el.textContent = namaDepan;
           el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
+        } catch {
           el.textContent = "Pengguna";
           el.onclick = () => window.location.href = "akun.html";
         }
@@ -206,6 +206,6 @@
         el.onclick = () => window.location.href = "login.html";
       }
     });
-</script>
+  </script>
 </body>
 </html>

@@ -24,17 +24,27 @@
 
   <!-- Main -->
   <main class="flex-grow px-6 pt-10 pb-16 max-w-md mx-auto w-full">
-    <h1 class="text-2xl font-bold text-center mb-6">Pilih Fisioterapis</h1>
-    <div id="daftarTerapis" class="space-y-6">
-      <p class="text-center text-sm text-gray-500 italic">Memuat daftar terapis...</p>
-    </div>
+  <h1 class="text-2xl font-bold text-center mb-4">Pilih Fisioterapis</h1>
 
-    <div class="mt-10 text-center">
-      <a href="konsultasi-jenis.html"
-         class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
-        ← Kembali
-      </a>
-    </div>
+  <!-- Tombol Langsung Mulai -->
+  <div class="mb-8 text-center">
+    <button id="langsungMulaiBtn" class="bg-[#4B6CC1] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#3a57b0] transition">
+      🎯 Langsung Mulai Konsultasi
+    </button>
+    <p id="infoLangsung" class="text-sm text-center mt-2 text-gray-600 hidden">Mencari terapis terbaik untuk Anda...</p>
+  </div>
+
+  <!-- Daftar Terapis -->
+  <div id="daftarTerapis" class="space-y-6">
+    <p class="text-center text-sm text-gray-500 italic">Memuat daftar terapis...</p>
+  </div>
+
+  <div class="mt-10 text-center">
+    <a href="konsultasi-jenis.html"
+       class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+       Kembali
+    </a>
+  </div>
   </main>
 
   <!-- Popup Antrian -->
@@ -101,7 +111,10 @@
   const db = firebase.firestore();
 
   const daftarTerapis = document.getElementById("daftarTerapis");
+  const langsungBtn = document.getElementById("langsungMulaiBtn");
+  const infoLangsung = document.getElementById("infoLangsung");
 
+  // Fungsi popup
   function showQueuePopup() {
     document.getElementById("queuePopup").classList.remove("hidden");
   }
@@ -110,30 +123,35 @@
     document.getElementById("queuePopup").classList.add("hidden");
   }
 
+  // Tampilkan daftar terapis tersedia
+  let terapisTersedia = [];
+
   db.collection("terapis")
-    .where("status", "==", "tersedia") // ✅ hanya ambil yang tersedia
+    .where("status", "==", "tersedia")
     .get()
     .then(snapshot => {
       daftarTerapis.innerHTML = "";
+      terapisTersedia = [];
 
       if (snapshot.empty) {
         daftarTerapis.innerHTML = `
-          <p class="text-center text-gray-500 text-sm italic">Tidak ada terapis yang tersedia saat ini.</p>`;
+          <p class="text-center text-gray-500 text-sm italic">Terapis tidak tersedia saat ini.</p>`;
         return;
       }
 
       snapshot.forEach(doc => {
         const data = doc.data();
         const email = doc.id;
-        if (email === "fisiokita@gmail.com") return; // lewati sistem internal
+        if (email === "fisiokita@gmail.com") return;
 
-        const nama = data.nama || "Terapis";
+        terapisTersedia.push({ email, nama: data.nama });
+
+        const nama = data.nama || "Terapis Tanpa Nama";
         const spesialis = data.spesialis || "Umum";
         const deskripsi = data.deskripsi || "-";
 
         const item = document.createElement("article");
         item.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
-
         item.innerHTML = `
           <h3 class="font-semibold text-base mb-1">${nama}</h3>
           <p class="text-[#2970F2] font-medium mb-1">${spesialis}</p>
@@ -145,12 +163,25 @@
         `;
         daftarTerapis.appendChild(item);
       });
-    })
-    .catch(err => {
-      console.error("Gagal memuat data:", err);
-      daftarTerapis.innerHTML = `
-        <p class="text-sm text-center text-red-600">⚠️ Gagal memuat data. Silakan coba lagi.</p>`;
     });
+
+  // Langsung Mulai Konsultasi (acak)
+  langsungBtn.addEventListener("click", () => {
+    infoLangsung.classList.remove("hidden");
+
+    if (terapisTersedia.length === 0) {
+      alert("Terapis belum tersedia saat ini.");
+      infoLangsung.classList.add("hidden");
+      return;
+    }
+
+    // Pilih acak
+    const randomIndex = Math.floor(Math.random() * terapisTersedia.length);
+    const t = terapisTersedia[randomIndex];
+
+    // Redirect
+    window.location.href = `input-pasien.html?email=${encodeURIComponent(t.email)}&nama=${encodeURIComponent(t.nama)}`;
+  });
 </script>
 </body>
 </html>

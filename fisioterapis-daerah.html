@@ -14,11 +14,10 @@
       font-family: 'Inter', sans-serif;
     }
   </style>
-  
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
@@ -33,14 +32,15 @@
     <p id="lokasi" class="text-sm text-center text-gray-600 mb-6">Memuat lokasi...</p>
 
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
-    <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden">Tidak ada fisioterapis tersedia di wilayah ini.</p>
+    <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden"></p>
+    <div id="rekomendasi-terdekat" class="hidden mt-8 space-y-4">
+      <h3 class="text-sm font-semibold text-center text-gray-600 mb-2">💡 Rekomendasi Terapis Terdekat:</h3>
+    </div>
   </main>
 
   <!-- Footer -->
   <footer class="bg-[#141C2F] text-white mt-20 text-base">
     <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-      <!-- Logo dan Deskripsi -->
       <div class="flex items-center gap-3">
         <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
         <span class="font-bold text-xl">Fisio Kita</span>
@@ -48,19 +48,15 @@
       <p class="text-white/90 leading-relaxed">
         Temukan fisioterapis terbaik sesuai lokasi Anda dan jadwalkan konsultasi dengan mudah.
       </p>
-
-      <!-- Navigasi -->
       <div>
         <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
         <div class="grid grid-cols-2 gap-4">
-          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+          <a href="index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
         </div>
       </div>
-
-      <!-- Kontak -->
       <div>
         <h3 class="font-semibold text-lg mb-4">Kontak</h3>
         <ul class="space-y-2 text-white/90">
@@ -69,8 +65,6 @@
           <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
         </ul>
       </div>
-
-      <!-- Jam Operasional -->
       <div>
         <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
         <ul class="text-white/90 space-y-1">
@@ -79,15 +73,13 @@
           <li>Minggu: Tutup</li>
         </ul>
       </div>
-
-      <!-- Copyright -->
       <p class="text-center text-sm text-white/50 pt-8">
         © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
       </p>
     </div>
   </footer>
 
-  <!-- Firebase Config -->
+  <!-- Firebase Logic -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -96,68 +88,73 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-  </script>
+    const auth = firebase.auth();
 
-  <!-- Logic -->
-  <script>
-    // Konfigurasi Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const auth = firebase.auth();
-
-  // Ucapan Salam / Nama Pengguna di Header
-  auth.onAuthStateChanged(async (user) => {
-    const el = document.getElementById("userGreeting");
-    if (!el) return;
-
-    if (user) {
-      try {
-        const snap = await db.collection("users").doc(user.email).get();
-        const namaLengkap = snap.exists ? snap.data().nama : user.email;
-        const namaDepan = namaLengkap.split(" ")[0];
-
-        el.textContent = namaDepan;
-        el.classList.remove("underline");
-        el.classList.add("font-semibold", "hover:opacity-90", "cursor-pointer");
-        el.onclick = () => window.location.href = "akun.html";
-      } catch (err) {
-        console.error("Gagal mengambil nama:", err);
-        el.textContent = "Pengguna";
-        el.onclick = () => window.location.href = "akun.html";
-      }
-    } else {
-      el.textContent = "Masuk";
-      el.classList.remove("underline");
-      el.classList.add(
-        "bg-white", "text-[#4B6CC1]", "px-4", "py-2",
-        "rounded-full", "text-sm", "font-semibold",
-        "hover:bg-gray-100", "transition"
-      );
-      el.onclick = () => window.location.href = "login.html";
-    }
-    return;
-  });
-    
     const params = new URLSearchParams(window.location.search);
     const prov = params.get("prov");
     const kab = params.get("kab");
 
-    document.getElementById("lokasi").textContent = `${kab}, ${prov}`;
+    const lokasiEl = document.getElementById("lokasi");
     const container = document.getElementById("daftar-terapis");
     const tidakAda = document.getElementById("tidak-ada");
+    const rekomendasi = document.getElementById("rekomendasi-terdekat");
 
+    lokasiEl.textContent = `${kab}, ${prov}`;
+
+    auth.onAuthStateChanged(async user => {
+      const el = document.getElementById("userGreeting");
+      if (!el) return;
+      if (user) {
+        const snap = await db.collection("users").doc(user.email).get();
+        const nama = snap.exists ? snap.data().nama : user.email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "akun.html";
+        el.classList.add("font-semibold", "hover:opacity-90", "cursor-pointer");
+      } else {
+        el.textContent = "Masuk";
+        el.onclick = () => window.location.href = "login.html";
+        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+      }
+    });
+
+    // Ambil terapis di lokasi yang dipilih
     db.collection("terapis")
       .where("provinsi", "==", prov)
       .where("kabupaten", "==", kab)
       .get()
       .then(snapshot => {
+        container.innerHTML = "";
         if (snapshot.empty) {
           tidakAda.classList.remove("hidden");
+          tidakAda.textContent = "⚠️ Tidak ada fisioterapis tersedia di wilayah ini.";
+
+          // Cari rekomendasi terapis di provinsi yang sama
+          db.collection("terapis")
+            .where("provinsi", "==", prov)
+            .limit(3)
+            .get()
+            .then(res => {
+              if (!res.empty) {
+                rekomendasi.classList.remove("hidden");
+                res.forEach(doc => {
+                  const t = doc.data();
+                  const card = document.createElement("div");
+                  card.className = "bg-white p-4 rounded-xl shadow border text-sm text-[#1E2A44]";
+                  card.innerHTML = `
+                    <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+                    <p class="text-[#2970F2] font-medium mb-1">${t.spesialis || 'Umum'}</p>
+                    <p class="mb-1">🗓️ Jadwal: ${t.jadwal || '-'}</p>
+                    <p class="mb-3">📍 ${t.kabupaten}, ${t.provinsi}</p>
+                    <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(t.provinsi)}&kab=${encodeURIComponent(t.kabupaten)}"
+                      class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
+                      Lihat Terapis
+                    </a>
+                  `;
+                  rekomendasi.appendChild(card);
+                });
+              }
+            });
+
           return;
         }
 
@@ -169,7 +166,7 @@
               <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
               <p class="text-[#2970F2] font-medium mb-1">${t.spesialis}</p>
               <p class="mb-1">🗓️ Jadwal: ${t.jadwal || '-'}</p>
-              <p class="mb-3">📍 Lokasi praktik: ${t.kabupaten || '-'}, ${t.provinsi || '-'}</p>
+              <p class="mb-3">📍 ${t.kabupaten}, ${t.provinsi}</p>
               <a href="form-jadwal.html?nama=${encodeURIComponent(t.nama)}&email=${encodeURIComponent(doc.id)}&prov=${encodeURIComponent(prov)}&kab=${encodeURIComponent(kab)}"
                  class="block bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e40af] transition">
                 Jadwalkan Konsultasi
@@ -181,8 +178,8 @@
       })
       .catch(err => {
         console.error("Gagal memuat:", err);
-        tidakAda.textContent = "⚠️ Gagal memuat data. Silakan coba lagi.";
         tidakAda.classList.remove("hidden");
+        tidakAda.textContent = "⚠️ Terjadi kesalahan saat memuat data.";
       });
   </script>
 </body>

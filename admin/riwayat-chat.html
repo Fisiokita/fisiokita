@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Riwayat Chat - FisioKita</title>
+  <link rel="stylesheet" href="../css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -14,28 +15,31 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-sm min-h-screen flex flex-col">
+<body class="bg-[#f8fafc] text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
 <!-- Header -->
-<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex items-center justify-between">
-  <h1 class="text-lg font-semibold">📁 Riwayat Chat</h1>
-  <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+<header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow">
+  <h1 class="text-lg font-semibold">📁 Riwayat Konsultasi</h1>
+  <a href="dashboard.html" class="text-sm underline hover:text-gray-200">Kembali</a>
 </header>
 
 <!-- Main -->
-<main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
+<main class="flex-1 max-w-md w-full mx-auto px-4 py-6 space-y-6">
+
   <!-- Daftar Riwayat -->
-  <div>
-    <label class="block font-medium mb-1">Daftar Riwayat:</label>
-    <ul id="daftarRiwayat" class="space-y-2"></ul>
-  </div>
+  <section>
+    <h2 class="font-semibold text-base mb-2">👥 Sesi Selesai</h2>
+    <ul id="daftarRiwayat" class="space-y-2 text-sm"></ul>
+  </section>
 
   <!-- Chat Box -->
-  <div id="chatContainer" class="hidden">
-    <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow-inner border"></div>
-  </div>
+  <section id="chatContainer" class="hidden space-y-2">
+    <div id="chatBox" class="bg-white rounded-xl p-4 h-64 overflow-y-auto shadow-inner border space-y-2 text-sm"></div>
+  </section>
+
 </main>
 
+<!-- Firebase & Logic -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -80,19 +84,14 @@
         snapshot.forEach(doc => {
           const data = doc.data();
           const item = document.createElement("li");
-          item.className = "bg-white p-3 rounded shadow cursor-pointer hover:bg-blue-100 transition";
+          item.className = "bg-white p-3 rounded-xl border border-gray-200 shadow cursor-pointer hover:bg-[#DBEAFE] transition";
           item.innerHTML = `
-            <div class="font-semibold text-[#1D4ED8]">${data.namaPasien || "Pasien"}</div>
+            <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
             <div class="text-xs text-gray-500">${doc.id}</div>
           `;
-          item.addEventListener("click", () => {
-            bukaRiwayat(doc.id);
-          });
-
+          item.addEventListener("click", () => bukaRiwayat(doc.id));
           daftarRiwayat.appendChild(item);
         });
-      }, err => {
-        console.error("🔥 Gagal load riwayat:", err.message);
       });
   }
 
@@ -112,21 +111,23 @@
           const menit = waktu?.getMinutes().toString().padStart(2, "0");
           const isAdmin = data.dari === "Admin";
 
-          const div = document.createElement("div");
+          const bubble = document.createElement("div");
           if (isAdmin) {
-            div.className = "flex flex-col items-end max-w-[80%] ml-auto";
-            div.innerHTML = `
-              <div class="bg-gray-100 text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
+            bubble.className = "flex justify-end";
+            bubble.innerHTML = `
+              <div class="bg-white text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
                 ${data.pesan}
                 <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
               </div>`;
           } else {
-            div.className = "bg-[#DBEAFE] text-black text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
-            div.innerHTML = `${data.pesan}
-              <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>`;
+            bubble.className = "flex justify-start";
+            bubble.innerHTML = `
+              <div class="bg-[#DBEAFE] text-black text-sm rounded-xl rounded-tl-none px-3 py-2 shadow">
+                ${data.pesan}
+                <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>
+              </div>`;
           }
-
-          chatBox.appendChild(div);
+          chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
       });

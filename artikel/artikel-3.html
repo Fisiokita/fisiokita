@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Rehabilitas Cedera- Fisio Kita</title>
+  <title>Rehabilitasi Cedera - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -23,9 +19,9 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
@@ -35,126 +31,113 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Edukasi Kesehatan</h1>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Rehabilitasi Cedera: Kembali Aktif dengan Aman</h1>
 
-    <div class="space-y-8 text-black">
-      <!-- Artikel -->
-      <article class="bg-white rounded-lg p-6 shadow-md">
-  <h2 class="font-bold text-base mb-3"> Rehabilitasi Cedera: Kembali Aktif dengan Aman</h2>
+    <article class="bg-white p-6 rounded-xl shadow-md text-sm leading-relaxed space-y-5 border border-gray-200">
+      <p>Rehabilitasi cedera adalah proses pemulihan setelah tubuh mengalami kerusakan jaringan, baik akibat olahraga, kecelakaan, maupun aktivitas harian. Tujuannya: mengurangi nyeri, mengembalikan fungsi, dan mencegah cedera berulang.</p>
 
-  <p class="text-sm leading-relaxed mb-3">
-    Rehabilitasi cedera adalah proses pemulihan setelah tubuh mengalami kerusakan jaringan, baik akibat olahraga, kecelakaan, maupun aktivitas harian. Tujuannya adalah mengurangi nyeri, mempercepat penyembuhan, mengembalikan fungsi, dan mencegah cedera berulang.
-  </p>
+      <div>
+        <h2 class="font-semibold mb-1">🔍 Jenis Cedera yang Umum Direhabilitasi:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Strain otot atau robekan otot</li>
+          <li>Sprain ligamen seperti ankle sprain atau ACL</li>
+          <li>Cedera sendi (bahu, lutut, siku)</li>
+          <li>Patah tulang pasca operasi</li>
+          <li>Overuse injury seperti tennis elbow</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1">🔍 Jenis Cedera yang Sering Direhabilitasi:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Cedera otot seperti strain (tarikan) atau robekan otot</li>
-    <li>Cedera ligamen seperti ankle sprain atau ACL robek</li>
-    <li>Cedera sendi (bahu, lutut, siku, pergelangan kaki)</li>
-    <li>Patah tulang setelah imobilisasi atau operasi</li>
-    <li>Cedera akibat overuse seperti tennis elbow atau runner’s knee</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🎯 Tujuan Rehabilitasi Cedera:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Mengurangi nyeri & inflamasi</li>
+          <li>Mengembalikan fleksibilitas dan rentang gerak</li>
+          <li>Memperkuat jaringan dan otot penyangga</li>
+          <li>Melatih keseimbangan dan koordinasi</li>
+          <li>Membangun kembali kepercayaan diri pasien</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Tujuan Rehabilitasi Cedera:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Mengurangi nyeri dan peradangan</li>
-    <li>Mengembalikan rentang gerak dan fleksibilitas</li>
-    <li>Memperkuat otot dan jaringan penyangga</li>
-    <li>Meningkatkan keseimbangan dan koordinasi</li>
-    <li>Mengembalikan kepercayaan diri untuk bergerak kembali</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🛠️ Pendekatan Terapi:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Kompres dingin atau hangat dan elevasi</li>
+          <li>Latihan mobilisasi dan rentang gerak</li>
+          <li>Penguatan otot bertahap</li>
+          <li>Latihan propriosepsi dan stabilisasi</li>
+          <li>Simulasi aktivitas harian atau olahraga</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Pendekatan Terapi yang Digunakan:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Kompres es/hangat, elevasi, dan pembalutan kompresi (fase awal)</li>
-    <li>Mobilisasi sendi dan latihan rentang gerak</li>
-    <li>Latihan penguatan otot bertahap</li>
-    <li>Latihan keseimbangan, stabilisasi inti, dan propriosepsi</li>
-    <li>Simulasi aktivitas harian atau olahraga sesuai tujuan pasien</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🩺 Layanan FisioKita untuk Rehabilitasi Cedera:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Home visit fisioterapi rehabilitasi</li>
+          <li>Program pemulihan pasca operasi</li>
+          <li>Pemantauan progres secara berkala</li>
+          <li>Edukasi pencegahan cedera ulang</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Layanan FisioKita untuk Rehabilitasi Cedera:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1">
-    <li> Rehabilitasi cedera langsung di rumah (home visit)</li>
-    <li> Program latihan pemulihan pasca cedera atau operasi</li>
-    <li> Pemantauan progres dan penyesuaian program secara berkala</li>
-    <li> Edukasi pencegahan cedera berulang untuk atlet & non-atlet</li>
-  </ul>
+      <p>Setiap cedera unik. Rehabilitasi harus disesuaikan dengan kondisi pasien. Fisioterapis FisioKita siap mendampingi proses pemulihan yang aman dan efektif.</p>
 
-  <p class="text-sm leading-relaxed mt-3">
-    Setiap cedera memiliki karakteristik yang berbeda, sehingga rehabilitasi harus disesuaikan secara personal. Dengan bimbingan fisioterapis, proses pemulihan bisa lebih aman, cepat, dan tepat sasaran.
-  </p>
+      <p class="font-semibold">
+        Cedera tidak harus menghentikan aktivitasmu. <a href="../konsultasi-offline.html" class="text-blue-600 underline">Jadwalkan sesi rehabilitasi bersama FisioKita sekarang</a>.
+      </p>
+    </article>
 
-  <p class="text-sm leading-relaxed mt-3 font-semibold">
-    Cedera tidak harus menghentikan aktivitasmu. <a href="konsultasi-offline.html" class="underline text-blue-600">Jadwalkan sesi rehabilitasi bersama tim FisioKita sekarang</a>.
-  </p>
-      </article>
-      
-    </div>
-
-    <!-- Tombol kembali -->
-    <div class="mt-8 text-center">
-      <a href="index.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+    <div class="mt-10 text-center">
+      <a href="../edukasi.html" class="inline-block bg-[#2970F2] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali ke Edukasi
       </a>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white mt-20 text-base">
-  <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-    <!-- Logo dan Deskripsi -->
-    <div class="flex items-center gap-3">
-      <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
-    </p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="../index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="../edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="../akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 text-sm space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
+  </footer>
 
-    <!-- Kontak -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-      <ul class="space-y-2 text-white/90">
-        <li>📞 <a href="https://wa.me/6285179792319" >0851-7979-2319</a></li>
-        <li>  📧 <a href="mailto:fisiokita.cs@gmail.com" >fisiokita.cs@gmail.com</a></li>
-        <li>📍 Jl. Soekarno Hatta No.11, Manggis Ganting, Bukittinggi</li>
-      </ul>
-    </div>
-
-    <!-- Jam Operasional -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-      <ul class="text-white/90 space-y-1">
-        <li>Senin – Jumat: 08.00 – 18.00</li>
-        <li>Sabtu: 08.00 – 16.00</li>
-        <li>Minggu: Tutup</li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-sm text-white/50 pt-8">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
-  
-<script>
-  const auth = firebase.auth();
+  <!-- Auth Script -->
+  <script>
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     auth.onAuthStateChanged(async (user) => {
@@ -167,17 +150,17 @@
           const nama = doc.exists ? doc.data().nama : user.email;
           const namaDepan = nama.split(" ")[0];
           el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
+          el.onclick = () => window.location.href = "../akun.html";
+        } catch {
           el.textContent = "Pengguna";
-          el.onclick = () => window.location.href = "akun.html";
+          el.onclick = () => window.location.href = "../akun.html";
         }
       } else {
         el.textContent = "Masuk";
         el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
+        el.onclick = () => window.location.href = "../login.html";
       }
     });
-</script>
+  </script>
 </body>
 </html>

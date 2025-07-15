@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,189 +12,150 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
-
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 shadow flex justify-between items-center">
+<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 shadow flex justify-between items-center">
     <h1 class="text-lg font-semibold">👨‍⚕️ Tambah Terapis Baru</h1>
     <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
-  </header>
-
-  <!-- Main Content -->
-  <main class="flex-1 max-w-md mx-auto w-full px-4 py-6 space-y-8">
-
-    <!-- Form Tambah Terapis -->
+  </header>  <main class="flex-1 max-w-md mx-auto w-full px-4 py-6 space-y-8">
     <form id="formTerapis" class="bg-white rounded-xl p-4 shadow space-y-4 border border-gray-200">
-      <div>
-        <label class="block font-medium mb-1">Nama Lengkap</label>
-        <input type="text" id="nama" required class="w-full border p-2 rounded text-sm" />
-      </div>
-      <div>
-        <label class="block font-medium mb-1">Email</label>
-        <input type="email" id="email" required class="w-full border p-2 rounded text-sm" />
-      </div>
-      <div>
-        <label class="block font-medium mb-1">Password</label>
-        <input type="password" id="password" required class="w-full border p-2 rounded text-sm" />
-      </div>
-      <div>
-        <label class="block font-medium mb-1">Spesialisasi</label>
-        <input type="text" id="spesialis" required class="w-full border p-2 rounded text-sm" />
-      </div>
-      <div>
-        <label class="block font-medium mb-1">Provinsi</label>
-        <select id="provinsi" required class="w-full border p-2 rounded text-sm">
-          <option value="">Pilih Provinsi</option>
-        </select>
-      </div>
-      <div>
-        <label class="block font-medium mb-1">Kabupaten/Kota</label>
-        <select id="kabupaten" required class="w-full border p-2 rounded text-sm">
-          <option value="">Pilih Kabupaten</option>
-        </select>
-      </div>
-      <button type="submit" class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white w-full py-2 rounded transition">
-        Daftarkan Terapis
-      </button>
-    </form>
+      <input type="hidden" id="editEmail" />
+      <div><label class="block font-medium mb-1">Nama Lengkap</label><input type="text" id="nama" required class="w-full border p-2 rounded text-sm" /></div>
+      <div><label class="block font-medium mb-1">Email</label><input type="email" id="email" required class="w-full border p-2 rounded text-sm" /></div>
+      <div id="passwordDiv"><label class="block font-medium mb-1">Password</label><input type="password" id="password" class="w-full border p-2 rounded text-sm" /></div>
+      <div><label class="block font-medium mb-1">Spesialisasi</label><input type="text" id="spesialis" required class="w-full border p-2 rounded text-sm" /></div>
+      <div><label class="block font-medium mb-1">Provinsi</label><select id="provinsi" required class="w-full border p-2 rounded text-sm"><option value="">Pilih Provinsi</option></select></div>
+      <div><label class="block font-medium mb-1">Kabupaten/Kota</label><select id="kabupaten" required class="w-full border p-2 rounded text-sm"><option value="">Pilih Kabupaten</option></select></div>
+      <button type="submit" class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white w-full py-2 rounded transition">Simpan Terapis</button>
+    </form><section>
+  <h2 class="text-base font-semibold mb-2">📋 Terapis Terdaftar</h2>
+  <div id="daftarTerapis" class="space-y-4 text-sm text-gray-800"></div>
+</section>
 
-    <!-- Daftar Terapis -->
-    <section>
-      <h2 class="text-base font-semibold mb-2">📋 Terapis Terdaftar</h2>
-      <div id="daftarTerapis" class="space-y-4 text-sm text-gray-800">
-        <p class="italic text-gray-500">Memuat data...</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-[#141C2F] text-white text-sm px-6 py-8 mt-10 text-center">
+  </main>  <footer class="bg-[#141C2F] text-white text-sm px-6 py-8 mt-10 text-center">
     <div class="flex items-center justify-center gap-3 mb-3">
       <img src="img/logo.png" alt="Logo Fisio Kita" class="w-5 h-5" />
       <span class="font-semibold text-lg">Fisio Kita</span>
     </div>
     <p class="text-white/80 mb-1">Admin panel untuk registrasi terapis baru.</p>
     <p class="text-white/40 text-xs">© 2025 Fisio Kita. All rights reserved.</p>
-  </footer>
-
-  <!-- Firebase Init -->
-  <script>
+  </footer>  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-  </script>
 
-  <!-- Load Provinsi & Kabupaten -->
-  <script>
-    fetch("../data/wilayah.json")
-      .then(res => res.json())
-      .then(data => {
-        const provSelect = document.getElementById("provinsi");
-        const kabSelect = document.getElementById("kabupaten");
-
-        Object.keys(data).forEach(prov => {
-          const opt = document.createElement("option");
-          opt.value = prov;
-          opt.textContent = prov;
-          provSelect.appendChild(opt);
-        });
-
-        provSelect.addEventListener("change", () => {
-          kabSelect.innerHTML = `<option value="">Pilih Kabupaten</option>`;
-          const kabList = data[provSelect.value];
-          Object.keys(kabList).forEach(kab => {
-            const opt = document.createElement("option");
-            opt.value = kab;
-            opt.textContent = kab;
-            kabSelect.appendChild(opt);
-          });
-        });
+    fetch("../data/wilayah.json").then(res => res.json()).then(data => {
+      const provSelect = document.getElementById("provinsi");
+      const kabSelect = document.getElementById("kabupaten");
+      Object.keys(data).forEach(prov => {
+        const opt = document.createElement("option");
+        opt.value = prov;
+        opt.textContent = prov;
+        provSelect.appendChild(opt);
       });
-  </script>
-
-  <!-- Tambah Terapis -->
-  <script>
-    <script>
-  const form = document.getElementById("formTerapis");
-
-  auth.onAuthStateChanged(user => {
-    if (!user || user.email !== "fisiokita@gmail.com") {
-      alert("Akses hanya untuk admin utama.");
-      window.location.href = "dashboard.html";
-      return;
-    }
-    tampilkanDaftarTerapis();
-  });
-
-  function tampilkanDaftarTerapis() {
-    const daftarDiv = document.getElementById("daftarTerapis");
-    db.collection("terapis").get().then(snapshot => {
-      daftarDiv.innerHTML = "";
-      if (snapshot.empty) {
-        daftarDiv.innerHTML = "<p class='italic text-gray-500'>Belum ada terapis terdaftar.</p>";
-        return;
-      }
-
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.className = "bg-white rounded-xl border border-gray-200 p-4 shadow";
-        div.innerHTML = `
-          <div><strong>Nama:</strong> ${data.nama || "-"}</div>
-          <div><strong>Email:</strong> ${doc.id}</div>
-          <div><strong>Spesialisasi:</strong> ${data.spesialis || "-"}</div>
-          <div><strong>Provinsi:</strong> ${data.provinsi || "-"}</div>
-          <div><strong>Kabupaten:</strong> ${data.kabupaten || "-"}</div>
-        `;
-        daftarDiv.appendChild(div);
+      provSelect.addEventListener("change", () => {
+        kabSelect.innerHTML = `<option value="">Pilih Kabupaten</option>`;
+        const kabList = data[provSelect.value];
+        Object.keys(kabList).forEach(kab => {
+          const opt = document.createElement("option");
+          opt.value = kab;
+          opt.textContent = kab;
+          kabSelect.appendChild(opt);
+        });
       });
     });
-  }
 
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-
-    const nama = document.getElementById("nama").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const spesialis = document.getElementById("spesialis").value.trim();
-    const provinsi = document.getElementById("provinsi").value;
-    const kabupaten = document.getElementById("kabupaten").value;
-
-    if (!nama || !email || !password || !spesialis || !provinsi || !kabupaten) {
-      alert("Mohon lengkapi semua data.");
-      return;
-    }
-
-    try {
-      // Buat akun user baru
-      await auth.createUserWithEmailAndPassword(email, password);
-
-      // Simpan data di koleksi "terapis"
-      await db.collection("terapis").doc(email).set({
-        nama,
-        spesialis,
-        provinsi,
-        kabupaten,
-        status: "tidak tersedia"
-      });
-
-      alert("Terapis berhasil ditambahkan.");
-      form.reset();
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        alert("Akses hanya untuk admin utama.");
+        window.location.href = "dashboard.html";
+        return;
+      }
       tampilkanDaftarTerapis();
-    } catch (error) {
-      console.error(error);
-      alert("Gagal menambahkan terapis: " + error.message);
+    });
+
+    function tampilkanDaftarTerapis() {
+      const daftarDiv = document.getElementById("daftarTerapis");
+      db.collection("terapis").get().then(snapshot => {
+        daftarDiv.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const div = document.createElement("div");
+          div.className = "bg-white border rounded-xl p-4 shadow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2";
+          div.innerHTML = `
+            <div>
+              <div><strong>${d.nama}</strong></div>
+              <div>${doc.id} | ${d.spesialis}</div>
+              <div>${d.provinsi}, ${d.kabupaten}</div>
+              <div class="text-xs">Status: <span class="font-semibold">${d.status}</span></div>
+            </div>
+            <div class="flex flex-col gap-1">
+              <button onclick="ubahStatus('${doc.id}', '${d.status}')" class="text-blue-600 text-sm">Ubah Status</button>
+              <button onclick="editTerapis('${doc.id}')" class="text-yellow-600 text-sm">Edit</button>
+              <button onclick="hapusTerapis('${doc.id}')" class="text-red-600 text-sm">Hapus</button>
+            </div>
+          `;
+          daftarDiv.appendChild(div);
+        });
+      });
     }
-  });
-</script>
-</body>
+
+    function ubahStatus(email, current) {
+      const statusBaru = current === "tersedia" ? "tidak" : "tersedia";
+      db.collection("terapis").doc(email).update({ status: statusBaru }).then(() => tampilkanDaftarTerapis());
+    }
+
+    function hapusTerapis(email) {
+      if (confirm("Yakin ingin menghapus terapis ini?")) {
+        db.collection("terapis").doc(email).delete().then(() => tampilkanDaftarTerapis());
+      }
+    }
+
+    function editTerapis(email) {
+      db.collection("terapis").doc(email).get().then(doc => {
+        const d = doc.data();
+        document.getElementById("editEmail").value = email;
+        document.getElementById("nama").value = d.nama;
+        document.getElementById("email").value = email;
+        document.getElementById("email").disabled = true;
+        document.getElementById("spesialis").value = d.spesialis;
+        document.getElementById("provinsi").value = d.provinsi;
+        document.getElementById("kabupaten").innerHTML = `<option value="${d.kabupaten}">${d.kabupaten}</option>`;
+        document.getElementById("kabupaten").value = d.kabupaten;
+        document.getElementById("passwordDiv").style.display = "none";
+      });
+    }
+
+    document.getElementById("formTerapis").addEventListener("submit", async e => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const editEmail = document.getElementById("editEmail").value.trim();
+      const data = {
+        nama: document.getElementById("nama").value.trim(),
+        spesialis: document.getElementById("spesialis").value.trim(),
+        provinsi: document.getElementById("provinsi").value,
+        kabupaten: document.getElementById("kabupaten").value,
+        status: "tidak"
+      };
+      if (editEmail) {
+        await db.collection("terapis").doc(email).update(data);
+        alert("Terapis berhasil diperbarui.");
+        document.getElementById("formTerapis").reset();
+        document.getElementById("email").disabled = false;
+        document.getElementById("editEmail").value = "";
+        document.getElementById("passwordDiv").style.display = "block";
+        tampilkanDaftarTerapis();
+      } else {
+        const password = document.getElementById("password").value;
+        await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection("terapis").doc(email).set(data);
+        alert("Terapis berhasil ditambahkan.");
+        document.getElementById("formTerapis").reset();
+        tampilkanDaftarTerapis();
+      }
+    });
+  </script></body>
 </html>

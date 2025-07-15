@@ -107,124 +107,132 @@
   </footer>
 
   <!-- Auth + Wilayah Script -->
-  <script>
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    <script>
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    auth.onAuthStateChanged(async (user) => {
-      const el = document.getElementById("userGreeting");
-      if (!el) return;
+  auth.onAuthStateChanged(async (user) => {
+    const el = document.getElementById("userGreeting");
+    if (!el) return;
 
-      if (user) {
-        try {
-          const snap = await db.collection("users").doc(user.email).get();
-          const nama = snap.exists ? snap.data().nama : user.email;
-          const namaDepan = nama.split(" ")[0];
-          el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
-          el.textContent = "Pengguna";
-          el.onclick = () => window.location.href = "akun.html";
-        }
-      } else {
-        el.textContent = "Masuk";
-        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
-      }
-    });
+    if (user) {
+      const snap = await db.collection("users").doc(user.email).get();
+      const nama = snap.exists ? snap.data().nama : user.email;
+      el.textContent = nama.split(" ")[0];
+      el.onclick = () => window.location.href = "akun.html";
+    } else {
+      el.textContent = "Masuk";
+      el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+      el.onclick = () => window.location.href = "login.html";
+    }
+  });
 
-    window.onload = function () {
-      const provinsiSelect = document.getElementById("provinsiSelect");
-      const kabupatenSelect = document.getElementById("kabupatenSelect");
-      const listTerapis = document.getElementById("listTerapis");
-      const searchInput = document.getElementById("searchInput");
-      let semuaTerapis = [];
+  window.onload = function () {
+    const provinsiSelect = document.getElementById("provinsiSelect");
+    const kabupatenSelect = document.getElementById("kabupatenSelect");
+    const listTerapis = document.getElementById("listTerapis");
+    const searchInput = document.getElementById("searchInput");
+    let semuaTerapis = [];
 
-      fetch("data/wilayah.json")
-        .then(res => res.json())
-        .then(data => {
-          Object.keys(data).forEach(prov => {
-            const opt = document.createElement("option");
-            opt.value = prov;
-            opt.textContent = prov;
-            provinsiSelect.appendChild(opt);
-          });
-
-          provinsiSelect.addEventListener("change", () => {
-            kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
-            const selectedProv = provinsiSelect.value;
-            if (data[selectedProv]) {
-              Object.keys(data[selectedProv]).forEach(kab => {
-                const opt = document.createElement("option");
-                opt.value = kab;
-                opt.textContent = kab;
-                kabupatenSelect.appendChild(opt);
-              });
-            }
-          });
+    // Muat data provinsi dan kabupaten
+    fetch("data/wilayah.json")
+      .then(res => res.json())
+      .then(data => {
+        Object.keys(data).forEach(prov => {
+          const opt = document.createElement("option");
+          opt.value = prov;
+          opt.textContent = prov;
+          provinsiSelect.appendChild(opt);
         });
 
-      db.collection("terapis").get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const t = doc.data();
-          semuaTerapis.push({
-            nama: t.nama || "Tanpa Nama",
-            spesialis: t.spesialis || "Umum",
-            kabupaten: t.kabupaten || "-",
-            provinsi: t.provinsi || "-",
-            deskripsi: t.deskripsi || "Belum ada deskripsi."
-          });
+        provinsiSelect.addEventListener("change", () => {
+          kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+          const selectedProv = provinsiSelect.value;
+          if (data[selectedProv]) {
+            Object.keys(data[selectedProv]).forEach(kab => {
+              const opt = document.createElement("option");
+              opt.value = kab;
+              opt.textContent = kab;
+              kabupatenSelect.appendChild(opt);
+            });
+          }
         });
       });
 
-      kabupatenSelect.addEventListener("change", filterDanTampilkan);
-      searchInput.addEventListener("input", filterDanTampilkan);
+    kabupatenSelect.addEventListener("change", () => {
+      const prov = provinsiSelect.value;
+      const kab = kabupatenSelect.value;
+      if (!prov || !kab) return;
 
-      function renderTerapis(list) {
-        listTerapis.innerHTML = list.map(t => `
-          <article class="bg-white text-[#1E2A44] rounded-xl p-6 shadow-md border">
-            <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
-            <p class="text-sm text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
-            <p class="text-sm mb-1">📍 ${t.kabupaten}, ${t.provinsi}</p>
-            <p class="text-xs mb-1 text-gray-600 italic">${t.deskripsi}</p>
-          </article>
-        `).join("");
+      // Kosongkan sebelum ambil data
+      semuaTerapis = [];
+      listTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic">Memuat data terapis...</p>`;
+
+      db.collection("terapis")
+        .where("provinsi", "==", prov)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            const t = doc.data();
+            semuaTerapis.push({
+              nama: t.nama || "Tanpa Nama",
+              spesialis: t.spesialis || "Umum",
+              kabupaten: t.kabupaten || "-",
+              provinsi: t.provinsi || "-",
+              deskripsi: t.deskripsi || "Belum ada deskripsi."
+            });
+          });
+          filterDanTampilkan(); // setelah data masuk, tampilkan
+        });
+    });
+
+    searchInput.addEventListener("input", filterDanTampilkan);
+
+    function renderTerapis(list) {
+      listTerapis.innerHTML = list.map(t => `
+        <article class="bg-white text-[#1E2A44] rounded-xl p-6 shadow-md border">
+          <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+          <p class="text-sm text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
+          <p class="text-sm mb-1">📍 ${t.kabupaten}, ${t.provinsi}</p>
+          <p class="text-xs mb-1 text-gray-600 italic">${t.deskripsi}</p>
+        </article>
+      `).join("");
+    }
+
+    function filterDanTampilkan() {
+      const prov = provinsiSelect.value;
+      const kab = kabupatenSelect.value;
+      const keyword = searchInput.value.toLowerCase();
+
+      if (!prov || !kab) {
+        listTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic">Pilih provinsi dan kabupaten terlebih dahulu.</p>`;
+        return;
       }
 
-      function filterDanTampilkan() {
-        const prov = provinsiSelect.value;
-        const kab = kabupatenSelect.value;
-        const keyword = searchInput.value.toLowerCase();
+      const hasil = semuaTerapis.filter(t =>
+        t.kabupaten === kab &&
+        (t.nama.toLowerCase().includes(keyword) || t.spesialis.toLowerCase().includes(keyword))
+      );
 
-        if (!prov || !kab) {
-          listTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic">Pilih provinsi dan kabupaten terlebih dahulu.</p>`;
-          return;
-        }
+      if (hasil.length > 0) {
+        renderTerapis(hasil);
+      } else {
+        listTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic mb-4">Tidak ditemukan terapis di ${kab}, ${prov}.</p>`;
 
-        const hasil = semuaTerapis.filter(t =>
-          t.provinsi === prov &&
-          t.kabupaten === kab &&
+        const rekom = semuaTerapis.filter(t =>
+          t.kabupaten !== kab &&
           (t.nama.toLowerCase().includes(keyword) || t.spesialis.toLowerCase().includes(keyword))
         );
 
-        if (hasil.length > 0) {
-          renderTerapis(hasil);
+        if (rekom.length > 0) {
+          listTerapis.innerHTML += `<h3 class="font-semibold text-sm text-gray-700 mb-2">Rekomendasi di wilayah sekitar:</h3>`;
+          renderTerapis(rekom);
         } else {
-          listTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic mb-4">Tidak ditemukan terapis di ${kab}, ${prov}.</p>`;
-          const rekom = semuaTerapis.filter(t =>
-            t.provinsi === prov &&
-            t.kabupaten !== kab &&
-            (t.nama.toLowerCase().includes(keyword) || t.spesialis.toLowerCase().includes(keyword))
-          );
-          if (rekom.length > 0) {
-            listTerapis.innerHTML += `<h3 class="font-semibold text-sm text-gray-700 mb-2">Rekomendasi di wilayah sekitar:</h3>`;
-            renderTerapis(rekom);
-          } else {
-            listTerapis.innerHTML += `<p class="text-sm text-center italic text-gray-400">Tidak ada rekomendasi lain di provinsi ini.</p>`;
-          }
+          listTerapis.innerHTML += `<p class="text-sm text-center italic text-gray-400">Tidak ada rekomendasi lain di provinsi ini.</p>`;
         }
       }
-    };
-  </script>
+    }
+  };
+    </script>
 </body>
 </html>

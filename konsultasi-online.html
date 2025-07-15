@@ -8,44 +8,48 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
-    <div class="flex items-center gap-3">
-      <a href="konsultasi-jenis.html" class="flex items-center gap-2">
-        <img src="img/logo.png" alt="Fisio Kita Logo" class="w-6 h-6" />
-        <span class="font-semibold text-xl">Fisio Kita</span>
-      </a>
-    </div>
+    <a href="index.html" class="flex items-center gap-2">
+      <img src="img/logo.png" alt="Fisio Kita Logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </a>
     <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
   </header>
 
   <!-- Main -->
   <main class="flex-grow px-6 pt-10 pb-16 max-w-md mx-auto w-full">
-  <h1 class="text-2xl font-bold text-center mb-4">Pilih Fisioterapis</h1>
+    <h1 class="text-2xl font-bold text-center mb-4">Pilih Fisioterapis</h1>
 
-  <!-- Tombol Langsung Mulai -->
-  <div class="mb-8 text-center">
-    <button id="langsungMulaiBtn" class="bg-[#4B6CC1] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#3a57b0] transition">
-       Langsung Mulai Konsultasi
-    </button>
-    <p id="infoLangsung" class="text-sm text-center mt-2 text-gray-600 hidden">Mencari terapis terbaik untuk Anda...</p>
-  </div>
+    <!-- Tombol Langsung Mulai -->
+    <div class="mb-8 text-center">
+      <button id="langsungMulaiBtn" class="bg-[#4B6CC1] text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-[#3a57b0] transition">
+        Langsung Mulai Konsultasi
+      </button>
+      <p id="infoLangsung" class="text-sm text-center mt-2 text-gray-600 hidden">Mencari terapis terbaik untuk Anda...</p>
+    </div>
 
-  <!-- Daftar Terapis -->
-  <div id="daftarTerapis" class="space-y-6">
-    <p class="text-center text-sm text-gray-500 italic">Memuat daftar terapis...</p>
-  </div>
+    <!-- Daftar Terapis -->
+    <div id="daftarTerapis" class="space-y-6">
+      <p class="text-center text-sm text-gray-500 italic">Memuat daftar terapis...</p>
+    </div>
 
-  <div class="mt-10 text-center">
-    <a href="konsultasi-jenis.html"
-       class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
-       Kembali
-    </a>
-  </div>
+    <div class="mt-10 text-center">
+      <a href="konsultasi-jenis.html"
+         class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+         Kembali
+      </a>
+    </div>
   </main>
 
   <!-- Popup Antrian -->
@@ -72,10 +76,10 @@
       <div>
         <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
         <div class="grid grid-cols-2 gap-4">
-          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+          <a href="index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
         </div>
       </div>
       <div>
@@ -94,75 +98,53 @@
           <li>Minggu: Tutup</li>
         </ul>
       </div>
-      <p class="text-center text-sm text-white/50 pt-8">
-        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-      </p>
+      <p class="text-center text-sm text-white/50 pt-8">© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
     </div>
   </footer>
 
-  <!-- Script -->
+  <!-- Script Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-<script>
-  // Konfigurasi Firebase
+    document.addEventListener("DOMContentLoaded", () => {
+      const userGreeting = document.getElementById("userGreeting");
+      const daftarTerapis = document.getElementById("daftarTerapis");
+      const langsungBtn = document.getElementById("langsungMulaiBtn");
+      const infoLangsung = document.getElementById("infoLangsung");
+      const popup = document.getElementById("queuePopup");
 
-      
-
-        // ✅ Inisialisasi Firebase Dulu
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  // ✅ Tunggu DOM Siap
-  document.addEventListener("DOMContentLoaded", () => {
-    const userGreeting = document.getElementById("userGreeting");
-    const daftarTerapis = document.getElementById("daftarTerapis");
-    const langsungBtn = document.getElementById("langsungMulaiBtn");
-    const infoLangsung = document.getElementById("infoLangsung");
-    const popup = document.getElementById("queuePopup");
-
-    // ✅ Autentikasi User
-    auth.onAuthStateChanged(async (user) => {
-      if (!userGreeting) return;
-      if (user) {
-        try {
-          const doc = await db.collection("users").doc(user.email).get();
-          const nama = doc.exists ? doc.data().nama : user.email;
-          userGreeting.textContent = nama.split(" ")[0];
-          userGreeting.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
-          userGreeting.textContent = "Pengguna";
-          userGreeting.onclick = () => window.location.href = "akun.html";
+      auth.onAuthStateChanged(async (user) => {
+        if (!userGreeting) return;
+        if (user) {
+          try {
+            const doc = await db.collection("users").doc(user.email).get();
+            const nama = doc.exists ? doc.data().nama : user.email;
+            userGreeting.textContent = nama.split(" ")[0];
+            userGreeting.onclick = () => window.location.href = "akun.html";
+          } catch {
+            userGreeting.textContent = "Pengguna";
+            userGreeting.onclick = () => window.location.href = "akun.html";
+          }
+        } else {
+          userGreeting.textContent = "Masuk";
+          userGreeting.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
+          userGreeting.onclick = () => window.location.href = "login.html";
         }
-      } else {
-        userGreeting.textContent = "Masuk";
-        userGreeting.classList.add(
-          "bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full",
-          "text-sm", "font-semibold", "hover:bg-gray-100", "transition"
-        );
-        userGreeting.onclick = () => window.location.href = "login.html";
-      }
-    });
+      });
 
-    // ✅ Tampilkan Terapis
-    let terapisTersedia = [];
+      let terapisTersedia = [];
 
-    db.collection("terapis")
-      .where("status", "==", "tersedia")
-      .get()
-      .then(snapshot => {
-        if (!daftarTerapis) return;
-
+      db.collection("terapis").where("status", "==", "tersedia").get().then(snapshot => {
         daftarTerapis.innerHTML = "";
-        terapisTersedia = [];
-
         if (snapshot.empty) {
-          daftarTerapis.innerHTML = `
-            <p class="text-center text-sm text-gray-500 italic">Terapis tidak tersedia saat ini.</p>`;
+          daftarTerapis.innerHTML = `<p class="text-center text-sm text-gray-500 italic">Terapis tidak tersedia saat ini.</p>`;
           return;
         }
 
@@ -191,27 +173,21 @@
         });
       });
 
-    // ✅ Tombol "Langsung Mulai Konsultasi"
-    if (langsungBtn) {
       langsungBtn.addEventListener("click", () => {
-        if (infoLangsung) infoLangsung.classList.remove("hidden");
-
+        infoLangsung.classList.remove("hidden");
         if (terapisTersedia.length === 0) {
           alert("Terapis belum tersedia saat ini.");
-          if (infoLangsung) infoLangsung.classList.add("hidden");
+          infoLangsung.classList.add("hidden");
           return;
         }
 
-        const acak = Math.floor(Math.random() * terapisTersedia.length);
-        const t = terapisTersedia[acak];
+        const t = terapisTersedia[Math.floor(Math.random() * terapisTersedia.length)];
         window.location.href = `input-pasien.html?email=${encodeURIComponent(t.email)}&nama=${encodeURIComponent(t.nama)}`;
       });
-    }
 
-    // ✅ Fungsi Popup (jika ada)
-    window.showQueuePopup = () => popup?.classList.remove("hidden");
-    window.closePopup = () => popup?.classList.add("hidden");
-  });
-</script>
+      window.showQueuePopup = () => popup?.classList.remove("hidden");
+      window.closePopup = () => popup?.classList.add("hidden");
+    });
+  </script>
 </body>
 </html>

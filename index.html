@@ -215,22 +215,33 @@
       if (!el) return;
 
       if (user) {
-        try {
-          const doc = await db.collection("users").doc(user.email).get();
-          const nama = doc.exists ? doc.data().nama : user.email;
-          const namaDepan = nama.split(" ")[0];
-          el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
-          el.textContent = "Pengguna";
+    try {
+      const userDoc = await db.collection("users").doc(user.email).get();
+      if (userDoc.exists) {
+        const nama = userDoc.data().nama || user.email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "akun.html";
+      } else {
+        const terapisDoc = await db.collection("terapis").doc(user.email).get();
+        if (terapisDoc.exists) {
+          const nama = terapisDoc.data().nama || user.email;
+          el.textContent = nama.split(" ")[0];
+          el.onclick = () => window.location.href = "admin/dashboard.html";
+        } else {
+          el.textContent = user.email;
           el.onclick = () => window.location.href = "akun.html";
         }
-      } else {
-        el.textContent = "Masuk";
-        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
       }
-    });
+    } catch (err) {
+      el.textContent = "Pengguna";
+      el.onclick = () => window.location.href = "akun.html";
+    }
+  } else {
+    el.textContent = "Masuk";
+    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+    el.onclick = () => window.location.href = "login.html";
+  }
+});
           </script>
   
         

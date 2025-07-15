@@ -10,38 +10,49 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>body { font-family: 'Inter', sans-serif; }</style>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="bg-[#4B6CC1] text-white px-4 py-4 flex justify-between items-center shadow">
-    <h1 class="text-lg font-semibold">👤 Akun Saya</h1>
-    <button id="logoutBtn" class="text-sm underline hover:text-gray-200">Logout</button>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </div>
+    <button id="logoutBtn" class="bg-white text-[#4B6CC1] px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition">
+      Keluar
+    </button>
   </header>
 
   <!-- Main -->
-  <main class="flex-1 p-6 max-w-md mx-auto w-full space-y-10">
-    <!-- Profil Pasien -->
-    <section id="profilPasien" class="hidden space-y-4">
-      <h2 class="text-lg font-semibold mb-1">Profil Anda</h2>
-      <div class="bg-white p-4 rounded shadow text-sm space-y-2">
-        <p><strong>Nama:</strong> <span id="profilNama">-</span></p>
-        <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
-        <p><strong>No. HP:</strong> <span id="profilHP">-</span></p>
-        <p><strong>Lokasi:</strong> <span id="profilLokasi">-</span></p>
-        <p><strong>Jenis Kelamin:</strong> <span id="profilGender">-</span></p>
-        <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
-        <p class="text-xs text-gray-500">📆 Terakhir Login: <span id="profilLogin">-</span></p>
-        <div class="text-right mt-2">
-          <button onclick="document.getElementById('editFormSection').classList.toggle('hidden')" class="text-sm text-blue-600 hover:underline">✏️ Edit Profil</button>
-        </div>
+  <main class="flex-1 px-6 py-8 max-w-md w-full mx-auto space-y-8">
+    <h2 class="text-2xl font-bold text-[#1E2A44] text-center">👤 Profil Saya</h2>
+
+    <!-- Profil -->
+    <section class="bg-white p-4 rounded shadow text-sm space-y-2">
+      <p><strong>Nama:</strong> <span id="profilNama">Memuat...</span></p>
+      <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
+      <p><strong>No. HP:</strong> <span id="profilHP">-</span></p>
+      <p><strong>Jenis Kelamin:</strong> <span id="profilGender">-</span></p>
+      <p><strong>Tanggal Lahir:</strong> <span id="profilLahir">-</span></p>
+      <p><strong>Lokasi:</strong> <span id="profilLokasi">-</span></p>
+      <div class="text-right mt-2">
+        <button onclick="document.getElementById('formEditWrapper').classList.toggle('hidden')" class="text-sm text-blue-600 hover:underline">✏️ Edit Profil & Password</button>
       </div>
     </section>
 
-    <!-- Form Edit -->
-    <section id="editFormSection" class="hidden">
-      <h2 class="text-lg font-semibold mb-2">✏️ Ubah Profil</h2>
-      <form id="editForm" class="space-y-3 text-sm bg-white p-4 rounded shadow">
+    <!-- Edit Form -->
+    <section id="formEditWrapper" class="hidden space-y-6">
+      <form id="formEditProfil" class="bg-white p-4 rounded shadow space-y-3 text-sm">
+        <h3 class="font-semibold mb-2">✏️ Edit Profil</h3>
         <input type="text" id="editNama" placeholder="Nama Lengkap" class="w-full border rounded px-3 py-2" required />
         <input type="tel" id="editHP" placeholder="Nomor HP" class="w-full border rounded px-3 py-2" required />
         <input type="date" id="editTglLahir" class="w-full border rounded px-3 py-2" required />
@@ -50,40 +61,37 @@
           <option value="Laki-laki">Laki-laki</option>
           <option value="Perempuan">Perempuan</option>
         </select>
-        <select id="editProvinsi" class="w-full border rounded px-3 py-2" required>
-          <option value="">Pilih Provinsi</option>
-        </select>
-        <select id="editKabupaten" class="w-full border rounded px-3 py-2" required>
-          <option value="">Pilih Kabupaten</option>
-        </select>
-        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0] transition">Simpan Perubahan</button>
+        <select id="editProvinsi" class="w-full border rounded px-3 py-2" required></select>
+        <select id="editKabupaten" class="w-full border rounded px-3 py-2" required></select>
+        <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">Simpan Perubahan</button>
         <p id="pesanEdit" class="text-sm text-center mt-2"></p>
       </form>
-    </section>
 
-    <!-- Reset & Password -->
-    <section>
-      <h2 class="text-lg font-semibold mb-2">🔐 Ganti Kata Sandi</h2>
+      <!-- Ganti Password -->
       <form id="formGantiPassword" class="bg-white p-4 rounded shadow space-y-3 text-sm">
+        <h3 class="font-semibold mb-2">🔐 Ganti Password</h3>
         <input type="password" id="passwordLama" placeholder="Password Lama" class="w-full border rounded px-3 py-2" required />
         <input type="password" id="passwordBaru" placeholder="Password Baru" class="w-full border rounded px-3 py-2" required />
         <button type="submit" class="bg-[#4B6CC1] text-white w-full py-2 rounded hover:bg-[#3a57b0]">Simpan Password Baru</button>
         <p id="pesanPassword" class="text-sm text-center mt-2"></p>
+        <button type="button" id="btnResetPassword" class="text-xs text-blue-600 underline">Lupa Password? Kirim Link Reset</button>
+        <p id="pesanReset" class="text-sm text-center mt-2"></p>
       </form>
     </section>
 
-    <!-- Reset via Email -->
+    <!-- Riwayat -->
     <section>
-      <h2 class="text-lg font-semibold mb-2">📧 Lupa Password?</h2>
-      <button id="btnResetPassword" class="text-sm underline text-blue-600">Kirim Link Reset ke Email</button>
-      <p id="pesanReset" class="text-sm text-center mt-2"></p>
+      <h3 class="text-lg font-semibold mb-2">📁 Riwayat Konsultasi</h3>
+      <ul id="daftarRiwayat" class="space-y-3 text-sm">
+        <li class="text-gray-500 italic">Memuat...</li>
+      </ul>
     </section>
 
     <!-- Hapus Akun -->
     <section>
-      <h2 class="text-lg font-semibold mb-2 text-red-600">⚠️ Hapus Akun</h2>
-      <button id="hapusAkunBtn" class="text-sm underline text-red-600">Hapus akun secara permanen</button>
-      <p id="pesanHapus" class="text-sm text-center mt-2"></p>
+      <h3 class="text-lg font-semibold text-red-600 mb-2">⚠️ Hapus Akun</h3>
+      <button id="hapusAkunBtn" class="text-sm text-red-600 underline">Hapus akun secara permanen</button>
+      <p id="pesanHapus" class="text-sm mt-2"></p>
     </section>
   </main>
 
@@ -138,56 +146,51 @@
     </div>
   </footer>
 
-  <!-- Firebase Logic -->
+  <!-- Script -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
-    };
-    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const uidProfil = () => auth.currentUser?.email;
-
-    auth.onAuthStateChanged(async (user) => {
+    auth.onAuthStateChanged(async user => {
       if (!user) return location.href = "login.html";
+
       const email = user.email;
+      const doc = await db.collection("users").doc(email).get();
+      const d = doc.data();
 
-      try {
-        const doc = await db.collection("users").doc(email).get();
-        if (!doc.exists) return;
+      document.getElementById("profilEmail").textContent = email;
+      document.getElementById("profilNama").textContent = d?.nama || "-";
+      document.getElementById("profilHP").textContent = d?.hp || "-";
+      document.getElementById("profilGender").textContent = d?.jenis_kelamin || "-";
+      document.getElementById("profilLahir").textContent = d?.tanggal_lahir || "-";
+      document.getElementById("profilLokasi").textContent = `${d?.kabupaten || "-"}, ${d?.provinsi || "-"}`;
 
-        const d = doc.data();
-        document.getElementById("profilNama").textContent = d.nama || "-";
-        document.getElementById("profilEmail").textContent = email;
-        document.getElementById("profilHP").textContent = d.hp || "-";
-        document.getElementById("profilLokasi").textContent = `${d.kabupaten || "-"}, ${d.provinsi || "-"}`;
-        document.getElementById("profilGender").textContent = d.jenis_kelamin || "-";
-        document.getElementById("profilLahir").textContent = d.tanggal_lahir || "-";
-        document.getElementById("profilLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString();
+      isiFormEdit(d);
 
-        isiFormEdit(d);
-        document.getElementById("profilPasien").classList.remove("hidden");
-      } catch (err) {
-        console.error("Gagal ambil data profil:", err);
-      }
-    });
-
-    // Wilayah
-    let wilayahData = {};
-    fetch("data/wilayah.json").then(res => res.json()).then(data => {
-      wilayahData = data;
-      const provEl = document.getElementById("editProvinsi");
-      Object.keys(data).forEach(p => provEl.innerHTML += `<option value="${p}">${p}</option>`);
-      provEl.addEventListener("change", () => {
-        const kabEl = document.getElementById("editKabupaten");
-        kabEl.innerHTML = `<option value="">Pilih Kabupaten</option>`;
-        Object.keys(wilayahData[provEl.value] || {}).forEach(kab => {
-          kabEl.innerHTML += `<option value="${kab}">${kab}</option>`;
+      db.collection("sessions")
+        .where("kontak", "==", email)
+        .orderBy("dibuat", "desc")
+        .onSnapshot(snapshot => {
+          const list = document.getElementById("daftarRiwayat");
+          list.innerHTML = "";
+          if (snapshot.empty) {
+            list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
+            return;
+          }
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
+            list.innerHTML += `
+              <li class="bg-white p-3 rounded shadow border">
+                <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
+                <div class="text-xs text-gray-500 mb-1">${tgl}</div>
+                <div class="text-sm mb-1">${d.keluhan || "-"}</div>
+                <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
+                  ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
+                </div>
+              </li>`;
+          });
         });
-      });
     });
 
     function isiFormEdit(d) {
@@ -196,36 +199,49 @@
       document.getElementById("editTglLahir").value = d.tanggal_lahir || "";
       document.getElementById("editGender").value = d.jenis_kelamin || "";
       document.getElementById("editProvinsi").value = d.provinsi || "";
-      document.getElementById("editProvinsi").dispatchEvent(new Event("change"));
       setTimeout(() => {
         document.getElementById("editKabupaten").value = d.kabupaten || "";
       }, 300);
     }
 
-    // Edit Form Submit
-    document.getElementById("editForm").addEventListener("submit", async e => {
+    fetch("data/wilayah.json")
+      .then(res => res.json())
+      .then(data => {
+        const prov = document.getElementById("editProvinsi");
+        const kab = document.getElementById("editKabupaten");
+
+        Object.keys(data).forEach(p => prov.innerHTML += `<option value="${p}">${p}</option>`);
+        prov.addEventListener("change", () => {
+          kab.innerHTML = `<option value="">Pilih Kabupaten</option>`;
+          Object.keys(data[prov.value] || {}).forEach(k => {
+            kab.innerHTML += `<option value="${k}">${k}</option>`;
+          });
+        });
+      });
+
+    document.getElementById("formEditProfil").addEventListener("submit", async e => {
       e.preventDefault();
-      const email = auth.currentUser.email;
+      const user = auth.currentUser;
       const data = {
-        nama: document.getElementById("editNama").value,
-        hp: document.getElementById("editHP").value,
-        tanggal_lahir: document.getElementById("editTglLahir").value,
-        jenis_kelamin: document.getElementById("editGender").value,
-        provinsi: document.getElementById("editProvinsi").value,
-        kabupaten: document.getElementById("editKabupaten").value,
+        nama: editNama.value,
+        hp: editHP.value,
+        tanggal_lahir: editTglLahir.value,
+        jenis_kelamin: editGender.value,
+        provinsi: editProvinsi.value,
+        kabupaten: editKabupaten.value,
+        email: user.email
       };
-      await db.collection("users").doc(email).set(data, { merge: true });
-      alert("✅ Profil berhasil diperbarui");
-      location.reload();
+      await db.collection("users").doc(user.email).set(data, { merge: true });
+      document.getElementById("pesanEdit").textContent = "✅ Profil berhasil diperbarui";
     });
 
     document.getElementById("formGantiPassword").addEventListener("submit", async e => {
       e.preventDefault();
-      const oldPass = document.getElementById("passwordLama").value;
-      const newPass = document.getElementById("passwordBaru").value;
       const user = auth.currentUser;
-      const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
+      const oldPass = passwordLama.value;
+      const newPass = passwordBaru.value;
       try {
+        const cred = firebase.auth.EmailAuthProvider.credential(user.email, oldPass);
         await user.reauthenticateWithCredential(cred);
         await user.updatePassword(newPass);
         document.getElementById("pesanPassword").textContent = "✅ Password berhasil diperbarui.";
@@ -236,16 +252,16 @@
 
     document.getElementById("btnResetPassword").addEventListener("click", () => {
       const email = auth.currentUser.email;
-      auth.sendPasswordResetEmail(email)
+      firebase.auth().sendPasswordResetEmail(email)
         .then(() => document.getElementById("pesanReset").textContent = "✅ Link reset dikirim ke email.")
         .catch(err => document.getElementById("pesanReset").textContent = "❌ " + err.message);
     });
 
     document.getElementById("hapusAkunBtn").addEventListener("click", async () => {
+      const konfirmasi = prompt("Masukkan password untuk hapus akun:");
+      if (!konfirmasi) return;
       const user = auth.currentUser;
-      const confirm = prompt("Masukkan password Anda untuk konfirmasi:");
-      if (!confirm) return;
-      const cred = firebase.auth.EmailAuthProvider.credential(user.email, confirm);
+      const cred = firebase.auth.EmailAuthProvider.credential(user.email, konfirmasi);
       try {
         await user.reauthenticateWithCredential(cred);
         await db.collection("users").doc(user.email).delete();

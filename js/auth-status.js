@@ -16,16 +16,16 @@ auth.onAuthStateChanged(async (user) => {
 
       el.textContent = namaDepan;
       el.classList.add("text-white", "hover:opacity-90");
-      el.onclick = () => window.location.href = "akun.html";
+      el.onclick = () => window.location.href = "../akun.html";
     } catch (err) {
       console.error("Gagal ambil nama:", err);
       el.textContent = "Pengguna";
       el.classList.add("text-white", "hover:opacity-90");
-      el.onclick = () => window.location.href = "akun.html";
+      el.onclick = () => window.location.href = "../akun.html";
     }
   } else {
     el.textContent = "Masuk";
     el.classList.add("bg-white", "text-[#4B6CC1]", "hover:bg-gray-100", "shadow");
-    el.onclick = () => window.location.href = "login.html";
+    el.onclick = () => window.location.href = "../login.html";
   }
 });

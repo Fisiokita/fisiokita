@@ -6,25 +6,25 @@
   <title>Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
 
-  <!-- Header -->
   <!-- Header (tinggi & tebal) -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
@@ -207,32 +207,31 @@
 </footer>
 
   <script>
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  auth.onAuthStateChanged(async (user) => {
-    const el = document.getElementById("userGreeting");
-    if (!el) return;
+    auth.onAuthStateChanged(async (user) => {
+      const el = document.getElementById("userGreeting");
+      if (!el) return;
 
-    if (user) {
-      const email = user.email;
-      try {
-        const doc = await db.collection("users").doc(email).get();
-        const namaLengkap = doc.exists ? doc.data().nama : user.email;
-        const namaDepan = namaLengkap.split(" ")[0];
-
-        el.textContent = namaDepan;
-        el.onclick = () => window.location.href = "akun.html";
-      } catch (err) {
+      if (user) {
+        const email = user.email;
+        try {
+          const doc = await db.collection("users").doc(email).get();
+          const namaLengkap = doc.exists ? doc.data().nama : user.email;
+          const namaDepan = namaLengkap.split(" ")[0];
+          el.textContent = namaDepan;
+          el.onclick = () => window.location.href = "akun.html";
+        } catch (err) {
+          el.textContent = "Akun";
+          el.onclick = () => window.location.href = "akun.html";
+          console.error("Gagal mengambil data nama:", err);
+        }
+      } else {
         el.textContent = "Akun";
-        el.onclick = () => window.location.href = "akun.html";
-        console.error("Gagal mengambil data nama:", err);
+        el.onclick = () => window.location.href = "login.html";
       }
-    } else {
-      el.textContent = "Akun";
-      el.onclick = () => window.location.href = "login.html";
-    }
-  });
+    });
   </script>
 </body>
 </html>

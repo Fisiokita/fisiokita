@@ -101,26 +101,82 @@ auth.onAuthStateChanged(user => {
 });
 
 // Tambah Terapis
-document.getElementById("formTerapis").addEventListener("submit", async e => {
-  e.preventDefault();
-  const nama = nama.value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const spesialis = document.getElementById("spesialis").value.trim();
-  const prov = document.getElementById("provinsi").value;
-  const kab = document.getElementById("kabupaten").value;
 
-  if (email === "fisiokita@gmail.com") return alert("Email ini adalah akun admin, tidak bisa ditambahkan sebagai terapis.");
 
-  try {
-    await auth.createUserWithEmailAndPassword(email, password);
-    await db.collection("terapis").doc(email).set({ nama, spesialis, provinsi: prov, kabupaten: kab, status: "tidak tersedia" });
-    alert("Terapis berhasil ditambahkan.");
-    e.target.reset();
+  const form = document.getElementById("formTerapis");
+
+  auth.onAuthStateChanged(user => {
+    if (!user || user.email !== "fisiokita@gmail.com") {
+      alert("Akses hanya untuk admin utama.");
+      window.location.href = "dashboard.html";
+      return;
+    }
     tampilkanDaftarTerapis();
-  } catch (err) {
-    alert("Gagal: " + err.message);
+  });
+
+  function tampilkanDaftarTerapis() {
+    const daftarDiv = document.getElementById("daftarTerapis");
+    db.collection("terapis").get().then(snapshot => {
+      daftarDiv.innerHTML = "";
+      if (snapshot.empty) {
+        daftarDiv.innerHTML = "<p class='italic text-gray-500'>Belum ada terapis terdaftar.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-xl border border-gray-200 p-4 shadow";
+        div.innerHTML = `
+          <div><strong>Nama:</strong> ${data.nama || "-"}</div>
+          <div><strong>Email:</strong> ${doc.id}</div>
+          <div><strong>Spesialisasi:</strong> ${data.spesialis || "-"}</div>
+          <div><strong>Provinsi:</strong> ${data.provinsi || "-"}</div>
+          <div><strong>Kabupaten:</strong> ${data.kabupaten || "-"}</div>
+        `;
+        daftarDiv.appendChild(div);
+      });
+    });
   }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const nama = document.getElementById("nama").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const spesialis = document.getElementById("spesialis").value.trim();
+    const provinsi = document.getElementById("provinsi").value;
+    const kabupaten = document.getElementById("kabupaten").value;
+
+    if (!nama || !email || !password || !spesialis || !provinsi || !kabupaten) {
+      alert("Mohon lengkapi semua data.");
+      return;
+    }
+
+    if (email === "fisiokita@gmail.com") {
+      alert("Email ini hanya digunakan untuk admin utama. Tidak bisa didaftarkan.");
+      return;
+    }
+
+    try {
+      await auth.createUserWithEmailAndPassword(email, password);
+      await db.collection("terapis").doc(email).set({
+        nama,
+        spesialis,
+        provinsi,
+        kabupaten,
+        status: "tidak tersedia"
+      });
+      alert("Terapis berhasil ditambahkan.");
+      form.reset();
+      tampilkanDaftarTerapis();
+    } catch (error) {
+      console.error(error);
+      alert("Gagal menambahkan terapis: " + error.message);
+    }
+  });
+
 });
 
 // Tampilkan Terapis

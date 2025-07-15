@@ -106,83 +106,25 @@
 
   <!-- Firebase Script -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const daftarTerapis = document.getElementById("daftarTerapis");
-
-    function showQueuePopup() {
-      document.getElementById("queuePopup").classList.remove("hidden");
-    }
-
-    function closePopup() {
-      document.getElementById("queuePopup").classList.add("hidden");
-    }
-
-    db.collection("terapis")
-      .where("status", "==", "tersedia")
-      .get().then(snapshot => {
-        daftarTerapis.innerHTML = "";
-
-        if (snapshot.empty) {
-          daftarTerapis.innerHTML = `
-            <p class="text-center text-gray-500 text-sm italic">Terapis tidak tersedia saat ini.</p>`;
-          return;
-        }
-  
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const email = doc.id;
-          if (email === "fisiokita@gmail.com") return;
-
-          const nama = data.nama || "Terapis Tanpa Nama";
-          const status = data.status || "tidak";
-          const deskripsi = data.deskripsi || "Terapis FisioKita";
-
-          const item = document.createElement("article");
-          item.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
-
-          item.innerHTML = `
-            <h3 class="font-semibold text-base mb-1">${nama}</h3>
-            <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
-              ${status === 'tersedia' ? '✅ Tersedia' : '❌ Tidak Tersedia'}
-            </p>
-            <p class="text-xs mb-3">${deskripsi}</p>
-            ${
-              status === 'tersedia'
-                ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
-                    class="block bg-[#2970F2] text-white text-xs font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e4bb8] transition shadow">
-                    Konsultasi Sekarang
-                  </a>`
-                : `<button onclick="showQueuePopup()"
-                    class="block bg-gray-400 text-white text-xs font-semibold rounded-full px-4 py-2 w-full cursor-not-allowed">
-                    Masuk Antrian
-                  </button>`
-            }
-          `;
-
-          daftarTerapis.appendChild(item);
-        });
-        
-      });
-    const auth = firebase.auth();
+  // Konfigurasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1"
+  };
+  firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
+  // Ucapan Salam / Nama Pengguna di Header
   auth.onAuthStateChanged(async (user) => {
     const el = document.getElementById("userGreeting");
     if (!el) return;
 
     if (user) {
-      const email = user.email;
       try {
-        const doc = await db.collection("users").doc(email).get();
-        const namaLengkap = doc.exists ? doc.data().nama : email;
+        const snap = await db.collection("users").doc(user.email).get();
+        const namaLengkap = snap.exists ? snap.data().nama : user.email;
         const namaDepan = namaLengkap.split(" ")[0];
 
         el.textContent = namaDepan;
@@ -197,10 +139,77 @@
     } else {
       el.textContent = "Masuk";
       el.classList.remove("underline");
-      el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
+      el.classList.add(
+        "bg-white", "text-[#4B6CC1]", "px-4", "py-2",
+        "rounded-full", "text-sm", "font-semibold",
+        "hover:bg-gray-100", "transition"
+      );
       el.onclick = () => window.location.href = "login.html";
     }
   });
+
+  // Tampilkan daftar terapis tersedia
+  const daftarTerapis = document.getElementById("daftarTerapis");
+
+  function showQueuePopup() {
+    document.getElementById("queuePopup").classList.remove("hidden");
+  }
+
+  function closePopup() {
+    document.getElementById("queuePopup").classList.add("hidden");
+  }
+
+  db.collection("terapis")
+    .where("status", "==", "tersedia")
+    .get()
+    .then(snapshot => {
+      daftarTerapis.innerHTML = "";
+
+      if (snapshot.empty) {
+        daftarTerapis.innerHTML = `
+          <p class="text-center text-gray-500 text-sm italic">Terapis tidak tersedia saat ini.</p>`;
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const email = doc.id;
+
+        if (email === "fisiokita@gmail.com") return;
+
+        const nama = data.nama || "Terapis Tanpa Nama";
+        const status = data.status || "tidak tersedia";
+        const deskripsi = data.deskripsi || "Terapis FisioKita";
+
+        const item = document.createElement("article");
+        item.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
+
+        item.innerHTML = `
+          <h3 class="font-semibold text-base mb-1">${nama}</h3>
+          <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
+            ${status === 'tersedia' ? '✅ Tersedia' : '❌ Tidak Tersedia'}
+          </p>
+          <p class="text-xs mb-3">${deskripsi}</p>
+          ${
+            status === 'tersedia'
+              ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
+                  class="block bg-[#2970F2] text-white text-xs font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e4bb8] transition shadow">
+                  Konsultasi Sekarang
+                </a>`
+              : `<button onclick="showQueuePopup()"
+                  class="block bg-gray-400 text-white text-xs font-semibold rounded-full px-4 py-2 w-full cursor-not-allowed">
+                  Masuk Antrian
+                </button>`
+          }
+        `;
+
+        daftarTerapis.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("Gagal memuat data terapis:", err);
+      daftarTerapis.innerHTML = `<p class="text-center text-red-500 text-sm">Terjadi kesalahan saat memuat data.</p>`;
+    });
   </script>
 </body>
           </html>

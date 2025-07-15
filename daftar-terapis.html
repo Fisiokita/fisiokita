@@ -138,7 +138,7 @@
         semuaTerapis.push({
           nama: t.nama || "Tanpa Nama",
           spesialis: t.spesialis || "Umum",
-          lokasi: t.lokasi || "Lokasi tidak tersedia",
+          lokasi: `${t.kabupaten || '-'}, ${t.provinsi || '-'}`,
           deskripsi: t.deskripsi || "Belum ada deskripsi."
         });
       });

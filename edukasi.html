@@ -3,19 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Edukasi Kesehatan - Fisio Kita</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
+  <title>Fisio Kita</title>
 
-  <!-- Header -->
-  <header class="header-main">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- CSS Custom -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Firebase Core -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Inisialisasi Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <!-- Gaya Font -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+
+  <!-- Header Global -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
-      <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-semibold text-xl">Fisio Kita</span>
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+        <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+      </a>
     </div>
+    <span id="userGreeting" class="cursor-pointer">Masuk</span>
   </header>
 
   <!-- Main -->
@@ -133,5 +165,7 @@
       © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
     </p>
   </footer>
+  <!-- Script Status Login -->
+<script src="js/auth-status.js"></script>
 </body>
 </html>

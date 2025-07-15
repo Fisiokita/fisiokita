@@ -6,6 +6,7 @@
   <title>Konsultasi Offline - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -25,15 +26,14 @@
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
       <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
     </div>
-    <span id="userGreeting" class="cursor-pointer">Masuk</span>
+    <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
   </header>
-
 
   <!-- Main -->
   <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
@@ -66,28 +66,20 @@
   <!-- Footer -->
   <footer class="bg-[#141C2F] text-white mt-20 text-base">
     <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-      <!-- Logo dan Deskripsi -->
       <div class="flex items-center gap-3">
         <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
         <span class="font-bold text-xl">Fisio Kita</span>
       </div>
-      <p class="text-white/90 leading-relaxed">
-        Layanan fisioterapi profesional ke rumah Anda. Pesan konsultasi offline langsung melalui Fisio Kita.
-      </p>
-
-      <!-- Navigasi -->
+      <p class="text-white/90">Layanan fisioterapi profesional ke rumah Anda. Pesan konsultasi offline langsung melalui Fisio Kita.</p>
       <div>
         <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
         <div class="grid grid-cols-2 gap-4">
-          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+          <a href="index.html" class="bg-white text-[#141C2F] rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
         </div>
       </div>
-
-      <!-- Kontak -->
       <div>
         <h3 class="font-semibold text-lg mb-4">Kontak</h3>
         <ul class="space-y-2 text-white/90">
@@ -96,8 +88,6 @@
           <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
         </ul>
       </div>
-
-      <!-- Jam Operasional -->
       <div>
         <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
         <ul class="text-white/90 space-y-1">
@@ -106,60 +96,48 @@
           <li>Minggu: Tutup</li>
         </ul>
       </div>
-
-      <!-- Copyright -->
-      <p class="text-center text-sm text-white/50 pt-8">
-        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-      </p>
+      <p class="text-center text-sm text-white/50 pt-8">© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
     </div>
   </footer>
 
   <!-- Script -->
   <script>
-    
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  auth.onAuthStateChanged(async (user) => {
-    const el = document.getElementById("userGreeting");
-    if (!el) return;
+    auth.onAuthStateChanged(async (user) => {
+      const el = document.getElementById("userGreeting");
+      if (!el) return;
 
-    if (user) {
-      const email = user.email;
-      try {
-        const doc = await db.collection("users").doc(email).get();
-        const namaLengkap = doc.exists ? doc.data().nama : email;
-        const namaDepan = namaLengkap.split(" ")[0];
-
-        el.textContent = namaDepan;
-        el.classList.remove("underline");
-        el.classList.add("font-semibold", "hover:opacity-90", "cursor-pointer");
-        el.onclick = () => window.location.href = "akun.html";
-      } catch (err) {
-        console.error("Gagal mengambil nama:", err);
-        el.textContent = "Pengguna";
-        el.onclick = () => window.location.href = "akun.html";
+      if (user) {
+        try {
+          const doc = await db.collection("users").doc(user.email).get();
+          const nama = doc.exists ? doc.data().nama : user.email;
+          const namaDepan = nama.split(" ")[0];
+          el.textContent = namaDepan;
+          el.onclick = () => window.location.href = "akun.html";
+        } catch (err) {
+          el.textContent = "Pengguna";
+          el.onclick = () => window.location.href = "akun.html";
+        }
+      } else {
+        el.textContent = "Masuk";
+        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
+        el.onclick = () => window.location.href = "login.html";
       }
-    } else {
-      el.textContent = "Masuk";
-      el.classList.remove("underline");
-      el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-      el.onclick = () => window.location.href = "login.html";
-    }
-  });
-          
+    });
+
     const provinsiSelect = document.getElementById("provinsi");
     const kabupatenSelect = document.getElementById("kabupaten");
     const statusText = document.getElementById("status");
 
     let wilayahData = {};
 
-    // Load JSON wilayah
     fetch("data/wilayah.json")
       .then(res => res.json())
       .then(data => {
         wilayahData = data;
-        const provList = Object.keys(wilayahData);
+        const provList = Object.keys(data);
         provList.forEach(prov => {
           const opt = document.createElement("option");
           opt.value = prov;
@@ -171,7 +149,6 @@
         statusText.classList.remove("hidden");
       });
 
-    // Ketika provinsi berubah
     provinsiSelect.addEventListener("change", () => {
       const prov = provinsiSelect.value;
       kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
@@ -185,7 +162,6 @@
       }
     });
 
-    // Submit Form
     document.getElementById("lokasiForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const prov = provinsiSelect.value;

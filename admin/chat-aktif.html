@@ -4,45 +4,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chat Aktif - FisioKita</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#f8fafc] text-sm min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex items-center justify-between">
-    <h1 class="text-lg font-semibold">💬 Chat Aktif</h1>
-    <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+  <header class="header-main">
+    <div class="flex items-center gap-2">
+      <span class="text-white text-lg font-semibold">💬 Chat Aktif</span>
+    </div>
+    <a href="dashboard.html" class="text-sm underline text-white hover:text-gray-200">Kembali</a>
   </header>
 
   <!-- Main -->
-  <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-4">
+  <main class="flex-1 max-w-md w-full mx-auto px-4 py-6 space-y-6">
+    
     <!-- Daftar Sesi -->
-    <div>
-      <label class="block font-medium mb-1">Daftar Sesi:</label>
-      <ul id="daftarSesi" class="space-y-2"></ul>
-    </div>
+    <section>
+      <label class="block font-semibold mb-2">Daftar Sesi Aktif:</label>
+      <ul id="daftarSesi" class="space-y-2 text-sm"></ul>
+    </section>
 
     <!-- Chat Box -->
-    <div id="chatContainer" class="hidden">
-      <div id="chatBox" class="bg-white rounded p-3 h-64 overflow-y-auto space-y-2 shadow border border-gray-200"></div>
+    <section id="chatContainer" class="hidden space-y-3">
+      <div id="chatBox" class="bg-white border border-gray-200 rounded-xl p-4 h-64 overflow-y-auto space-y-2 shadow-inner"></div>
 
-      <form id="formChat" class="mt-3 flex gap-2">
-        <input type="text" id="inputPesan" class="flex-1 border border-gray-300 px-3 py-2 rounded-full text-sm" placeholder="Ketik balasan..." />
-        <button class="bg-[#1D4ED8] hover:bg-[#2563EB] text-white px-4 py-2 rounded-full text-sm">Kirim</button>
+      <form id="formChat" class="flex items-center gap-2">
+        <input type="text" id="inputPesan" class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm" placeholder="Ketik balasan..." />
+        <button class="btn-primary px-4 py-2 text-sm">Kirim</button>
       </form>
 
-      <button id="btnAkhiri" class="mt-2 text-xs text-red-600 underline hover:text-red-800 block text-right">Akhiri Chat</button>
-    </div>
+      <button id="btnAkhiri" class="text-xs text-red-600 underline hover:text-red-800 text-right block">Akhiri Chat</button>
+    </section>
   </main>
 
+  <!-- Firebase Logic -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -83,17 +85,17 @@
         .onSnapshot(snapshot => {
           daftarSesi.innerHTML = "";
           if (snapshot.empty) {
-            daftarSesi.innerHTML = "<li class='text-gray-600 italic'>Tidak ada sesi aktif.</li>";
+            daftarSesi.innerHTML = "<li class='text-gray-500 italic'>Tidak ada sesi aktif.</li>";
             return;
           }
 
           snapshot.forEach(doc => {
             const data = doc.data();
             const item = document.createElement("li");
-            item.className = "bg-white p-3 rounded shadow border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-[#dbeafe] transition";
+            item.className = "bg-white p-3 rounded-xl border border-gray-200 shadow flex justify-between items-center cursor-pointer hover:bg-[#E0E7FF] transition";
             item.innerHTML = `
               <div>
-                <div class="font-semibold text-sm">${data.namaPasien || "Pasien"}</div>
+                <div class="font-semibold">${data.namaPasien || "Pasien"}</div>
                 <div class="text-xs text-gray-500">${doc.id}</div>
               </div>
               <span class="text-red-500 text-xs" id="notifikasi-${doc.id}">🔴</span>
@@ -127,16 +129,19 @@
 
             const div = document.createElement("div");
             if (isAdmin) {
-              div.className = "flex flex-col items-end max-w-[80%] ml-auto";
+              div.className = "flex justify-end";
               div.innerHTML = `
-                <div class="bg-white border border-gray-300 text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
+                <div class="bg-white text-black rounded-xl rounded-br-none px-4 py-2 shadow text-sm">
                   ${data.pesan}
-                  <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>
+                  <span class="text-xs text-gray-400 ml-2">${jam}.${menit}</span>
                 </div>`;
             } else {
-              div.className = "bg-[#dbeafe] text-[#111827] text-sm rounded-xl rounded-tl-none px-3 py-2 max-w-[80%] break-words shadow";
-              div.innerHTML = `${data.pesan}
-                <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>`;
+              div.className = "flex justify-start";
+              div.innerHTML = `
+                <div class="bg-[#DBEAFE] text-black rounded-xl rounded-tl-none px-4 py-2 shadow text-sm">
+                  ${data.pesan}
+                  <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
+                </div>`;
             }
             chatBox.appendChild(div);
           });

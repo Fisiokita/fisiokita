@@ -9,33 +9,67 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style> body { font-family: 'Inter', sans-serif; } </style>
 </head>
-<body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
 <!-- Header -->
-<header class="bg-[#1D4ED8] text-white px-4 py-3 shadow flex justify-between items-center">
+<header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow-md">
   <h1 class="text-lg font-semibold">🏠 Permintaan Home Visit</h1>
-  <a href="dashboard.html" class="text-white underline text-sm">Kembali</a>
+  <a href="dashboard.html" class="btn-white text-sm">Kembali</a>
 </header>
 
 <!-- Tabs -->
 <nav class="flex justify-center bg-white border-b shadow text-sm font-medium">
-  <button class="px-4 py-2 border-b-2 border-[#1D4ED8] text-[#1D4ED8]" data-tab="pending">Permintaan</button>
-  <button class="px-4 py-2 text-gray-600 hover:text-[#1D4ED8]" data-tab="diterima">Disetujui</button>
-  <button class="px-4 py-2 text-gray-600 hover:text-[#1D4ED8]" data-tab="ditolak">Ditolak</button>
+  <button class="px-4 py-2 border-b-2 border-[#7F3CE0] text-[#7F3CE0]" data-tab="pending">Permintaan</button>
+  <button class="px-4 py-2 text-gray-600 hover:text-[#7F3CE0]" data-tab="diterima">Disetujui</button>
+  <button class="px-4 py-2 text-gray-600 hover:text-[#7F3CE0]" data-tab="ditolak">Ditolak</button>
 </nav>
 
 <!-- Main -->
-<main class="flex-1 max-w-md mx-auto w-full p-4">
+<main class="flex-1 max-w-md mx-auto w-full px-4 py-6">
   <ul id="offlineList" class="space-y-4 text-sm">
     <li class="text-gray-500 italic">Memuat data...</li>
   </ul>
 </main>
 
+<!-- Footer -->
+<footer class="bg-[#141C2F] text-white text-base mt-10">
+  <div class="max-w-md mx-auto px-6 py-10 space-y-8">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+      <span class="font-bold text-2xl">Fisio Kita</span>
+    </div>
+    <p class="text-white/90 leading-relaxed">
+      Pantau permintaan home visit dari pasien dan atur tindak lanjut dengan mudah.
+    </p>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
+        <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
+        <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
+        <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
+      <ul class="text-white/90 space-y-1 text-sm">
+        <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+        <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+      </ul>
+    </div>
+
+    <p class="text-center text-sm text-white/50 pt-6">
+      © 2025 FisioKita. Semua hak dilindungi undang-undang.
+    </p>
+  </div>
+</footer>
+
+<!-- Firebase Logic -->
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -56,8 +90,8 @@
   const tabButtons = document.querySelectorAll("nav button");
   tabButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      tabButtons.forEach(b => b.classList.remove("border-b-2", "border-[#1D4ED8]", "text-[#1D4ED8]"));
-      btn.classList.add("border-b-2", "border-[#1D4ED8]", "text-[#1D4ED8]");
+      tabButtons.forEach(b => b.classList.remove("border-b-2", "border-[#7F3CE0]", "text-[#7F3CE0]"));
+      btn.classList.add("border-b-2", "border-[#7F3CE0]", "text-[#7F3CE0]");
       currentTab = btn.dataset.tab;
       tampilkanPermintaanOffline();
     });
@@ -94,7 +128,7 @@
           }[data.status];
 
           const li = document.createElement("li");
-          li.className = "bg-white p-4 rounded shadow";
+          li.className = "bg-white p-4 rounded-xl border border-gray-200 shadow space-y-1";
 
           li.innerHTML = `
             <div class="flex justify-between items-center mb-1">

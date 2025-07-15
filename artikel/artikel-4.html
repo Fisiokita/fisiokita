@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> Edukasi Neurologi - Fisio Kita</title>
+  <title>Fisioterapi Neurologi - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -23,9 +19,9 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
 
-  <!-- Header (tinggi & tebal) -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
@@ -35,150 +31,132 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Edukasi Kesehatan</h1>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Fisioterapi Neurologi: Pulihkan Fungsi Gerak</h1>
 
-    <div class="space-y-8 text-black">
-      <!-- Artikel -->
-      <article class="bg-white rounded-lg p-6 shadow-md">
-  <h2 class="font-bold text-base mb-3"> Fisioterapi Neurologi: Pulihkan Fungsi Gerak Setelah Gangguan Saraf</h2>
+    <article class="bg-white p-6 rounded-xl shadow-md text-sm leading-relaxed space-y-5 border border-gray-200">
+      <p>Fisioterapi neurologi difokuskan untuk pasien dengan gangguan sistem saraf pusat atau perifer, seperti stroke, Parkinson, cedera otak, dan lainnya. Tujuan terapi ini adalah mengembalikan kemampuan gerak dan meningkatkan kemandirian pasien.</p>
 
-  <p class="text-sm leading-relaxed mb-3">
-    Fisioterapi neurologi adalah bentuk terapi yang difokuskan pada pasien dengan gangguan sistem saraf pusat atau perifer, seperti stroke, cedera otak, cedera tulang belakang, Parkinson, multiple sclerosis, atau neuropati. Terapi ini bertujuan untuk memaksimalkan kemampuan gerak dan fungsi pasien agar bisa kembali beraktivitas secara mandiri.
-  </p>
+      <div>
+        <h2 class="font-semibold mb-1">🧠 Kondisi yang Ditangani:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Stroke (iskemik/hemoragik)</li>
+          <li>Cedera otak traumatik (TBI)</li>
+          <li>Paraplegia atau tetraplegia</li>
+          <li>Parkinson</li>
+          <li>Multiple sclerosis</li>
+          <li>Neuropati perifer</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Kondisi yang Ditangani Fisioterapi Neurologi:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Stroke (iskemik maupun hemoragik)</li>
-    <li>Cedera otak traumatik (TBI)</li>
-    <li>Cedera tulang belakang (paraplegia atau tetraplegia)</li>
-    <li>Penyakit Parkinson</li>
-    <li>Multiple sclerosis (MS)</li>
-    <li>Neuropati perifer atau kelemahan saraf tepi</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🎯 Tujuan Fisioterapi Neurologi:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Memulihkan koordinasi dan kekuatan otot</li>
+          <li>Melatih ulang kemampuan berdiri dan berjalan</li>
+          <li>Menjaga fleksibilitas dan mencegah kekakuan otot</li>
+          <li>Meningkatkan aktivitas fungsional harian</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Tujuan dan Manfaat Fisioterapi Neurologi:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Memulihkan kekuatan dan koordinasi otot.</li>
-    <li>Melatih ulang keseimbangan dan kemampuan berdiri/jalan.</li>
-    <li>Meningkatkan kontrol gerakan dan mencegah kekakuan otot.</li>
-    <li>Menjaga dan meningkatkan mobilitas sendi.</li>
-    <li>Membantu pasien menjadi lebih mandiri dalam aktivitas harian.</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🛠️ Teknik yang Digunakan:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Latihan keseimbangan & propriosepsi</li>
+          <li>Latihan fungsional duduk, berdiri, berjalan</li>
+          <li>Stimulasi saraf dan otot</li>
+          <li>Latihan penguatan motorik dan koordinasi</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Teknik Terapi yang Digunakan:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1 mb-3">
-    <li>Latihan fungsional seperti duduk, berdiri, berpindah posisi, berjalan.</li>
-    <li>Latihan keseimbangan dan propriosepsi.</li>
-    <li>Pemulihan gerakan motorik dan koordinasi.</li>
-    <li>Mobilisasi sendi dan latihan rentang gerak.</li>
-    <li>Stimulasi saraf dan latihan penguatan otot.</li>
-  </ul>
+      <div>
+        <h2 class="font-semibold mb-1">🩺 Layanan FisioKita untuk Neurologi:</h2>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Home visit pasca stroke atau cedera otak</li>
+          <li>Program latihan mobilisasi bertahap</li>
+          <li>Pendampingan keluarga dan pemantauan berkala</li>
+        </ul>
+      </div>
 
-  <h3 class="font-semibold mb-1"> Layanan FisioKita untuk Pasien Neurologi:</h3>
-  <ul class="list-disc text-sm pl-5 space-y-1">
-    <li> Terapi pasca stroke dan cedera otak.</li>
-    <li> Kunjungan fisioterapis ke rumah (home visit).</li>
-    <li> Latihan duduk, berdiri, berpindah posisi, dan berjalan ulang.</li>
-    <li> Rencana terapi personal & pendampingan keluarga pasien.</li>
-  </ul>
+      <p>Terapi saraf memerlukan konsistensi, kesabaran, dan pendekatan personal. Bersama FisioKita, pasien didampingi secara optimal untuk mencapai progres yang nyata.</p>
 
-  <p class="text-sm leading-relaxed mt-3">
-    Fisioterapi neurologi memerlukan pendekatan yang konsisten dan penuh empati. Dengan bimbingan terapis yang tepat, pasien dapat mencapai kemajuan yang berarti meski dengan keterbatasan saraf yang kompleks.
-  </p>
+      <p class="font-semibold">
+        Butuh terapi pasca stroke atau cedera saraf? <a href="../konsultasi-offline.html" class="underline text-blue-600">Hubungi FisioKita sekarang</a>.
+      </p>
+    </article>
 
-  <p class="text-sm leading-relaxed mt-3 font-semibold">
-    Butuh terapi pasca stroke atau cedera saraf? <a href="konsultasi-offline.html" class="underline text-blue-600">Hubungi tim FisioKita dan jadwalkan terapi di rumah</a>.
-  </p>
-      </article>
-      
-    </div>
-
-    <!-- Tombol kembali -->
-    <div class="mt-8 text-center">
-      <a href="index.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+    <div class="mt-10 text-center">
+      <a href="../edukasi.html" class="inline-block bg-[#2970F2] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali ke Edukasi
       </a>
     </div>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white mt-20 text-base">
-  <div class="max-w-md mx-auto px-6 py-12 space-y-10">
-
-    <!-- Logo dan Deskripsi -->
-    <div class="flex items-center gap-3">
-      <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
-    </p>
-
-    <!-- Navigasi -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
-        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
-        <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
-        <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan fisioterapi terpercaya — pesan konsultasi online & offline langsung dengan terapis terbaik kami.
+      </p>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="../index.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🏠 Beranda</a>
+          <a href="../konsultasi-jenis.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">🩺 Konsultasi</a>
+          <a href="../edukasi.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">📚 Edukasi</a>
+          <a href="../akun.html" class="bg-white text-[#141C2F] font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100">👤 Akun</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 text-sm space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
+  </footer>
 
-    <!-- Kontak -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak</h3>
-      <ul class="space-y-2 text-white/90">
-        <li>📞 <a href="https://wa.me/6285179792319" >0851-7979-2319</a></li>
-        <li>  📧 <a href="mailto:fisiokita.cs@gmail.com" >fisiokita.cs@gmail.com</a></li>
-        <li>📍 Jl. Soekarno Hatta No.11, Manggis Ganting, Bukittinggi</li>
-      </ul>
-    </div>
-
-    <!-- Jam Operasional -->
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
-      <ul class="text-white/90 space-y-1">
-        <li>Senin – Jumat: 08.00 – 18.00</li>
-        <li>Sabtu: 08.00 – 16.00</li>
-        <li>Minggu: Tutup</li>
-      </ul>
-    </div>
-
-    <!-- Copyright -->
-    <p class="text-center text-sm text-white/50 pt-8">
-      © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
-  
-<script>
-  const auth = firebase.auth();
+  <!-- Firebase Auth -->
+  <script>
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     auth.onAuthStateChanged(async (user) => {
       const el = document.getElementById("userGreeting");
       if (!el) return;
-
       if (user) {
         try {
           const doc = await db.collection("users").doc(user.email).get();
           const nama = doc.exists ? doc.data().nama : user.email;
-          const namaDepan = nama.split(" ")[0];
-          el.textContent = namaDepan;
-          el.onclick = () => window.location.href = "akun.html";
-        } catch (err) {
+          el.textContent = nama.split(" ")[0];
+          el.onclick = () => window.location.href = "../akun.html";
+        } catch {
           el.textContent = "Pengguna";
-          el.onclick = () => window.location.href = "akun.html";
+          el.onclick = () => window.location.href = "../akun.html";
         }
       } else {
         el.textContent = "Masuk";
         el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
-        el.onclick = () => window.location.href = "login.html";
+        el.onclick = () => window.location.href = "../login.html";
       }
     });
-</script>
+  </script>
 </body>
 </html>

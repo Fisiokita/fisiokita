@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jadwal Konsultasi - FisioKita</title>
+  <title>Jadwal Konsultasi - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -12,23 +12,23 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-[#f8fafc] text-[#111827] min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3 bg-[#2563EB] text-white shadow">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex items-center gap-3 shadow-md">
     <a href="index.html">
       <img src="img/logo.png" alt="Logo" class="w-6 h-6" />
     </a>
-    <span class="font-semibold text-lg">FisioKita</span>
+    <span class="font-semibold text-xl">Fisio Kita</span>
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-4">Jadwalkan Konsultasi</h1>
-    <p class="text-sm text-center mb-1">Dengan: <span id="namaFisioterapis" class="font-bold text-[#2563EB]"></span></p>
+  <main class="flex-grow px-6 pt-8 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-2">Jadwalkan Konsultasi</h1>
+    <p class="text-sm text-center mb-1">Dengan: <span id="namaFisioterapis" class="font-bold text-[#2970F2]"></span></p>
     <p id="lokasiInfo" class="text-xs text-center text-gray-500 mb-4 hidden">Lokasi: <span id="lokasiSpan"></span></p>
 
-    <form id="jadwalForm" class="bg-white rounded-lg p-6 text-[#111827] space-y-4 shadow">
+    <form id="jadwalForm" class="bg-white rounded-xl p-6 text-[#1E2A44] space-y-4 shadow-md border">
       <div>
         <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
         <input type="text" id="namaPasien" class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm" required />
@@ -63,21 +63,47 @@
         </select>
       </div>
       <button type="submit"
-              class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 w-full hover:bg-[#1e40af] transition">
+              class="bg-[#2970F2] text-white text-sm font-semibold rounded-full px-4 py-3 w-full hover:bg-[#215cd5] transition shadow">
         Konfirmasi Jadwal
       </button>
     </form>
   </main>
 
-  <!-- Firebase Config -->
+  <!-- Footer -->
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-10 space-y-8">
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90">Konsultasikan kondisi Anda dengan fisioterapis profesional dari Fisio Kita.</p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <a href="index.html" class="bg-white text-[#141C2F] text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+        <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+        <a href="edukasi.html" class="bg-white text-[#141C2F] text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+        <a href="akun.html" class="bg-white text-[#141C2F] text-sm font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+      </div>
+
+      <div>
+        <h3 class="font-semibold text-base mb-1">Kontak</h3>
+        <ul class="space-y-1 text-white/90 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <p class="text-center text-white/50 text-sm pt-4">© 2025 Fisio Kita. Semua hak dilindungi undang-undang.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -117,8 +143,6 @@
 
       try {
         await db.collection("offline_req").add(data);
-
-        // Redirect ke tiket
         const query = new URLSearchParams(data).toString();
         window.location.href = `tiket.html?${query}`;
       } catch (err) {

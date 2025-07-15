@@ -11,6 +11,15 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
@@ -106,17 +115,42 @@
 
   <!-- Firebase -->
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
-    };
-    firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
     const db = firebase.firestore();
-  </script>
 
-  <!-- Submit Handler -->
-  <script>
+    auth.onAuthStateChanged(async (user) => {
+      const el = document.getElementById("userGreeting");
+      if (user) {
+    try {
+      const userDoc = await db.collection("users").doc(user.email).get();
+      if (userDoc.exists) {
+        const nama = userDoc.data().nama || user.email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "akun.html";
+      } else {
+        const terapisDoc = await db.collection("terapis").doc(user.email).get();
+        if (terapisDoc.exists) {
+          const nama = terapisDoc.data().nama || user.email;
+          el.textContent = nama.split(" ")[0];
+          el.onclick = () => window.location.href = "admin/dashboard.html";
+        } else {
+          el.textContent = user.email;
+          el.onclick = () => window.location.href = "akun.html";
+        }
+      }
+    } catch (err) {
+      el.textContent = "Pengguna";
+      el.onclick = () => window.location.href = "akun.html";
+    }
+  } else {
+    el.textContent = "Masuk";
+    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+    el.onclick = () => window.location.href = "login.html";
+  }
+});
+
+  // Submit Handler -->
+  
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
     const emailTerapis = params.get("email") || "";

@@ -174,22 +174,30 @@
     fetch("data/wilayah.json")
       .then(res => res.json())
       .then(data => {
-        const prov = document.getElementById("regProvinsi");
-        const kab = document.getElementById("regKabupaten");
-        Object.keys(data).forEach(p => {
+        wilayahData = data;
+        const provList = Object.keys(wilayahData);
+        provList.forEach(prov => {
           const opt = document.createElement("option");
-          opt.value = p;
-          opt.textContent = p;
-          prov.appendChild(opt);
+          opt.value = prov;
+          opt.textContent = prov;
+          provinsiSelect.appendChild(opt);
         });
-        prov.onchange = () => {
-          kab.innerHTML = "";
-          Object.keys(data[prov.value] || {}).forEach(k => {
-            const opt = document.createElement("option");
-            opt.value = k;
-            opt.textContent = k;
-            kab.appendChild(opt);
-          });
+      })
+      .catch(() => {
+        statusText.classList.remove("hidden");
+      });
+
+    // Ketika provinsi berubah
+    provinsiSelect.addEventListener("change", () => {
+      const prov = provinsiSelect.value;
+      kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+      if (wilayahData[prov]) {
+        Object.keys(wilayahData[prov]).forEach(kab => {
+          const opt = document.createElement("option");
+          opt.value = kab;
+          opt.textContent = kab;
+          kabupatenSelect.appendChild(opt);
+        });
         };
       });
   </script>

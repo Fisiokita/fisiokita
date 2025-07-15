@@ -5,75 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Konsultasi Online - Fisio Kita</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#4B6CC1] text-white min-h-screen flex flex-col">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="flex items-center gap-2 px-4 py-3">
-    <a href="konsultasi-jenis.html">
-      <img src="img/logo.png" alt="Kembali" class="w-6 h-6" />
-    </a>
-    <span class="font-semibold text-lg">Fisio Kita</span>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <a href="konsultasi-jenis.html" class="flex items-center gap-2">
+        <img src="img/logo.png" alt="Fisio Kita Logo" class="w-6 h-6" />
+        <span class="font-semibold text-xl">Fisio Kita</span>
+      </a>
+    </div>
   </header>
 
   <!-- Main -->
-  <main class="flex-grow px-6 pt-6 pb-12 max-w-md mx-auto w-full">
-    <h1 class="text-xl font-semibold text-center mb-6">Fisioterapis Tersedia</h1>
+  <main class="flex-grow px-6 pt-10 pb-16 max-w-md mx-auto w-full">
+    <h1 class="text-2xl font-bold text-center mb-6">Pilih Fisioterapis</h1>
     <div id="daftarTerapis" class="space-y-6">
-      <p class="text-center text-sm text-white">Memuat daftar terapis...</p>
+      <p class="text-center text-sm text-gray-500 italic">Memuat daftar terapis...</p>
     </div>
 
-    <!-- Tombol kembali -->
-    <div class="mt-8 text-center">
+    <div class="mt-10 text-center">
       <a href="konsultasi-jenis.html"
-         class="bg-[#2563EB] text-white text-sm font-semibold rounded-md px-4 py-2 hover:bg-[#1e4bb8] transition">
-        Kembali
+         class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+        ← Kembali
       </a>
     </div>
   </main>
 
   <!-- Popup Antrian -->
   <div id="queuePopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg text-center text-black max-w-sm w-full">
+    <div class="bg-white p-6 rounded-lg shadow-xl text-center text-[#1E2A44] max-w-sm w-full">
       <h2 class="font-bold text-lg mb-2">Terapis Tidak Tersedia</h2>
-      <p class="text-sm mb-4">Terapis Tidak Tersedia.<br />Silahkan Pilih Terapis Lain.</p>
-      <button onclick="closePopup()" class="bg-[#2563EB] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
+      <p class="text-sm mb-4 leading-relaxed">Terapis sedang tidak tersedia. Silakan pilih terapis lain atau tunggu giliran.</p>
+      <button onclick="closePopup()" class="bg-[#2970F2] text-white text-sm font-semibold px-4 py-2 rounded hover:bg-[#1e4bb8] transition">
         Oke, Mengerti
       </button>
     </div>
   </div>
 
   <!-- Footer -->
-  <footer class="text-white text-xs max-w-md mx-auto space-y-4 pb-6 mt-8">
-    <div class="flex items-center gap-2">
-      <img src="img/logo.png" alt="Logo" class="w-5 h-5" />
-      <span>Fisio Kita</span>
+  <footer class="bg-[#141C2F] text-white mt-20 text-base">
+    <div class="max-w-md mx-auto px-6 py-12 space-y-10">
+
+      <!-- Logo dan Deskripsi -->
+      <div class="flex items-center gap-3">
+        <img src="img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-xl">Fisio Kita</span>
+      </div>
+      <p class="text-white/90 leading-relaxed">
+        Layanan konsultasi online bersama fisioterapis profesional. Mudah, cepat, dan terpercaya.
+      </p>
+
+      <!-- Navigasi -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <a href="index.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🏠 Beranda</a>
+          <a href="konsultasi-jenis.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">🩺 Konsultasi</a>
+          <a href="edukasi.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">📚 Edukasi</a>
+          <a href="akun.html" class="bg-white text-[#141C2F] text-base font-semibold rounded-full px-4 py-2 text-center hover:bg-gray-100 transition">👤 Akun</a>
+        </div>
+      </div>
+
+      <!-- Kontak -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak</h3>
+        <ul class="space-y-2 text-white/90">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+          <li>📍 Jl. Soekarno Hatta No.11, Bukittinggi</li>
+        </ul>
+      </div>
+
+      <!-- Jam Operasional -->
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Jam Operasional</h3>
+        <ul class="text-white/90 space-y-1">
+          <li>Senin – Jumat: 08.00 – 18.00</li>
+          <li>Sabtu: 08.00 – 16.00</li>
+          <li>Minggu: Tutup</li>
+        </ul>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-center text-sm text-white/50 pt-8">
+        © 2025 Fisio Kita. Semua hak dilindungi undang-undang.
+      </p>
     </div>
-    <p>Pilih fisioterapis untuk memulai sesi konsultasi.</p>
   </footer>
 
-  <!-- Firebase & Logic -->
+  <!-- Firebase Script -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const daftarTerapis = document.getElementById("daftarTerapis");
 
-    function showQueuePopup(nama) {
+    function showQueuePopup() {
       document.getElementById("queuePopup").classList.remove("hidden");
     }
 
@@ -82,50 +120,50 @@
     }
 
     db.collection("terapis")
-  .where("status", "==", "tersedia")
-  .get().then(snapshot => {
-      daftarTerapis.innerHTML = "";
+      .where("status", "==", "tersedia")
+      .get().then(snapshot => {
+        daftarTerapis.innerHTML = "";
 
-      if (snapshot.empty) {
-        daftarTerapis.innerHTML = `
-        <p class="text-center text-white text-sm italic">Terapis tidak online.</p>`;
-        return;
-      }
+        if (snapshot.empty) {
+          daftarTerapis.innerHTML = `
+            <p class="text-center text-gray-500 text-sm italic">Terapis tidak tersedia saat ini.</p>`;
+          return;
+        }
 
-      snapshot.forEach(doc => {
-  const data = doc.data();
-  const email = doc.id;
-  // ❌ Lewati admin utama
-  if (email === "fisiokita@gmail.com") return;
-        const nama = data.nama?.trim() || "Terapis Tanpa Nama";
-        const status = data.status || "tidak";
-        const deskripsi = data.deskripsi || "Terapis FisioKita";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const email = doc.id;
+          if (email === "fisiokita@gmail.com") return;
 
-        const item = document.createElement("article");
-        item.className = "bg-white rounded-lg p-6 text-black shadow-md";
+          const nama = data.nama || "Terapis Tanpa Nama";
+          const status = data.status || "tidak";
+          const deskripsi = data.deskripsi || "Terapis FisioKita";
 
-        item.innerHTML = `
-          <h3 class="font-semibold text-base mb-1">${nama}</h3>
-          <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
-            ${status === 'tersedia' ? '✅ Tersedia' : '❌ Tidak Tersedia'}
-          </p>
-          <p class="text-xs mb-3">${deskripsi}</p>
-          ${
-            status === 'tersedia'
-              ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
-                  class="block bg-[#2563EB] text-white text-xs font-semibold rounded-md px-4 py-2 text-center hover:bg-[#1e4bb8] transition">
-                  Konsultasi Sekarang
-                </a>`
-              : `<button onclick="showQueuePopup('${nama}')"
-                  class="block bg-gray-400 text-white text-xs font-semibold rounded-md px-4 py-2 w-full cursor-not-allowed">
-                  Masuk Antrian
-                </button>`
-          }
-        `;
+          const item = document.createElement("article");
+          item.className = "bg-white rounded-xl p-6 text-[#1E2A44] shadow-md border";
 
-        daftarTerapis.appendChild(item);
+          item.innerHTML = `
+            <h3 class="font-semibold text-base mb-1">${nama}</h3>
+            <p class="text-xs ${status === 'tersedia' ? 'text-green-600' : 'text-red-600'} font-semibold mb-2">
+              ${status === 'tersedia' ? '✅ Tersedia' : '❌ Tidak Tersedia'}
+            </p>
+            <p class="text-xs mb-3">${deskripsi}</p>
+            ${
+              status === 'tersedia'
+                ? `<a href="input-pasien.html?email=${encodeURIComponent(email)}&nama=${encodeURIComponent(nama)}"
+                    class="block bg-[#2970F2] text-white text-xs font-semibold rounded-full px-4 py-2 text-center hover:bg-[#1e4bb8] transition shadow">
+                    Konsultasi Sekarang
+                  </a>`
+                : `<button onclick="showQueuePopup()"
+                    class="block bg-gray-400 text-white text-xs font-semibold rounded-full px-4 py-2 w-full cursor-not-allowed">
+                    Masuk Antrian
+                  </button>`
+            }
+          `;
+
+          daftarTerapis.appendChild(item);
+        });
       });
-    });
   </script>
 </body>
-</html>
+          </html>

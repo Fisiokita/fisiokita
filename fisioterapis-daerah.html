@@ -34,7 +34,7 @@
     <div id="daftar-terapis" class="space-y-6 hidden"></div>
     <p id="tidak-ada" class="text-center text-sm text-gray-500 italic hidden"></p>
     <div id="rekomendasi-terdekat" class="hidden mt-8 space-y-4">
-      <h3 class="text-sm font-semibold text-center text-gray-600 mb-2">💡 Rekomendasi Terapis Terdekat:</h3>
+      <h3 class="text-sm font-semibold text-center text-gray-600 mb-2"> Rekomendasi Terapis Terdekat:</h3>
     </div>
   </main>
 
@@ -126,7 +126,7 @@
         container.innerHTML = "";
         if (snapshot.empty) {
           tidakAda.classList.remove("hidden");
-          tidakAda.textContent = "⚠️ Tidak ada fisioterapis tersedia di wilayah ini.";
+          tidakAda.textContent = " Tidak ada fisioterapis tersedia di wilayah ini.";
 
           // Cari rekomendasi terapis di provinsi yang sama
           db.collection("terapis")
@@ -179,7 +179,7 @@
       .catch(err => {
         console.error("Gagal memuat:", err);
         tidakAda.classList.remove("hidden");
-        tidakAda.textContent = "⚠️ Terjadi kesalahan saat memuat data.";
+        tidakAda.textContent = " Terjadi kesalahan saat memuat data.";
       });
   </script>
 </body>

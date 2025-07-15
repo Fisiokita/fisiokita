@@ -11,7 +11,6 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
   </style>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -77,12 +76,12 @@
         Konfirmasi Jadwal
       </button>
     </form>
-    <!-- Tombol kembali -->
-      <div class="mt-10 text-center">
-        <a href="index.html" class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
-          Kembali
-        </a>
-      </div>
+
+    <div class="mt-10 text-center">
+      <a href="index.html" class="inline-block bg-[#2970F2] text-white text-base font-semibold rounded-full px-6 py-3 hover:bg-[#1e4bb8] transition shadow">
+        Kembali
+      </a>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -114,44 +113,42 @@
     </div>
   </footer>
 
-  <!-- Firebase -->
+  <!-- Script Firebase & Form -->
   <script>
-  const auth = firebase.auth();
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
     auth.onAuthStateChanged(async (user) => {
       const el = document.getElementById("userGreeting");
+      if (!el) return;
       if (user) {
-    try {
-      const userDoc = await db.collection("users").doc(user.email).get();
-      if (userDoc.exists) {
-        const nama = userDoc.data().nama || user.email;
-        el.textContent = nama.split(" ")[0];
-        el.onclick = () => window.location.href = "akun.html";
-      } else {
-        const terapisDoc = await db.collection("terapis").doc(user.email).get();
-        if (terapisDoc.exists) {
-          const nama = terapisDoc.data().nama || user.email;
-          el.textContent = nama.split(" ")[0];
-          el.onclick = () => window.location.href = "admin/dashboard.html";
-        } else {
-          el.textContent = user.email;
+        try {
+          const userDoc = await db.collection("users").doc(user.email).get();
+          if (userDoc.exists) {
+            el.textContent = (userDoc.data().nama || user.email).split(" ")[0];
+            el.onclick = () => window.location.href = "akun.html";
+          } else {
+            const terapisDoc = await db.collection("terapis").doc(user.email).get();
+            if (terapisDoc.exists) {
+              el.textContent = (terapisDoc.data().nama || user.email).split(" ")[0];
+              el.onclick = () => window.location.href = "admin/dashboard.html";
+            } else {
+              el.textContent = user.email;
+              el.onclick = () => window.location.href = "akun.html";
+            }
+          }
+        } catch (err) {
+          el.textContent = "Pengguna";
           el.onclick = () => window.location.href = "akun.html";
         }
+      } else {
+        el.textContent = "Masuk";
+        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+        el.onclick = () => window.location.href = "login.html";
       }
-    } catch (err) {
-      el.textContent = "Pengguna";
-      el.onclick = () => window.location.href = "akun.html";
-    }
-  } else {
-    el.textContent = "Masuk";
-    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
-    el.onclick = () => window.location.href = "login.html";
-  }
-});
+    });
 
-  //Submit Handler 
-  
+    // Ambil parameter dari URL
     const params = new URLSearchParams(window.location.search);
     const namaFisio = params.get("nama") || "Fisioterapis Tidak Diketahui";
     const emailTerapis = params.get("email") || "";
@@ -159,12 +156,12 @@
     const kab = params.get("kab");
 
     document.getElementById("namaFisioterapis").textContent = namaFisio;
-
     if (prov && kab) {
       document.getElementById("lokasiInfo").classList.remove("hidden");
       document.getElementById("lokasiSpan").textContent = `${kab}, ${prov}`;
     }
 
+    // Submit form
     document.getElementById("jadwalForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 

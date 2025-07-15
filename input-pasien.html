@@ -6,6 +6,7 @@
   <title>Data Pasien - FisioKita</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <link rel="stylesheet" href="css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -13,13 +14,14 @@
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header -->
-  <header class="header-main">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
       <a href="konsultasi-online.html">
         <img src="img/logo.png" alt="Logo" class="w-7 h-7" />
       </a>
       <span class="font-semibold text-lg sm:text-xl">Fisio Kita</span>
     </div>
+    <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
   </header>
 
   <!-- Main -->
@@ -62,12 +64,10 @@
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
   </script>
 
@@ -80,15 +80,57 @@
     document.getElementById("namaFisio").textContent = namaFisio;
 
     const form = document.getElementById("formPasien");
+    const namaInput = document.getElementById("nama");
     const kontakInput = document.getElementById("kontak");
     const kontakError = document.getElementById("kontakError");
+    const keluhanInput = document.getElementById("keluhan");
+    const userGreeting = document.getElementById("userGreeting");
+
+    // Cek status login dan isi otomatis nama + hp
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Ganti tombol jadi nama user
+        try {
+          const snap = await db.collection("users").doc(user.email).get();
+          const data = snap.data() || {};
+          const nama = data.nama || user.email;
+          const hp = data.hp || "";
+
+          const namaDepan = nama.split(" ")[0];
+          userGreeting.textContent = namaDepan;
+          userGreeting.classList.add("font-semibold", "hover:opacity-90");
+          userGreeting.onclick = () => window.location.href = "akun.html";
+
+          if (data.nama) {
+            namaInput.value = data.nama;
+            namaInput.setAttribute("readonly", true);
+            namaInput.classList.add("bg-gray-100", "cursor-not-allowed");
+          }
+
+          if (data.hp) {
+            kontakInput.value = data.hp;
+            kontakInput.setAttribute("readonly", true);
+            kontakInput.classList.add("bg-gray-100", "cursor-not-allowed");
+          }
+        } catch (err) {
+          console.error("Gagal ambil data user:", err);
+          userGreeting.textContent = "Pengguna";
+          userGreeting.onclick = () => window.location.href = "akun.html";
+        }
+      } else {
+        // Belum login
+        userGreeting.textContent = "Masuk";
+        userGreeting.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100", "transition");
+        userGreeting.onclick = () => window.location.href = "login.html";
+      }
+    });
 
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      const nama = document.getElementById("nama").value.trim();
+      const nama = namaInput.value.trim();
       const kontak = kontakInput.value.trim();
-      const keluhan = document.getElementById("keluhan").value.trim();
+      const keluhan = keluhanInput.value.trim();
 
       if (!/^\d{10,15}$/.test(kontak)) {
         kontakError.classList.remove("hidden");

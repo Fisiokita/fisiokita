@@ -151,25 +151,60 @@
     });
 
     function filterDanTampilkan() {
-      const prov = provinsiSelect.value;
-      const kab = kabupatenSelect.value;
-      const keyword = searchInput.value.toLowerCase();
+  const prov = provinsiSelect.value;
+  const kab = kabupatenSelect.value;
+  const keyword = searchInput.value.toLowerCase();
 
-      if (!prov || !kab) {
-        listTerapis.innerHTML = `<p class="text-center text-gray-500 text-sm italic">Pilih provinsi dan kabupaten terlebih dahulu.</p>`;
-        return;
-      }
+  if (!prov || !kab) {
+    listTerapis.innerHTML = `<p class="text-center text-gray-500 text-sm italic">Pilih provinsi dan kabupaten terlebih dahulu.</p>`;
+    return;
+  }
 
-      const hasil = semuaTerapis.filter(t =>
-        t.provinsi === prov &&
-        t.kabupaten === kab &&
-        (
-          t.nama.toLowerCase().includes(keyword) ||
-          t.spesialis.toLowerCase().includes(keyword)
-        )
-      );
-      renderTerapis(hasil);
+  const hasil = semuaTerapis.filter(t =>
+    t.provinsi === prov &&
+    t.kabupaten === kab &&
+    (
+      t.nama.toLowerCase().includes(keyword) ||
+      t.spesialis.toLowerCase().includes(keyword)
+    )
+  );
+
+  if (hasil.length > 0) {
+    renderTerapis(hasil);
+  } else {
+    // Jika tidak ditemukan, tampilkan pesan & cari rekomendasi terdekat
+    listTerapis.innerHTML = `
+      <p class="text-center text-gray-500 text-sm italic mb-4">
+        Tidak ditemukan terapis di ${kab}, ${prov}.
+      </p>`;
+
+    // Rekomendasi dari provinsi yang sama, kabupaten berbeda
+    const rekomendasi = semuaTerapis.filter(t =>
+      t.provinsi === prov && t.kabupaten !== kab &&
+      (
+        t.nama.toLowerCase().includes(keyword) ||
+        t.spesialis.toLowerCase().includes(keyword)
+      )
+    );
+
+    if (rekomendasi.length > 0) {
+      listTerapis.innerHTML += `<h3 class="font-semibold text-sm text-gray-700 mb-2">Rekomendasi di wilayah sekitar:</h3>`;
+      rekomendasi.forEach(t => {
+        const html = `
+          <article class="bg-white text-[#1E2A44] rounded-xl p-6 shadow-md border mb-4">
+            <h3 class="font-semibold text-base mb-1">${t.nama}</h3>
+            <p class="text-sm text-[#4B6CC1] font-semibold mb-2">${t.spesialis}</p>
+            <p class="text-sm mb-1">📍 ${t.kabupaten}, ${t.provinsi}</p>
+            <p class="text-xs mb-1 text-gray-600 italic">${t.deskripsi}</p>
+          </article>
+        `;
+        listTerapis.innerHTML += html;
+      });
+    } else {
+      listTerapis.innerHTML += `<p class="text-sm text-center italic text-gray-400">Tidak ada rekomendasi lain di provinsi ini.</p>`;
     }
+  }
+}
   </script>
 </body>
 </html>

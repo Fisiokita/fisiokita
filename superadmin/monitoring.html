@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitoring Sistem - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">📊 Monitoring & Statistik</h1>
+    <p class="text-sm text-gray-600">Pantau kinerja sistem dan aktivitas user secara realtime.</p>
+  </header>
+
+  <!-- Statistik Ringkas -->
+  <section class="grid grid-cols-2 gap-4 mb-6 text-center">
+    <div class="bg-white rounded-xl shadow p-4">
+      <div class="text-xl font-bold" id="jumlahUser">0</div>
+      <div class="text-sm text-gray-500">Total User</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4">
+      <div class="text-xl font-bold" id="jumlahTerapis">0</div>
+      <div class="text-sm text-gray-500">Total Terapis</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4">
+      <div class="text-xl font-bold" id="sesiAktif">0</div>
+      <div class="text-sm text-gray-500">Sesi Aktif</div>
+    </div>
+    <div class="bg-white rounded-xl shadow p-4">
+      <div class="text-xl font-bold" id="sesiSelesai">0</div>
+      <div class="text-sm text-gray-500">Sesi Selesai</div>
+    </div>
+  </section>
+
+  <!-- Log Aktivitas -->
+  <section class="bg-white border rounded-xl p-4 shadow mb-6">
+    <h2 class="font-semibold mb-3">📁 Log Aktivitas Terakhir</h2>
+    <ul id="logList" class="space-y-2 text-sm text-gray-700"></ul>
+  </section>
+
+  <!-- Firebase Logic -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const jumlahUser = document.getElementById("jumlahUser");
+    const jumlahTerapis = document.getElementById("jumlahTerapis");
+    const sesiAktif = document.getElementById("sesiAktif");
+    const sesiSelesai = document.getElementById("sesiSelesai");
+    const logList = document.getElementById("logList");
+
+    db.collection("pasien").get().then(snap => jumlahUser.textContent = snap.size);
+    db.collection("terapis").get().then(snap => jumlahTerapis.textContent = snap.size);
+    db.collection("sessions").where("selesai", "==", false).get().then(snap => sesiAktif.textContent = snap.size);
+    db.collection("sessions").where("selesai", "==", true).get().then(snap => sesiSelesai.textContent = snap.size);
+
+    db.collection("logs").orderBy("waktu", "desc").limit(10).onSnapshot(snapshot => {
+      logList.innerHTML = "";
+      snapshot.forEach(doc => {
+        const log = doc.data();
+        const waktu = log.waktu?.toDate().toLocaleString("id-ID");
+        const item = document.createElement("li");
+        item.className = "border-b pb-2";
+        item.innerHTML = `<div><b>${log.user || "Sistem"}</b> • <span class="text-xs text-gray-500">${waktu}</span></div><div>${log.aksi}</div>`;
+        logList.appendChild(item);
+      });
+    });
+  </script>
+</body>
+</html>

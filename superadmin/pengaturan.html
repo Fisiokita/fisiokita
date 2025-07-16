@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pengaturan Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">⚙️ Pengaturan Akun Superadmin</h1>
+    <p class="text-sm text-gray-600">Kelola akun Anda sebagai pengelola sistem.</p>
+  </header>
+
+  <div class="space-y-6 max-w-md">
+
+    <!-- Info akun -->
+    <div>
+      <label class="block font-medium mb-1">Email Anda:</label>
+      <input id="emailDisplay" type="text" readonly class="w-full px-3 py-2 border rounded bg-gray-100 text-sm" />
+    </div>
+
+    <!-- Ganti Password -->
+    <div>
+      <label class="block font-medium mb-1">Ganti Password:</label>
+      <input id="newPassword" type="password" placeholder="Password baru..." class="w-full px-3 py-2 border rounded text-sm" />
+      <button onclick="ubahPassword()" class="btnPrimary mt-2">🔐 Simpan Password</button>
+    </div>
+
+    <!-- Ganti Email -->
+    <div>
+      <label class="block font-medium mb-1">Ganti Email:</label>
+      <input id="newEmail" type="email" placeholder="Email baru..." class="w-full px-3 py-2 border rounded text-sm" />
+      <button onclick="ubahEmail()" class="btnPrimary mt-2">✉️ Simpan Email</button>
+    </div>
+
+    <!-- Tambah Superadmin Baru -->
+    <div class="border-t pt-6 mt-6">
+      <label class="block font-semibold mb-1">➕ Tambah Superadmin Baru</label>
+      <input id="superEmail" type="email" placeholder="Email Superadmin baru" class="w-full px-3 py-2 border rounded text-sm mb-2" />
+      <input id="superPassword" type="password" placeholder="Password awal" class="w-full px-3 py-2 border rounded text-sm mb-2" />
+      <button onclick="tambahSuperadmin()" class="btnPrimary">👥 Tambahkan</button>
+    </div>
+
+    <!-- Logout -->
+    <button onclick="logout()" class="text-red-600 underline mt-10 block">🚪 Logout</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("emailDisplay").value = user.email;
+      } else {
+        window.location.href = "../login.html";
+      }
+    });
+
+    function ubahPassword() {
+      const newPass = document.getElementById("newPassword").value.trim();
+      if (!newPass) return alert("Masukkan password baru");
+      auth.currentUser.updatePassword(newPass)
+        .then(() => alert("Password berhasil diperbarui"))
+        .catch(err => alert("Gagal: " + err.message));
+    }
+
+    function ubahEmail() {
+      const newEmail = document.getElementById("newEmail").value.trim();
+      if (!newEmail) return alert("Masukkan email baru");
+      auth.currentUser.updateEmail(newEmail)
+        .then(() => alert("Email berhasil diperbarui"))
+        .catch(err => alert("Gagal: " + err.message));
+    }
+
+    function tambahSuperadmin() {
+      const email = document.getElementById("superEmail").value.trim();
+      const password = document.getElementById("superPassword").value.trim();
+      if (!email || !password) return alert("Isi email dan password");
+
+      // NOTE: Hanya bisa dijalankan jika backend punya Firebase Admin SDK (bukan via client)
+      alert("Fitur ini butuh backend Admin SDK. Silakan tambahkan superadmin manual di Firebase Console.");
+    }
+
+    function logout() {
+      auth.signOut().then(() => window.location.href = "../login.html");
+    }
+  </script>
+
+  <style>
+    .btnPrimary {
+      background-color: #4B6CC1;
+      color: white;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .btnPrimary:hover {
+      background-color: #374e9d;
+    }
+  </style>
+</body>
+</html>

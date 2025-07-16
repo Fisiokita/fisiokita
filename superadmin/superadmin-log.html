@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Log Aktivitas - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-100 font-['Inter'] min-h-screen">
+  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold">📝 Log Aktivitas Sistem</h1>
+    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+  </header>
+
+  <main class="p-6 max-w-5xl mx-auto space-y-6">
+    <div class="flex justify-between items-center">
+      <h2 class="font-semibold text-base">Daftar Log</h2>
+      <button onclick="exportLog()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">⬇️ Export CSV</button>
+    </div>
+
+    <div class="bg-white shadow rounded p-4 overflow-x-auto">
+      <table class="w-full text-sm border" id="tabelLog">
+        <thead>
+          <tr class="bg-gray-100 text-left">
+            <th class="p-2 border">Waktu</th>
+            <th class="p-2 border">User</th>
+            <th class="p-2 border">Aksi</th>
+            <th class="p-2 border">Detail</th>
+          </tr>
+        </thead>
+        <tbody id="isiLog"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const isiLog = document.getElementById("isiLog");
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "../login.html";
+      loadLog();
+    });
+
+    function loadLog() {
+      db.collection("logs").orderBy("waktu", "desc").limit(100).onSnapshot(snapshot => {
+        isiLog.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const waktu = d.waktu?.toDate()?.toLocaleString("id-ID") || "-";
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="border px-2 py-1">${waktu}</td>
+            <td class="border px-2 py-1">${d.user || "-"}</td>
+            <td class="border px-2 py-1">${d.aksi || "-"}</td>
+            <td class="border px-2 py-1">${d.detail || "-"}</td>
+          `;
+          isiLog.appendChild(row);
+        });
+      });
+    }
+
+    function exportLog() {
+      db.collection("logs").orderBy("waktu", "desc").get().then(snapshot => {
+        let csv = "Waktu,User,Aksi,Detail\n";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const waktu = d.waktu?.toDate()?.toLocaleString("id-ID") || "-";
+          csv += `"${waktu}","${d.user || ''}","${d.aksi || ''}","${d.detail || ''}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "log-aktivitas.csv";
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>

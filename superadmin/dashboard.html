@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superadmin - FisioKita</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-50 font-['Inter'] min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">🛡️ Superadmin Dashboard</h1>
+    <button id="logoutBtn" class="text-sm underline">Logout</button>
+  </header>
+
+  <!-- Tabs -->
+  <main class="max-w-6xl mx-auto py-6 px-4">
+    <div class="mb-4 flex flex-wrap gap-2">
+      <button class="tab-btn" data-tab="dashboard">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="admin">👨‍⚕️ Admin/Terapis</button>
+      <button class="tab-btn" data-tab="pasien">🧑‍💻 Pasien</button>
+      <button class="tab-btn" data-tab="konsultasi">💬 Konsultasi</button>
+      <button class="tab-btn" data-tab="artikel">📰 Artikel</button>
+      <button class="tab-btn" data-tab="layanan">📅 Layanan</button>
+      <button class="tab-btn" data-tab="log">📄 Log</button>
+    </div>
+
+    <!-- === Tab Konten === -->
+
+    <section id="tab-dashboard" class="tab-content">
+      <h2 class="font-bold text-lg mb-2">📊 Ringkasan Sistem</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <div class="text-xl font-bold" id="stat-user">-</div>
+          <div class="text-gray-500">Total Pasien</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <div class="text-xl font-bold" id="stat-admin">-</div>
+          <div class="text-gray-500">Admin/Terapis</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <div class="text-xl font-bold" id="stat-sesi">-</div>
+          <div class="text-gray-500">Sesi Konsultasi</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow text-center">
+          <div class="text-xl font-bold" id="stat-artikel">-</div>
+          <div class="text-gray-500">Artikel Edukasi</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-admin" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">👨‍⚕️ Manajemen Admin / Terapis</h2>
+      <p class="text-sm text-gray-600">Silakan kelola terapis: tambah, edit, hapus, dan reset status.</p>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+
+    <section id="tab-pasien" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">🧑‍💻 Manajemen Pasien</h2>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+
+    <section id="tab-konsultasi" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">💬 Semua Konsultasi</h2>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+
+    <section id="tab-artikel" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">📰 Kelola Artikel Edukasi</h2>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+
+    <section id="tab-layanan" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">📅 Jadwal & Layanan</h2>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+
+    <section id="tab-log" class="tab-content hidden">
+      <h2 class="font-bold text-lg mb-2">📄 Riwayat Aktivitas</h2>
+      <!-- Konten lanjut di halaman admin.js -->
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-gray-500 mt-12 pb-4">
+    &copy; 2025 FisioKita. Panel Superadmin.
+  </footer>
+
+  <!-- Script -->
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Proteksi Login
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        alert("Akses hanya untuk Superadmin!");
+        window.location.href = "../login.html";
+      } else {
+        ambilStatistik();
+      }
+    });
+
+    function ambilStatistik() {
+      db.collection("users").get().then(snap => {
+        document.getElementById("stat-user").textContent = snap.size;
+      });
+      db.collection("terapis").get().then(snap => {
+        document.getElementById("stat-admin").textContent = snap.size;
+      });
+      db.collection("sessions").get().then(snap => {
+        document.getElementById("stat-sesi").textContent = snap.size;
+      });
+      db.collection("artikel").get().then(snap => {
+        document.getElementById("stat-artikel").textContent = snap.size;
+      });
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "../login.html");
+    });
+
+    // Tab Navigation
+    const tabs = document.querySelectorAll(".tab-btn");
+    const contents = document.querySelectorAll(".tab-content");
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        contents.forEach(c => c.classList.add("hidden"));
+        document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+        tabs.forEach(t => t.classList.remove("bg-white", "shadow"));
+        btn.classList.add("bg-white", "shadow");
+      });
+    });
+  </script>
+</body>
+</html>

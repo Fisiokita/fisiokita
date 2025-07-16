@@ -36,84 +36,77 @@
 
     <!-- Menu Navigasi -->
     <section class="space-y-4">
-      <a href="chat-aktif.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
+      <a href="chat-aktif.html" class="relative block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">💬 Chat Aktif</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
+          <span id="notifChat" class="hidden text-xs bg-red-500 text-white font-semibold px-2 py-0.5 rounded-full">0</span>
         </div>
       </a>
 
       <a href="riwayat-chat.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">📁 Riwayat Konsultasi</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
       <a href="jadwal.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">🗓️ Jadwal Terapis</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
       <a href="konsultasi-offline.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">🏠 Permintaan Home Visit</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
       <a href="pengaturan.html" class="block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">⚙️ Pengaturan Akun</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
 
       <a id="menuTambahTerapis" href="tambah-terapis.html" class="hidden block bg-white rounded-xl p-4 shadow border border-gray-100 hover:bg-[#DBEAFE] transition">
         <div class="flex justify-between items-center">
           <span class="font-semibold">👨‍⚕️ Tambah Terapis Baru</span>
-          <i class="fas fa-chevron-right text-gray-500"></i>
         </div>
       </a>
     </section>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white text-base mt-12">
-  <div class="max-w-md mx-auto px-6 py-10 space-y-8">
-    <div class="flex items-center gap-3">
-      <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.
-    </p>
-
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
-        <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
-        <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
-        <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+  <footer class="bg-[#141C2F] text-white text-base mt-12">
+    <div class="max-w-md mx-auto px-6 py-10 space-y-8">
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
-    </div>
+      <p class="text-white/90 leading-relaxed">Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.</p>
 
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
-      <ul class="text-white/90 space-y-1 text-sm">
-        <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
-        <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
+          <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
+          <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
+          <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+        </div>
+      </div>
 
-    <p class="text-center text-sm text-white/50 pt-6">
-      © 2025 FisioKita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
+        <ul class="text-white/90 space-y-1 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <p class="text-center text-sm text-white/50 pt-6">
+        © 2025 FisioKita. Semua hak dilindungi undang-undang.
+      </p>
+    </div>
+  </footer>
 
   <!-- Firebase Script -->
   <script>
@@ -141,12 +134,14 @@
             if (data.status) {
               document.getElementById("statusSelect").value = data.status;
             }
+
+            if (currentEmail.toLowerCase() === "fisiokita@gmail.com") {
+              document.getElementById("menuTambahTerapis").classList.remove("hidden");
+            }
+
+            tampilkanNotifikasiBelumDijawab(currentEmail);
           } else {
             document.getElementById("terapisNama").textContent = user.email;
-          }
-
-          if (user.email.toLowerCase() === "fisiokita@gmail.com") {
-            document.getElementById("menuTambahTerapis").classList.remove("hidden");
           }
         });
       } else {
@@ -164,6 +159,44 @@
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => window.location.href = "../login.html");
     });
+
+    // Notifikasi jumlah sesi aktif belum dijawab
+    async function tampilkanNotifikasiBelumDijawab(emailTerapis) {
+      try {
+        const sesiSnapshot = await db.collection("sessions")
+          .where("selesai", "==", false)
+          .where("kepada", "==", emailTerapis)
+          .get();
+
+        let jumlahBelumDijawab = 0;
+
+        for (const sesi of sesiSnapshot.docs) {
+          const sesiId = sesi.id;
+          const pesanSnapshot = await db.collection("chats")
+            .where("sessionId", "==", sesiId)
+            .orderBy("waktu", "desc")
+            .limit(1)
+            .get();
+
+          if (!pesanSnapshot.empty) {
+            const pesanTerakhir = pesanSnapshot.docs[0].data();
+            if (pesanTerakhir.dari !== "Admin") {
+              jumlahBelumDijawab++;
+            }
+          }
+        }
+
+        const notifEl = document.getElementById("notifChat");
+        if (jumlahBelumDijawab > 0) {
+          notifEl.textContent = `🔴 ${jumlahBelumDijawab}`;
+          notifEl.classList.remove("hidden");
+        } else {
+          notifEl.classList.add("hidden");
+        }
+      } catch (err) {
+        console.error("Gagal mengambil notifikasi:", err);
+      }
+    }
   </script>
 </body>
 </html>

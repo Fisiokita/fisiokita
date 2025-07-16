@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Superadmin - Backup Data</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-50 text-[#1E2A44] min-h-screen font-['Inter']">
+  <header class="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">📦 Backup & Export Data</h1>
+    <a href="dashboard.html" class="btn-white text-sm">Kembali</a>
+  </header>
+
+  <main class="max-w-xl mx-auto px-6 py-8 space-y-6">
+    <section class="bg-white p-5 rounded-xl shadow space-y-4">
+      <h2 class="text-base font-semibold">📤 Pilih Data yang Ingin Diunduh</h2>
+      <div class="grid grid-cols-1 gap-3">
+        <button onclick="exportData('users')" class="btn-primary w-full">👤 Export Data Pasien</button>
+        <button onclick="exportData('sessions')" class="btn-primary w-full">💬 Export Sesi Konsultasi</button>
+        <button onclick="exportData('chats')" class="btn-primary w-full">📨 Export Chat</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        window.location.href = "../login.html";
+      }
+    });
+
+    async function exportData(collectionName) {
+      const snapshot = await db.collection(collectionName).get();
+      const data = [];
+      snapshot.forEach(doc => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${collectionName}-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+  </script>
+</body>
+</html>

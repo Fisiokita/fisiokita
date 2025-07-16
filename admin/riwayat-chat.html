@@ -10,12 +10,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-  </style>
 </head>
-<body class="bg-[#f8fafc] text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 
 <!-- Header -->
 <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow">
@@ -24,21 +20,26 @@
 </header>
 
 <!-- Main -->
-<main class="flex-1 max-w-md w-full mx-auto px-4 py-6 space-y-6">
+<main class="flex-1 max-w-md w-full mx-auto px-6 py-6 relative">
 
-  <!-- Daftar Riwayat -->
-  <section>
-    <h2 class="font-semibold text-base mb-2">👥 Sesi Selesai</h2>
+  <!-- === Daftar Riwayat Selesai === -->
+  <section id="riwayatListSection">
+    <label class="block font-semibold mb-2">Daftar Sesi Selesai:</label>
     <ul id="daftarRiwayat" class="space-y-2 text-sm"></ul>
   </section>
 
-  <!-- Chat Box -->
-  <section id="chatContainer" class="hidden space-y-2">
-    <div id="chatBox" class="bg-white rounded-xl p-4 h-64 overflow-y-auto shadow-inner border space-y-2 text-sm"></div>
+  <!-- === Chat Fullscreen === -->
+  <section id="chatContainer" class="hidden absolute inset-0 bg-white px-4 py-5 flex flex-col">
+    <!-- Header Chat -->
+    <div class="flex justify-between items-center mb-4">
+      <button id="btnKembali" class="text-sm text-[#4B6CC1] hover:underline">&larr; Kembali</button>
+      <span class="font-semibold text-sm text-gray-700">Riwayat Chat</span>
+      <div></div>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chatBox" class="flex-1 overflow-y-auto space-y-3 px-1 pb-2"></div>
   </section>
-
-  
-
 </main>
 
 <!-- Firebase & Logic -->
@@ -46,10 +47,7 @@
   const firebaseConfig = {
     apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
     authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1",
-    storageBucket: "fisiosehat-af9f1.appspot.com",
-    messagingSenderId: "800971487968",
-    appId: "1:800971487968:web:0dec5977632004aa0fee85"
+    projectId: "fisiosehat-af9f1"
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
@@ -58,6 +56,8 @@
   const daftarRiwayat = document.getElementById("daftarRiwayat");
   const chatBox = document.getElementById("chatBox");
   const chatContainer = document.getElementById("chatContainer");
+  const riwayatListSection = document.getElementById("riwayatListSection");
+  const btnKembali = document.getElementById("btnKembali");
 
   let currentEmail = "";
 
@@ -99,6 +99,7 @@
 
   function bukaRiwayat(sessionId) {
     chatContainer.classList.remove("hidden");
+    riwayatListSection.classList.add("hidden");
     chatBox.innerHTML = "";
 
     db.collection("chats")
@@ -114,26 +115,22 @@
           const isAdmin = data.dari === "Admin";
 
           const bubble = document.createElement("div");
-          if (isAdmin) {
-            bubble.className = "flex justify-end";
-            bubble.innerHTML = `
-              <div class="bg-white text-black text-sm rounded-xl rounded-br-none px-3 py-2 shadow">
-                ${data.pesan}
-                <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
-              </div>`;
-          } else {
-            bubble.className = "flex justify-start";
-            bubble.innerHTML = `
-              <div class="bg-[#DBEAFE] text-black text-sm rounded-xl rounded-tl-none px-3 py-2 shadow">
-                ${data.pesan}
-                <span class="text-xs text-gray-600 ml-2">${jam}.${menit}</span>
-              </div>`;
-          }
+          bubble.className = isAdmin ? "flex justify-end" : "flex justify-start";
+          bubble.innerHTML = `
+            <div class="${isAdmin ? 'bg-white' : 'bg-[#FDE2E4]'} text-black rounded-xl ${isAdmin ? 'rounded-br-none' : 'rounded-tl-none'} px-4 py-2 shadow text-sm max-w-[75%]">
+              ${data.pesan}
+              <span class="text-xs text-gray-400 ml-2">${jam}.${menit}</span>
+            </div>`;
           chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
       });
   }
+
+  btnKembali.addEventListener("click", () => {
+    chatContainer.classList.add("hidden");
+    riwayatListSection.classList.remove("hidden");
+  });
 </script>
 </body>
 </html>

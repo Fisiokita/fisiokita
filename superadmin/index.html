@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Superadmin - FisioKita</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#F9FAFB] font-['Inter'] min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">Superadmin Dashboard</h1>
+    <button id="logoutBtn" class="text-sm underline">Logout</button>
+  </header>
+
+  <!-- Main -->
+  <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+
+    <!-- Ringkasan -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+      <div class="bg-white rounded-xl shadow p-4">
+        <p class="text-sm text-gray-500">Terapis/Admin</p>
+        <h2 id="totalAdmin" class="text-2xl font-bold">-</h2>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4">
+        <p class="text-sm text-gray-500">Pasien</p>
+        <h2 id="totalPasien" class="text-2xl font-bold">-</h2>
+      </div>
+      <div class="bg-white rounded-xl shadow p-4 col-span-full">
+        <p class="text-sm text-gray-500">Total Konsultasi</p>
+        <h2 id="totalKonsultasi" class="text-2xl font-bold">-</h2>
+      </div>
+    </section>
+
+    <!-- Navigasi -->
+    <section class="space-y-3">
+      <a href="manajemen-admin.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">👥 Manajemen Admin</a>
+      <a href="manajemen-pasien.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">🧑‍⚕️ Data Pasien</a>
+      <a href="manajemen-konsultasi.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">💬 Semua Konsultasi</a>
+      <a href="manajemen-artikel.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">📚 Artikel Edukasi</a>
+      <a href="pengaturan.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">⚙️ Pengaturan Akun</a>
+      <a href="logs.html" class="block bg-white p-4 rounded-xl shadow border hover:bg-[#E0E7FF] transition">📊 Log Aktivitas</a>
+    </section>
+  </main>
+
+  <!-- Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        alert("Akses khusus superadmin!");
+        window.location.href = "/login.html";
+      } else {
+        hitungData();
+      }
+    });
+
+    function hitungData() {
+      db.collection("terapis").get().then(snapshot => {
+        document.getElementById("totalAdmin").textContent = snapshot.size;
+      });
+
+      db.collection("pasien").get().then(snapshot => {
+        document.getElementById("totalPasien").textContent = snapshot.size;
+      });
+
+      db.collection("sessions").get().then(snapshot => {
+        document.getElementById("totalKonsultasi").textContent = snapshot.size;
+      });
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => window.location.href = "/login.html");
+    });
+  </script>
+</body>
+</html>

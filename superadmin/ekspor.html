@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Export Data - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">📦 Backup & Export</h1>
+    <p class="text-sm text-gray-600">Unduh data dari sistem FisioKita ke file CSV atau JSON.</p>
+  </header>
+
+  <!-- Tombol Export -->
+  <section class="space-y-4">
+    <button onclick="exportData('pasien')" class="btnExport">⬇️ Export Pasien</button>
+    <button onclick="exportData('terapis')" class="btnExport">⬇️ Export Terapis</button>
+    <button onclick="exportData('sessions')" class="btnExport">⬇️ Export Konsultasi</button>
+    <button onclick="exportData('chats')" class="btnExport">⬇️ Export Chat</button>
+    <button onclick="exportData('artikel')" class="btnExport">⬇️ Export Artikel</button>
+  </section>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function exportData(collectionName) {
+      db.collection(collectionName).get().then(snapshot => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${collectionName}.json`;
+        link.click();
+      }).catch(error => alert("Gagal mengekspor: " + error.message));
+    }
+  </script>
+
+  <style>
+    .btnExport {
+      display: block;
+      width: 100%;
+      background-color: #4B6CC1;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+
+    .btnExport:hover {
+      background-color: #374e9d;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Artikel - FisioKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
+
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">📚 Manajemen Artikel</h1>
+    <p class="text-sm text-gray-600">Tambah, ubah, atau hapus artikel edukasi untuk pasien.</p>
+  </header>
+
+  <!-- Form Tambah/Edit Artikel -->
+  <section class="mb-8">
+    <h2 class="font-semibold mb-2">📝 Form Artikel</h2>
+    <form id="formArtikel" class="space-y-3">
+      <input type="hidden" id="artikelId">
+      <input type="text" id="judul" placeholder="Judul Artikel" class="w-full border rounded px-3 py-2" required />
+      <input type="text" id="penulis" placeholder="Penulis" class="w-full border rounded px-3 py-2" required />
+      <textarea id="isi" placeholder="Isi artikel..." rows="6" class="w-full border rounded px-3 py-2" required></textarea>
+      <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded shadow hover:bg-blue-700 text-sm">💾 Simpan</button>
+      <button type="button" onclick="resetForm()" class="ml-2 text-gray-600 text-sm hover:underline">Batal</button>
+    </form>
+  </section>
+
+  <!-- Daftar Artikel -->
+  <section>
+    <h2 class="font-semibold mb-2">📄 Daftar Artikel</h2>
+    <div id="daftarArtikel" class="space-y-3"></div>
+  </section>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const form = document.getElementById("formArtikel");
+    const judul = document.getElementById("judul");
+    const penulis = document.getElementById("penulis");
+    const isi = document.getElementById("isi");
+    const artikelId = document.getElementById("artikelId");
+    const daftarArtikel = document.getElementById("daftarArtikel");
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        loadArtikel();
+      } else {
+        window.location.href = "../login.html";
+      }
+    });
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        judul: judul.value,
+        penulis: penulis.value,
+        isi: isi.value,
+        tanggal: firebase.firestore.Timestamp.now(),
+      };
+
+      if (artikelId.value) {
+        db.collection("artikel").doc(artikelId.value).update(data).then(() => {
+          alert("✅ Artikel diperbarui.");
+          resetForm();
+        });
+      } else {
+        db.collection("artikel").add({ ...data, dibaca: 0 }).then(() => {
+          alert("✅ Artikel ditambahkan.");
+          resetForm();
+        });
+      }
+    });
+
+    function resetForm() {
+      form.reset();
+      artikelId.value = "";
+    }
+
+    function loadArtikel() {
+      db.collection("artikel").orderBy("tanggal", "desc").onSnapshot(snapshot => {
+        daftarArtikel.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "p-4 bg-white rounded-xl shadow border";
+          div.innerHTML = `
+            <h3 class="font-semibold text-lg">${data.judul}</h3>
+            <p class="text-sm text-gray-600 mb-2">✍️ ${data.penulis} — Dibaca: ${data.dibaca || 0}</p>
+            <div class="space-x-2">
+              <button onclick="editArtikel('${doc.id}', ${JSON.stringify(data).replace(/"/g, '&quot;')})" class="text-blue-600 text-sm hover:underline">Edit</button>
+              <button onclick="hapusArtikel('${doc.id}')" class="text-red-600 text-sm hover:underline">Hapus</button>
+            </div>
+          `;
+          daftarArtikel.appendChild(div);
+        });
+      });
+    }
+
+    function editArtikel(id, data) {
+      artikelId.value = id;
+      judul.value = data.judul;
+      penulis.value = data.penulis;
+      isi.value = data.isi;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function hapusArtikel(id) {
+      if (confirm("Yakin ingin menghapus artikel ini?")) {
+        db.collection("artikel").doc(id).delete().then(() => {
+          alert("🗑️ Artikel dihapus.");
+        });
+      }
+    }
+  </script>
+</body>
+</html>

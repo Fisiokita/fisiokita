@@ -120,7 +120,7 @@
     async function cekDanRedirect(user) {
       const email = user.email.toLowerCase();
       if (email === "fisiokita@gmail.com") {
-        location.href = "admin/super-admin-dashboard.html";
+        location.href = "superadmin/superadmin-dashboard.html";
       } else {
         const doc = await db.collection("terapis").doc(email).get();
         location.href = doc.exists ? "admin/dashboard.html" : "akun.html";

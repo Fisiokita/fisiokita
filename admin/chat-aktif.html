@@ -21,71 +21,77 @@
   </header>
 
   <!-- Main -->
-  <main class="flex-1 max-w-md w-full mx-auto px-6 py-6 space-y-6">
+  <main class="flex-1 max-w-md w-full mx-auto px-6 py-6 relative">
 
-    <!-- Daftar Sesi -->
-    <section>
+    <!-- === Halaman Daftar Sesi === -->
+    <section id="sesiListSection">
       <label class="block font-semibold mb-2">Daftar Sesi Aktif:</label>
       <ul id="daftarSesi" class="space-y-2 text-sm"></ul>
     </section>
 
-    <!-- Chat Box -->
-    <section id="chatContainer" class="hidden space-y-3">
-      <div id="chatBox" class="bg-white border border-gray-200 rounded-xl p-4 h-64 overflow-y-auto space-y-2 shadow-inner"></div>
+    <!-- === Halaman Chat Fullscreen === -->
+    <section id="chatContainer" class="hidden absolute top-0 left-0 right-0 bottom-0 bg-white px-4 py-5 flex flex-col">
+      <!-- Header Chat -->
+      <div class="flex justify-between items-center mb-4">
+        <button id="btnKembali" class="text-sm text-[#4B6CC1] hover:underline">&larr; Kembali</button>
+        <span class="font-semibold text-sm text-gray-700">Live Chat</span>
+        <div></div>
+      </div>
 
-      <form id="formChat" class="flex items-center gap-2">
-        <input type="text" id="inputPesan" class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm" placeholder="Ketik balasan..." />
-        <button class="btn-primary px-4 py-2 text-sm">Kirim</button>
+      <!-- Box Chat -->
+      <div id="chatBox" class="flex-1 overflow-y-auto space-y-3 px-1 pb-2"></div>
+
+      <!-- Input & Tombol -->
+      <form id="formChat" class="flex gap-2 pt-2">
+        <input type="text" id="inputPesan" class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm" placeholder="Ketik pesan..." />
+        <button type="submit" class="btn-primary text-sm px-4 py-2">Kirim</button>
       </form>
 
-      <button id="btnAkhiri" class="text-xs text-red-600 underline hover:text-red-800 text-right block">Akhiri Chat</button>
+      <button id="btnAkhiri" class="text-xs text-red-600 mt-2 underline hover:text-red-800 text-center">Akhiri Chat</button>
     </section>
   </main>
 
   <!-- Footer -->
-<footer class="bg-[#141C2F] text-white text-base mt-12">
-  <div class="max-w-md mx-auto px-6 py-10 space-y-8">
-    <div class="flex items-center gap-3">
-      <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
-      <span class="font-bold text-2xl">Fisio Kita</span>
-    </div>
-    <p class="text-white/90 leading-relaxed">
-      Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.
-    </p>
-
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
-        <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
-        <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
-        <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+  <footer class="bg-[#141C2F] text-white text-base mt-12">
+    <div class="max-w-md mx-auto px-6 py-10 space-y-8">
+      <div class="flex items-center gap-3">
+        <img src="../img/logo.png" alt="Logo Fisio Kita" class="w-6 h-6" />
+        <span class="font-bold text-2xl">Fisio Kita</span>
       </div>
-    </div>
+      <p class="text-white/90 leading-relaxed">
+        Kelola jadwal kerja harian Anda dengan mudah dan fleksibel.
+      </p>
 
-    <div>
-      <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
-      <ul class="text-white/90 space-y-1 text-sm">
-        <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
-        <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
-      </ul>
-    </div>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Navigasi</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <a href="../index.html" class="nav-footer-btn">🏠 Beranda</a>
+          <a href="dashboard.html" class="nav-footer-btn">💼 Dashboard</a>
+          <a href="chat-aktif.html" class="nav-footer-btn">💬 Chat</a>
+          <a href="pengaturan.html" class="nav-footer-btn">⚙️ Pengaturan</a>
+        </div>
+      </div>
 
-    <p class="text-center text-sm text-white/50 pt-6">
-      © 2025 FisioKita. Semua hak dilindungi undang-undang.
-    </p>
-  </div>
-</footer>
+      <div>
+        <h3 class="font-semibold text-lg mb-4">Kontak Admin</h3>
+        <ul class="text-white/90 space-y-1 text-sm">
+          <li>📞 <a href="https://wa.me/6285179792319">0851-7979-2319</a></li>
+          <li>📧 <a href="mailto:fisiokita.cs@gmail.com">fisiokita.cs@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <p class="text-center text-sm text-white/50 pt-6">
+        © 2025 FisioKita. Semua hak dilindungi undang-undang.
+      </p>
+    </div>
+  </footer>
 
   <!-- Firebase Logic -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1",
-      storageBucket: "fisiosehat-af9f1.appspot.com",
-      messagingSenderId: "800971487968",
-      appId: "1:800971487968:web:0dec5977632004aa0fee85"
+      projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -93,10 +99,12 @@
 
     const daftarSesi = document.getElementById("daftarSesi");
     const chatContainer = document.getElementById("chatContainer");
+    const sesiListSection = document.getElementById("sesiListSection");
     const chatBox = document.getElementById("chatBox");
     const formChat = document.getElementById("formChat");
     const inputPesan = document.getElementById("inputPesan");
     const btnAkhiri = document.getElementById("btnAkhiri");
+    const btnKembali = document.getElementById("btnKembali");
 
     let currentEmail = "";
     let currentSessionId = "";
@@ -133,12 +141,10 @@
               </div>
               <span class="text-red-500 text-xs" id="notifikasi-${doc.id}">🔴</span>
             `;
-
             item.addEventListener("click", () => {
               bukaSesi(doc.id);
               document.getElementById(`notifikasi-${doc.id}`).classList.add("hidden");
             });
-
             daftarSesi.appendChild(item);
           });
         });
@@ -147,6 +153,7 @@
     function bukaSesi(sessionId) {
       currentSessionId = sessionId;
       chatContainer.classList.remove("hidden");
+      sesiListSection.classList.add("hidden");
 
       db.collection("chats")
         .where("sessionId", "==", sessionId)
@@ -161,21 +168,13 @@
             const isAdmin = data.dari === "Admin";
 
             const div = document.createElement("div");
-            if (isAdmin) {
-              div.className = "flex justify-end";
-              div.innerHTML = `
-                <div class="bg-white text-black rounded-xl rounded-br-none px-4 py-2 shadow text-sm">
-                  ${data.pesan}
-                  <span class="text-xs text-gray-400 ml-2">${jam}.${menit}</span>
-                </div>`;
-            } else {
-              div.className = "flex justify-start";
-              div.innerHTML = `
-                <div class="bg-[#DBEAFE] text-black rounded-xl rounded-tl-none px-4 py-2 shadow text-sm">
-                  ${data.pesan}
-                  <span class="text-xs text-gray-500 ml-2">${jam}.${menit}</span>
-                </div>`;
-            }
+            div.className = isAdmin ? "flex justify-end" : "flex justify-start";
+            div.innerHTML = `
+              <div class="${isAdmin ? 'bg-white' : 'bg-[#DBEAFE]'} text-black rounded-xl px-4 py-2 shadow text-sm max-w-[75%]">
+                ${data.pesan}
+                <span class="text-xs text-gray-400 ml-2">${jam}.${menit}</span>
+              </div>
+            `;
             chatBox.appendChild(div);
           });
           chatBox.scrollTop = chatBox.scrollHeight;
@@ -210,6 +209,11 @@
           chatBox.innerHTML += `<div class="text-center text-xs text-gray-500 italic mt-2">✅ Sesi telah diakhiri.</div>`;
         });
       }
+    });
+
+    btnKembali.addEventListener("click", () => {
+      chatContainer.classList.add("hidden");
+      sesiListSection.classList.remove("hidden");
     });
   </script>
 </body>

@@ -1,55 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manajemen Artikel - Superadmin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Superadmin - Artikel Edukasi</title>
+  <link rel="stylesheet" href="../css/style.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    textarea { resize: vertical; }
+  </style>
 </head>
-<body class="bg-gray-100 font-['Inter'] min-h-screen">
-  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+<body class="bg-gray-50 text-[#1E2A44] min-h-screen">
+  <header class="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-6 py-4 flex justify-between items-center shadow">
     <h1 class="text-lg font-semibold">📚 Manajemen Artikel Edukasi</h1>
-    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+    <a href="dashboard.html" class="btn-white text-sm">Kembali</a>
   </header>
 
-  <main class="p-6 max-w-4xl mx-auto space-y-6">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-base">Daftar Artikel</h2>
-      <button onclick="bukaFormTambah()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">+ Tambah Artikel</button>
-    </div>
+  <main class="max-w-3xl mx-auto px-6 py-6 space-y-6">
+    <!-- Form Tambah/Edit -->
+    <section class="bg-white rounded-xl shadow p-4 space-y-3">
+      <h2 class="font-semibold text-base">📝 Tambah / Edit Artikel</h2>
+      <input type="hidden" id="artikelId">
+      <input type="text" id="judul" class="form-input w-full" placeholder="Judul Artikel">
+      <input type="text" id="penulis" class="form-input w-full" placeholder="Nama Penulis">
+      <textarea id="konten" rows="6" class="form-textarea w-full" placeholder="Isi Konten Artikel..."></textarea>
+      <button id="simpanArtikel" class="btn-primary w-full">💾 Simpan Artikel</button>
+    </section>
 
-    <div class="bg-white shadow rounded p-4 overflow-x-auto">
-      <table class="w-full text-sm border" id="tabelArtikel">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="p-2 border text-left">Judul</th>
-            <th class="p-2 border text-left">Penulis</th>
-            <th class="p-2 border">Tanggal</th>
-            <th class="p-2 border">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="isiArtikel"></tbody>
-      </table>
-    </div>
+    <!-- Daftar Artikel -->
+    <section class="bg-white rounded-xl shadow p-4">
+      <h2 class="font-semibold text-base mb-3">📄 Daftar Artikel</h2>
+      <ul id="daftarArtikel" class="space-y-3 text-sm"></ul>
+    </section>
   </main>
-
-  <!-- Modal Form Tambah/Edit -->
-  <div id="modalForm" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-[90%] max-w-xl space-y-4">
-      <h2 class="font-semibold text-lg" id="modalJudul">Tambah Artikel</h2>
-      <input id="judulArtikel" class="w-full border px-3 py-2 rounded text-sm" placeholder="Judul Artikel" />
-      <input id="penulisArtikel" class="w-full border px-3 py-2 rounded text-sm" placeholder="Nama Penulis" />
-      <textarea id="isiArtikelText" class="w-full border px-3 py-2 rounded text-sm" rows="6" placeholder="Isi artikel..."></textarea>
-      <div class="flex justify-end gap-3">
-        <button onclick="tutupForm()" class="text-gray-600 text-sm">Batal</button>
-        <button onclick="simpanArtikel()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded">Simpan</button>
-      </div>
-    </div>
-  </div>
 
   <script>
     const firebaseConfig = {
@@ -58,77 +45,70 @@
       projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const isiArtikel = document.getElementById("isiArtikel");
-    const modalForm = document.getElementById("modalForm");
-    const modalJudul = document.getElementById("modalJudul");
-    const judulArtikel = document.getElementById("judulArtikel");
-    const penulisArtikel = document.getElementById("penulisArtikel");
-    const isiArtikelText = document.getElementById("isiArtikelText");
+    const judul = document.getElementById("judul");
+    const penulis = document.getElementById("penulis");
+    const konten = document.getElementById("konten");
+    const artikelId = document.getElementById("artikelId");
+    const simpanBtn = document.getElementById("simpanArtikel");
+    const daftarArtikel = document.getElementById("daftarArtikel");
 
-    let idEdit = null;
+    function resetForm() {
+      artikelId.value = "";
+      judul.value = "";
+      penulis.value = "";
+      konten.value = "";
+    }
 
-    auth.onAuthStateChanged(user => {
-      if (!user) return location.href = "../login.html";
-      loadArtikel();
+    simpanBtn.addEventListener("click", () => {
+      const data = {
+        judul: judul.value.trim(),
+        penulis: penulis.value.trim(),
+        konten: konten.value.trim(),
+        waktu: firebase.firestore.Timestamp.now()
+      };
+      if (!data.judul || !data.konten) return alert("Judul dan konten wajib diisi.");
+
+      if (artikelId.value) {
+        db.collection("artikel").doc(artikelId.value).set(data).then(() => {
+          resetForm();
+        });
+      } else {
+        db.collection("artikel").add(data).then(() => {
+          resetForm();
+        });
+      }
     });
 
-    function loadArtikel() {
-      db.collection("artikel").orderBy("dibuat", "desc").onSnapshot(snapshot => {
-        isiArtikel.innerHTML = "";
+    function tampilkanArtikel() {
+      db.collection("artikel").orderBy("waktu", "desc").onSnapshot(snapshot => {
+        daftarArtikel.innerHTML = "";
         snapshot.forEach(doc => {
           const d = doc.data();
-          const row = document.createElement("tr");
-          const tanggal = d.dibuat?.toDate()?.toLocaleDateString("id-ID") || "-";
-          row.innerHTML = `
-            <td class="border p-2">${d.judul}</td>
-            <td class="border p-2">${d.penulis}</td>
-            <td class="border p-2 text-center">${tanggal}</td>
-            <td class="border p-2 text-center space-x-2">
-              <button onclick="editArtikel('${doc.id}', \`${d.judul}\`, \`${d.penulis}\`, \`${d.isi}\`)" class="text-blue-600 text-xs">Edit</button>
-              <button onclick="hapusArtikel('${doc.id}')" class="text-red-600 text-xs">Hapus</button>
-            </td>
+          const li = document.createElement("li");
+          li.className = "border p-3 rounded-xl flex justify-between items-start";
+          li.innerHTML = `
+            <div>
+              <div class="font-bold">${d.judul}</div>
+              <div class="text-xs text-gray-500">🖋️ ${d.penulis || "Tidak diketahui"}</div>
+              <div class="text-xs mt-1">${d.konten.slice(0, 100)}...</div>
+            </div>
+            <div class="flex flex-col gap-1 items-end text-sm">
+              <button onclick="editArtikel('${doc.id}', ${JSON.stringify(d).replace(/"/g, '&quot;')})" class="text-blue-600 hover:underline">Edit</button>
+              <button onclick="hapusArtikel('${doc.id}')" class="text-red-600 hover:underline">Hapus</button>
+            </div>
           `;
-          isiArtikel.appendChild(row);
+          daftarArtikel.appendChild(li);
         });
       });
     }
 
-    function bukaFormTambah() {
-      idEdit = null;
-      modalJudul.textContent = "Tambah Artikel";
-      judulArtikel.value = "";
-      penulisArtikel.value = "";
-      isiArtikelText.value = "";
-      modalForm.classList.remove("hidden");
-    }
-
-    function editArtikel(id, judul, penulis, isi) {
-      idEdit = id;
-      modalJudul.textContent = "Edit Artikel";
-      judulArtikel.value = judul;
-      penulisArtikel.value = penulis;
-      isiArtikelText.value = isi;
-      modalForm.classList.remove("hidden");
-    }
-
-    function simpanArtikel() {
-      const data = {
-        judul: judulArtikel.value.trim(),
-        penulis: penulisArtikel.value.trim(),
-        isi: isiArtikelText.value.trim(),
-        dibuat: firebase.firestore.Timestamp.now()
-      };
-      if (!data.judul || !data.penulis || !data.isi) return alert("Semua kolom wajib diisi.");
-
-      if (idEdit) {
-        db.collection("artikel").doc(idEdit).update(data);
-      } else {
-        db.collection("artikel").add(data);
-      }
-      tutupForm();
+    function editArtikel(id, data) {
+      artikelId.value = id;
+      judul.value = data.judul;
+      penulis.value = data.penulis;
+      konten.value = data.konten;
     }
 
     function hapusArtikel(id) {
@@ -137,9 +117,7 @@
       }
     }
 
-    function tutupForm() {
-      modalForm.classList.add("hidden");
-    }
+    tampilkanArtikel();
   </script>
 </body>
 </html>

@@ -1,153 +1,123 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manajemen Terapis - Superadmin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Admin & Terapis - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-[#F9FAFB] font-['Inter'] min-h-screen">
+<body class="bg-gray-100 min-h-screen font-['Inter']">
+  <header class="bg-gradient-to-r from-purple-700 to-blue-600 text-white px-6 py-4 shadow flex justify-between items-center">
+    <h1 class="text-lg font-semibold">👨‍💼 Superadmin - Manajemen Admin & Terapis</h1>
+    <button onclick="logout()" class="text-sm bg-white text-purple-700 px-3 py-1 rounded shadow">Logout</button>
+  </header>  <main class="max-w-4xl mx-auto p-6">
+    <section class="mb-8">
+      <h2 class="text-xl font-bold mb-3">Tambah Terapis Baru</h2>
+      <form id="formTambah" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="namaTerapis" placeholder="Nama Terapis" required class="border p-2 rounded" />
+        <input type="email" id="emailTerapis" placeholder="Email" required class="border p-2 rounded" />
+        <input type="password" id="passwordTerapis" placeholder="Password Default" required class="border p-2 rounded" />
+        <select id="statusTerapis" class="border p-2 rounded">
+          <option value="tersedia">Tersedia</option>
+          <option value="tidak">Tidak Tersedia</option>
+        </select>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Tambah</button>
+      </form>
+    </section><section>
+  <h2 class="text-xl font-bold mb-4">Daftar Admin / Terapis</h2>
+  <ul id="daftarTerapis" class="space-y-4"></ul>
+</section>
 
-<!-- Header -->
-<header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 shadow flex justify-between items-center">
-  <h1 class="text-lg font-semibold">👥 Manajemen Terapis</h1>
-  <a href="index.html" class="text-sm underline">Kembali</a>
-</header>
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-<main class="max-w-md mx-auto px-4 py-6 space-y-6">
-
-  <!-- Form Tambah Terapis -->
-  <section class="bg-white p-4 rounded-xl shadow space-y-3">
-    <h2 class="font-semibold text-base mb-2">➕ Tambah Terapis Baru</h2>
-    <input type="text" id="inputNama" placeholder="Nama lengkap" class="w-full border px-3 py-2 rounded text-sm" />
-    <input type="email" id="inputEmail" placeholder="Email" class="w-full border px-3 py-2 rounded text-sm" />
-    <input type="password" id="inputPassword" placeholder="Password awal" class="w-full border px-3 py-2 rounded text-sm" />
-    <button id="btnTambah" class="bg-[#4B6CC1] text-white px-4 py-2 rounded text-sm w-full hover:bg-[#3b53a3]">Tambah</button>
-  </section>
-
-  <!-- Daftar Terapis -->
-  <section>
-    <h2 class="font-semibold text-base mb-2">📋 Daftar Terapis</h2>
-    <ul id="daftarTerapis" class="space-y-3 text-sm"></ul>
-  </section>
-
-</main>
-
-<!-- Firebase -->
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-    authDomain: "fisiosehat-af9f1.firebaseapp.com",
-    projectId: "fisiosehat-af9f1"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-
-  const daftarTerapis = document.getElementById("daftarTerapis");
-  const inputNama = document.getElementById("inputNama");
-  const inputEmail = document.getElementById("inputEmail");
-  const inputPassword = document.getElementById("inputPassword");
-  const btnTambah = document.getElementById("btnTambah");
-
-  auth.onAuthStateChanged(user => {
-    if (!user || user.email !== "fisiokita@gmail.com") {
-      alert("Akses ditolak");
-      window.location.href = "/login.html";
-    } else {
-      loadTerapis();
-    }
-  });
-
-  function loadTerapis() {
-    db.collection("terapis").onSnapshot(snapshot => {
-      daftarTerapis.innerHTML = "";
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const li = document.createElement("li");
-        li.className = "bg-white p-4 rounded-xl shadow flex justify-between items-start";
-
-        li.innerHTML = `
-  <div class="flex-1">
-    <input type="text" value="${data.nama || ""}" onchange="editNama('${doc.id}', this.value)" class="w-full text-sm font-medium border-b border-gray-200 focus:outline-none focus:border-blue-400 mb-1" />
-    <div class="text-xs text-gray-500">${doc.id}</div>
-    <select onchange="ubahStatus('${doc.id}', this.value)" class="text-xs mt-1 border rounded px-2 py-1">
-      <option value="tersedia" ${data.status === "tersedia" ? "selected" : ""}>Tersedia</option>
-      <option value="tidak" ${data.status === "tidak" ? "selected" : ""}>Tidak Tersedia</option>
-    </select>
-  </div>
-  <div class="flex flex-col gap-1 text-xs text-right">
-    <button onclick="resetPassword('${doc.id}')" class="text-blue-500 hover:underline">Reset PW</button>
-    <button onclick="hapusTerapis('${doc.id}')" class="text-red-500 hover:underline">Hapus</button>
-  </div>
-`;
-        daftarTerapis.appendChild(li);
-      });
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "fisiokita@gmail.com") {
+        alert("Akses ditolak. Halaman ini hanya untuk Superadmin.");
+        window.location.href = "/login.html";
+      } else {
+        loadTerapis();
+      }
     });
-  }
 
-  btnTambah.addEventListener("click", () => {
-    const nama = inputNama.value.trim();
-    const email = inputEmail.value.trim();
-    const password = inputPassword.value.trim();
-
-    if (!nama || !email || !password) {
-      alert("Semua kolom wajib diisi.");
-      return;
+    function logout() {
+      auth.signOut().then(() => location.href = "/login.html");
     }
 
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(userCred => {
-        const userEmail = userCred.user.email;
-        return db.collection("terapis").doc(userEmail).set({
-          nama,
-          email: userEmail,
-          status: "tersedia"
+    document.getElementById("formTambah").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nama = namaTerapis.value.trim();
+      const email = emailTerapis.value.trim();
+      const password = passwordTerapis.value;
+      const status = statusTerapis.value;
+
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(email, password);
+        await db.collection("terapis").doc(email).set({ nama, status });
+        alert("Terapis berhasil ditambahkan");
+        document.getElementById("formTambah").reset();
+        loadTerapis();
+      } catch (err) {
+        alert("Gagal tambah terapis: " + err.message);
+      }
+    });
+
+    function loadTerapis() {
+      db.collection("terapis").orderBy("nama").onSnapshot(snapshot => {
+        const list = document.getElementById("daftarTerapis");
+        list.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const li = document.createElement("li");
+          li.className = "bg-white p-4 rounded shadow flex justify-between items-start";
+          li.innerHTML = `
+            <div class="flex-1">
+              <input type="text" value="${data.nama || ""}" onchange="editNama('${doc.id}', this.value)" class="w-full text-sm font-medium border-b border-gray-300 focus:outline-none mb-1" />
+              <div class="text-xs text-gray-500">${doc.id}</div>
+              <select onchange="ubahStatus('${doc.id}', this.value)" class="text-xs mt-1 border rounded px-2 py-1">
+                <option value="tersedia" ${data.status === "tersedia" ? "selected" : ""}>Tersedia</option>
+                <option value="tidak" ${data.status === "tidak" ? "selected" : ""}>Tidak Tersedia</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1 text-xs">
+              <button onclick="resetPassword('${doc.id}')" class="text-blue-600 hover:underline">Reset PW</button>
+              <button onclick="hapusTerapis('${doc.id}')" class="text-red-600 hover:underline">Hapus</button>
+            </div>
+          `;
+          list.appendChild(li);
         });
-      })
-      .then(() => {
-        inputNama.value = "";
-        inputEmail.value = "";
-        inputPassword.value = "";
-        alert("Terapis berhasil ditambahkan.");
-      })
-      .catch(err => {
-        alert("Error: " + err.message);
       });
-  });
-
-  function hapusTerapis(email) {
-    if (confirm(`Yakin ingin menghapus akun ${email}?`)) {
-      db.collection("terapis").doc(email).delete().then(() => {
-        alert("Terapis dihapus.");
-      });
-      function editNama(email, namaBaru) {
-  db.collection("terapis").doc(email).update({
-    nama: namaBaru
-  }).then(() => {
-    console.log("Nama diperbarui.");
-  }).catch(err => alert("Gagal edit nama: " + err.message));
-}
-
-function ubahStatus(email, statusBaru) {
-  db.collection("terapis").doc(email).update({
-    status: statusBaru
-  }).then(() => {
-    console.log("Status diubah.");
-  }).catch(err => alert("Gagal ubah status: " + err.message));
-}
-
-function resetPassword(email) {
-  auth.sendPasswordResetEmail(email)
-    .then(() => alert("Email reset password telah dikirim ke: " + email))
-    .catch(err => alert("Gagal kirim reset password: " + err.message));
-}
     }
-  }
-</script>
-</body>
+
+    function editNama(email, namaBaru) {
+      db.collection("terapis").doc(email).update({ nama: namaBaru });
+    }
+
+    function ubahStatus(email, statusBaru) {
+      db.collection("terapis").doc(email).update({ status: statusBaru });
+    }
+
+    function resetPassword(email) {
+      auth.sendPasswordResetEmail(email)
+        .then(() => alert("Link reset password dikirim ke: " + email))
+        .catch(err => alert("Gagal reset password: " + err.message));
+    }
+
+    function hapusTerapis(email) {
+      if (!confirm("Yakin ingin menghapus terapis ini?")) return;
+      db.collection("terapis").doc(email).delete()
+        .then(() => alert("Terapis dihapus."))
+        .catch(err => alert("Gagal hapus: " + err.message));
+    }
+  </script></body>
 </html>

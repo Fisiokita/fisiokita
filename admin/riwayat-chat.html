@@ -117,10 +117,10 @@
           const bubble = document.createElement("div");
           bubble.className = isAdmin ? "flex justify-end" : "flex justify-start";
           bubble.innerHTML = `
-            <div class="${isAdmin ? 'bg-white' : 'bg-[#FDE2E4]'} text-black rounded-xl ${isAdmin ? 'rounded-br-none' : 'rounded-tl-none'} px-4 py-2 shadow text-sm max-w-[75%]">
-              ${data.pesan}
-              <span class="text-xs text-gray-400 ml-2">${jam}.${menit}</span>
-            </div>`;
+  <div class="${isAdmin ? 'bg-[#4B6CC1] text-white' : 'bg-white text-black'} rounded-xl ${isAdmin ? 'rounded-br-none' : 'rounded-tl-none'} px-4 py-2 shadow text-sm max-w-[75%]">
+    ${data.pesan}
+    <span class="text-xs ${isAdmin ? 'text-white/70' : 'text-gray-400'} ml-2">${jam}.${menit}</span>
+  </div>`;
           chatBox.appendChild(bubble);
         });
         chatBox.scrollTop = chatBox.scrollHeight;

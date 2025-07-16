@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log Aktivitas - FisioKita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">📋 Log Aktivitas</h1>
+    <p class="text-sm text-gray-600">Catatan semua aktivitas pengguna di sistem.</p>
+  </header>
+
+  <div class="overflow-x-auto max-w-full border border-gray-200 rounded-xl shadow bg-white">
+    <table class="min-w-full text-sm text-left">
+      <thead class="bg-[#EFF6FF] text-gray-700 border-b">
+        <tr>
+          <th class="py-3 px-4">Waktu</th>
+          <th class="py-3 px-4">User</th>
+          <th class="py-3 px-4">Peran</th>
+          <th class="py-3 px-4">Aksi</th>
+          <th class="py-3 px-4">Detail</th>
+        </tr>
+      </thead>
+      <tbody id="logTable" class="text-gray-700 divide-y"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const logTable = document.getElementById("logTable");
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        loadLogs();
+      } else {
+        window.location.href = "../login.html";
+      }
+    });
+
+    function loadLogs() {
+      db.collection("logs").orderBy("timestamp", "desc").limit(100).onSnapshot(snapshot => {
+        logTable.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const waktu = data.timestamp?.toDate();
+          const waktuStr = waktu ? waktu.toLocaleString("id-ID") : "-";
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td class="py-2 px-4">${waktuStr}</td>
+            <td class="py-2 px-4">${data.user || "-"}</td>
+            <td class="py-2 px-4">${data.role || "-"}</td>
+            <td class="py-2 px-4">${data.aksi || "-"}</td>
+            <td class="py-2 px-4 text-gray-500">${data.detail || "-"}</td>
+          `;
+
+          logTable.appendChild(tr);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

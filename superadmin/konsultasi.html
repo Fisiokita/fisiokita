@@ -1,120 +1,136 @@
-<!-- superadmin-konsultasi.html --><!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manajemen Konsultasi - Superadmin</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Konsultasi - FisioKita</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-[#f9fafb] text-[#1E2A44] min-h-screen font-['Inter']">
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-lg font-semibold">🗂️ Manajemen Konsultasi</h1>
-    <a href="superadmin-dashboard.html" class="btn-white text-sm">Kembali</a>
-  </header>  <!-- Konten -->  <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-    <!-- Filter & Export -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <input id="searchInput" type="text" placeholder="🔍 Cari nama pasien atau terapis..." class="border border-gray-300 rounded px-4 py-2 text-sm w-full sm:w-1/2" />
-      <button onclick="exportCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm">⬇️ Export CSV</button>
-    </div><!-- Tabel -->
-<div class="overflow-auto">
-  <table class="min-w-full text-sm border">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="border px-3 py-2 text-left">ID</th>
-        <th class="border px-3 py-2 text-left">Pasien</th>
-        <th class="border px-3 py-2 text-left">Terapis</th>
-        <th class="border px-3 py-2">Waktu</th>
-        <th class="border px-3 py-2">Durasi</th>
-        <th class="border px-3 py-2">Status</th>
-      </tr>
-    </thead>
-    <tbody id="tabelKonsultasi" class="bg-white"></tbody>
-  </table>
-</div>
+<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
 
-  </main>  <!-- Firebase Logic -->  <script>
+  <header class="mb-6">
+    <h1 class="text-2xl font-semibold mb-2">🩺 Manajemen Konsultasi</h1>
+    <p class="text-sm text-gray-600">Lihat dan kelola semua sesi konsultasi online dan offline.</p>
+  </header>
+
+  <!-- Filter -->
+  <div class="flex flex-wrap gap-3 mb-4 text-sm">
+    <select id="filterStatus" class="border rounded px-3 py-1">
+      <option value="semua">🔁 Semua Status</option>
+      <option value="aktif">🟢 Aktif</option>
+      <option value="selesai">✅ Selesai</option>
+    </select>
+    <select id="filterJenis" class="border rounded px-3 py-1">
+      <option value="semua">🌐 Semua Jenis</option>
+      <option value="online">💬 Online</option>
+      <option value="offline">🏠 Offline</option>
+    </select>
+    <button onclick="exportCSV()" class="ml-auto bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded">⬇️ Export CSV</button>
+  </div>
+
+  <!-- Tabel Konsultasi -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm border-collapse border border-gray-300">
+      <thead class="bg-gray-200 text-left">
+        <tr>
+          <th class="border p-2">Pasien</th>
+          <th class="border p-2">Terapis</th>
+          <th class="border p-2">Jenis</th>
+          <th class="border p-2">Status</th>
+          <th class="border p-2">Waktu</th>
+          <th class="border p-2">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelSesi"></tbody>
+    </table>
+  </div>
+
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const tabel = document.getElementById("tabelKonsultasi");
-    const searchInput = document.getElementById("searchInput");
-    let dataGlobal = [];
+    const tabelSesi = document.getElementById("tabelSesi");
+    const filterStatus = document.getElementById("filterStatus");
+    const filterJenis = document.getElementById("filterJenis");
 
-    function formatDate(ts) {
-      const date = ts?.toDate?.();
-      if (!date) return "-";
-      return date.toLocaleString("id-ID");
-    }
+    let semuaDataSesi = [];
 
-    function hitungDurasi(waktuAwal, waktuAkhir) {
-      if (!waktuAwal || !waktuAkhir) return "-";
-      const menit = Math.round((waktuAkhir.toDate() - waktuAwal.toDate()) / 60000);
-      return `${menit} menit`;
-    }
-
-    db.collection("sessions").orderBy("dibuat", "desc").onSnapshot(snapshot => {
-      dataGlobal = [];
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        dataGlobal.push({
-          id: doc.id,
-          namaPasien: d.namaPasien || "-",
-          kepada: d.kepada || "-",
-          dibuat: d.dibuat,
-          selesai: d.selesai,
-          waktuSelesai: d.waktuSelesai || null
-        });
-      });
-      renderData();
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        muatSesi();
+      } else {
+        window.location.href = "../login.html";
+      }
     });
 
-    searchInput.addEventListener("input", renderData);
-
-    function renderData() {
-      const cari = searchInput.value.toLowerCase();
-      tabel.innerHTML = "";
-
-      dataGlobal.filter(d =>
-        d.namaPasien.toLowerCase().includes(cari) ||
-        d.kepada.toLowerCase().includes(cari)
-      ).forEach(d => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td class="border px-3 py-2 text-xs">${d.id}</td>
-          <td class="border px-3 py-2">${d.namaPasien}</td>
-          <td class="border px-3 py-2">${d.kepada}</td>
-          <td class="border px-3 py-2 text-center">${formatDate(d.dibuat)}</td>
-          <td class="border px-3 py-2 text-center">${hitungDurasi(d.dibuat, d.waktuSelesai)}</td>
-          <td class="border px-3 py-2 text-center">
-            <span class="inline-block px-2 py-1 rounded-full text-xs ${d.selesai ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}">
-              ${d.selesai ? 'Selesai' : 'Aktif'}
-            </span>
-          </td>
-        `;
-        tabel.appendChild(row);
+    function muatSesi() {
+      db.collection("sessions").orderBy("dibuat", "desc").onSnapshot(snapshot => {
+        semuaDataSesi = [];
+        snapshot.forEach(doc => {
+          semuaDataSesi.push({ id: doc.id, ...doc.data() });
+        });
+        tampilkanSesi();
       });
     }
 
+    function tampilkanSesi() {
+      tabelSesi.innerHTML = "";
+      const status = filterStatus.value;
+      const jenis = filterJenis.value;
+
+      const hasilFilter = semuaDataSesi.filter(data => {
+        const cocokStatus = status === "semua" || (status === "selesai" ? data.selesai : !data.selesai);
+        const cocokJenis = jenis === "semua" || data.jenis === jenis;
+        return cocokStatus && cocokJenis;
+      });
+
+      hasilFilter.forEach(data => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-gray-50";
+        const waktu = data.dibuat?.toDate().toLocaleString("id-ID");
+        row.innerHTML = `
+          <td class="border p-2">${data.namaPasien || "-"}</td>
+          <td class="border p-2">${data.namaTerapis || "-"}</td>
+          <td class="border p-2">${data.jenis}</td>
+          <td class="border p-2">${data.selesai ? "✅ Selesai" : "🟢 Aktif"}</td>
+          <td class="border p-2">${waktu}</td>
+          <td class="border p-2">
+            <button onclick="lihatChat('${data.id}')" class="text-blue-600 hover:underline">🔍 Lihat</button>
+          </td>
+        `;
+        tabelSesi.appendChild(row);
+      });
+    }
+
+    filterStatus.addEventListener("change", tampilkanSesi);
+    filterJenis.addEventListener("change", tampilkanSesi);
+
     function exportCSV() {
-      let csv = "ID,Pasien,Terapis,Tanggal,Durasi,Status\n";
-      dataGlobal.forEach(d => {
-        csv += `${d.id},${d.namaPasien},${d.kepada},${formatDate(d.dibuat)},${hitungDurasi(d.dibuat, d.waktuSelesai)},${d.selesai ? "Selesai" : "Aktif"}\n`;
+      let csv = "Pasien,Terapis,Jenis,Status,Waktu\n";
+      semuaDataSesi.forEach(data => {
+        const waktu = data.dibuat?.toDate().toLocaleString("id-ID");
+        csv += `"${data.namaPasien || '-'}","${data.namaTerapis || '-'}","${data.jenis}","${data.selesai ? 'Selesai' : 'Aktif'}","${waktu}"\n`;
       });
       const blob = new Blob([csv], { type: "text/csv" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "data_konsultasi.csv";
+      link.download = "data-konsultasi.csv";
       link.click();
     }
-  </script></body>
+
+    function lihatChat(sessionId) {
+      window.open(`../admin/riwayat-chat.html?sessionId=${sessionId}`, "_blank");
+    }
+  </script>
+</body>
 </html>

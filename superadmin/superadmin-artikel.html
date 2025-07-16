@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Artikel - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-100 font-['Inter'] min-h-screen">
+  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold">📚 Manajemen Artikel Edukasi</h1>
+    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+  </header>
+
+  <main class="p-6 max-w-4xl mx-auto space-y-6">
+    <div class="flex justify-between items-center">
+      <h2 class="font-semibold text-base">Daftar Artikel</h2>
+      <button onclick="bukaFormTambah()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">+ Tambah Artikel</button>
+    </div>
+
+    <div class="bg-white shadow rounded p-4 overflow-x-auto">
+      <table class="w-full text-sm border" id="tabelArtikel">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="p-2 border text-left">Judul</th>
+            <th class="p-2 border text-left">Penulis</th>
+            <th class="p-2 border">Tanggal</th>
+            <th class="p-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="isiArtikel"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal Form Tambah/Edit -->
+  <div id="modalForm" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-[90%] max-w-xl space-y-4">
+      <h2 class="font-semibold text-lg" id="modalJudul">Tambah Artikel</h2>
+      <input id="judulArtikel" class="w-full border px-3 py-2 rounded text-sm" placeholder="Judul Artikel" />
+      <input id="penulisArtikel" class="w-full border px-3 py-2 rounded text-sm" placeholder="Nama Penulis" />
+      <textarea id="isiArtikelText" class="w-full border px-3 py-2 rounded text-sm" rows="6" placeholder="Isi artikel..."></textarea>
+      <div class="flex justify-end gap-3">
+        <button onclick="tutupForm()" class="text-gray-600 text-sm">Batal</button>
+        <button onclick="simpanArtikel()" class="bg-blue-600 text-white text-sm px-4 py-2 rounded">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const isiArtikel = document.getElementById("isiArtikel");
+    const modalForm = document.getElementById("modalForm");
+    const modalJudul = document.getElementById("modalJudul");
+    const judulArtikel = document.getElementById("judulArtikel");
+    const penulisArtikel = document.getElementById("penulisArtikel");
+    const isiArtikelText = document.getElementById("isiArtikelText");
+
+    let idEdit = null;
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "../login.html";
+      loadArtikel();
+    });
+
+    function loadArtikel() {
+      db.collection("artikel").orderBy("dibuat", "desc").onSnapshot(snapshot => {
+        isiArtikel.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const row = document.createElement("tr");
+          const tanggal = d.dibuat?.toDate()?.toLocaleDateString("id-ID") || "-";
+          row.innerHTML = `
+            <td class="border p-2">${d.judul}</td>
+            <td class="border p-2">${d.penulis}</td>
+            <td class="border p-2 text-center">${tanggal}</td>
+            <td class="border p-2 text-center space-x-2">
+              <button onclick="editArtikel('${doc.id}', \`${d.judul}\`, \`${d.penulis}\`, \`${d.isi}\`)" class="text-blue-600 text-xs">Edit</button>
+              <button onclick="hapusArtikel('${doc.id}')" class="text-red-600 text-xs">Hapus</button>
+            </td>
+          `;
+          isiArtikel.appendChild(row);
+        });
+      });
+    }
+
+    function bukaFormTambah() {
+      idEdit = null;
+      modalJudul.textContent = "Tambah Artikel";
+      judulArtikel.value = "";
+      penulisArtikel.value = "";
+      isiArtikelText.value = "";
+      modalForm.classList.remove("hidden");
+    }
+
+    function editArtikel(id, judul, penulis, isi) {
+      idEdit = id;
+      modalJudul.textContent = "Edit Artikel";
+      judulArtikel.value = judul;
+      penulisArtikel.value = penulis;
+      isiArtikelText.value = isi;
+      modalForm.classList.remove("hidden");
+    }
+
+    function simpanArtikel() {
+      const data = {
+        judul: judulArtikel.value.trim(),
+        penulis: penulisArtikel.value.trim(),
+        isi: isiArtikelText.value.trim(),
+        dibuat: firebase.firestore.Timestamp.now()
+      };
+      if (!data.judul || !data.penulis || !data.isi) return alert("Semua kolom wajib diisi.");
+
+      if (idEdit) {
+        db.collection("artikel").doc(idEdit).update(data);
+      } else {
+        db.collection("artikel").add(data);
+      }
+      tutupForm();
+    }
+
+    function hapusArtikel(id) {
+      if (confirm("Yakin ingin menghapus artikel ini?")) {
+        db.collection("artikel").doc(id).delete();
+      }
+    }
+
+    function tutupForm() {
+      modalForm.classList.add("hidden");
+    }
+  </script>
+</body>
+</html>

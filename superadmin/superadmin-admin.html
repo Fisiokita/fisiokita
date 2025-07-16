@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Admin - FisioKita Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-[#f8fafc] font-['Inter'] min-h-screen text-[#1E2A44]">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white p-4">
+    <div class="flex justify-between items-center">
+      <h1 class="text-lg font-bold">👑 Superadmin - Manajemen Admin</h1>
+      <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+    </div>
+  </header>  <main class="max-w-4xl mx-auto p-6 space-y-8"><!-- Form Tambah Admin -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="font-semibold text-lg mb-3">➕ Tambah Admin / Terapis</h2>
+  <form id="formTambah" class="space-y-4">
+    <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full border border-gray-300 rounded px-4 py-2" />
+    <input type="email" id="email" placeholder="Email" required class="w-full border border-gray-300 rounded px-4 py-2" />
+    <input type="password" id="password" placeholder="Password" required class="w-full border border-gray-300 rounded px-4 py-2" />
+    <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded">Tambah Admin</button>
+  </form>
+</section>
+
+<!-- Daftar Admin -->
+<section class="bg-white rounded-xl shadow p-4">
+  <h2 class="font-semibold text-lg mb-4">📋 Daftar Admin / Terapis</h2>
+  <table class="w-full text-sm border">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="p-2 border">Nama</th>
+        <th class="p-2 border">Email</th>
+        <th class="p-2 border">Status</th>
+        <th class="p-2 border">Online</th>
+        <th class="p-2 border">Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tabelAdmin"></tbody>
+  </table>
+</section>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const superadminEmail = "fisiokita@gmail.com";
+
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== superadminEmail) {
+        alert("Akses ditolak. Hanya superadmin yang bisa mengakses halaman ini.");
+        window.location.href = "../login.html";
+      } else {
+        loadAdmin();
+      }
+    });
+
+    const formTambah = document.getElementById("formTambah");
+    formTambah.addEventListener("submit", e => {
+      e.preventDefault();
+      const nama = document.getElementById("nama").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(cred => {
+          db.collection("terapis").doc(email).set({
+            nama,
+            statusAktif: true,
+            status: "tidak"
+          }).then(() => {
+            alert("Admin berhasil ditambahkan.");
+            formTambah.reset();
+            loadAdmin();
+          });
+        })
+        .catch(err => alert("Gagal: " + err.message));
+    });
+
+    function loadAdmin() {
+      const tabel = document.getElementById("tabelAdmin");
+      tabel.innerHTML = "";
+
+      db.collection("terapis").get().then(snapshot => {
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="border p-2">${d.nama}</td>
+            <td class="border p-2">${doc.id}</td>
+            <td class="border p-2">${d.statusAktif ? 'Aktif' : 'Nonaktif'}</td>
+            <td class="border p-2">${d.status || '-'}</td>
+            <td class="border p-2 space-x-2">
+              <button onclick="toggleStatus('${doc.id}', ${d.statusAktif})" class="text-blue-600 underline text-xs">Toggle</button>
+              <button onclick="hapusAdmin('${doc.id}')" class="text-red-600 underline text-xs">Hapus</button>
+            </td>
+          `;
+          tabel.appendChild(tr);
+        });
+      });
+    }
+
+    function toggleStatus(email, statusSekarang) {
+      db.collection("terapis").doc(email).update({
+        statusAktif: !statusSekarang
+      });
+    }
+
+    function hapusAdmin(email) {
+      if (confirm("Yakin ingin menghapus admin ini?")) {
+        db.collection("terapis").doc(email).delete();
+      }
+    }
+  </script></body>
+</html>

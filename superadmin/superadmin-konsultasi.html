@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Konsultasi - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-100 font-['Inter'] min-h-screen">
+  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold">📋 Manajemen Konsultasi</h1>
+    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+  </header>
+
+  <main class="p-6 max-w-5xl mx-auto space-y-6">
+    <!-- Filter -->
+    <div class="flex flex-wrap gap-3 items-center">
+      <label class="font-medium">Filter Status:</label>
+      <select id="filterStatus" class="px-3 py-2 rounded border text-sm">
+        <option value="semua">Semua</option>
+        <option value="aktif">Aktif</option>
+        <option value="selesai">Selesai</option>
+      </select>
+    </div>
+
+    <!-- Tabel Sesi -->
+    <div class="bg-white rounded shadow p-4 overflow-auto">
+      <table class="w-full text-sm border" id="tabelSesi">
+        <thead>
+          <tr class="bg-gray-100 text-left">
+            <th class="p-2 border">Pasien</th>
+            <th class="p-2 border">Terapis</th>
+            <th class="p-2 border">Jenis</th>
+            <th class="p-2 border">Status</th>
+            <th class="p-2 border">Waktu</th>
+            <th class="p-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="isiTabelSesi"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const isiTabel = document.getElementById("isiTabelSesi");
+    const filterStatus = document.getElementById("filterStatus");
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "../login.html";
+      tampilkanSemuaSesi();
+    });
+
+    function tampilkanSemuaSesi() {
+      db.collection("sessions")
+        .orderBy("dibuat", "desc")
+        .onSnapshot(snapshot => {
+          isiTabel.innerHTML = "";
+
+          snapshot.forEach(doc => {
+            const s = doc.data();
+            const status = s.selesai ? "Selesai" : "Aktif";
+            const waktu = s.dibuat?.toDate()?.toLocaleString("id-ID") || "-";
+            const jenis = s.jenis || "Online";
+            const show = (filterStatus.value === "semua") ||
+                         (filterStatus.value === "selesai" && s.selesai) ||
+                         (filterStatus.value === "aktif" && !s.selesai);
+            if (!show) return;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td class="p-2 border">${s.namaPasien || "Pasien"}</td>
+              <td class="p-2 border">${s.namaTerapis || "Terapis"}</td>
+              <td class="p-2 border">${jenis}</td>
+              <td class="p-2 border">${status}</td>
+              <td class="p-2 border">${waktu}</td>
+              <td class="p-2 border">
+                ${jenis === "Online" ? `<a href="../admin/chat-aktif.html?id=${doc.id}" class="text-blue-600 underline text-xs">Lihat Chat</a>` : "-"}
+              </td>
+            `;
+            isiTabel.appendChild(tr);
+          });
+        });
+    }
+
+    filterStatus.addEventListener("change", tampilkanSemuaSesi);
+  </script>
+</body>
+</html>

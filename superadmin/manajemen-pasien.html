@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manajemen Pasien - Superadmin FisioKita</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+</head>
+<body class="bg-[#F8FAFC] text-[#1E2A44] font-sans">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-bold">👤 Manajemen Pasien</h1>
+    <a href="dashboard.html" class="text-sm underline">Kembali ke Dashboard</a>
+  </header>  <main class="max-w-6xl mx-auto p-6">
+    <div class="mb-4 flex items-center justify-between">
+      <input type="text" id="searchInput" placeholder="Cari nama/email pasien..." class="border px-4 py-2 rounded w-1/2" />
+      <button id="exportBtn" class="bg-green-500 text-white px-4 py-2 rounded">⬇️ Export CSV</button>
+    </div><div class="overflow-x-auto bg-white rounded shadow">
+  <table class="w-full text-left border-collapse" id="pasienTable">
+    <thead class="bg-[#DBEAFE]">
+      <tr>
+        <th class="p-3">Nama</th>
+        <th class="p-3">Email</th>
+        <th class="p-3">Jumlah Sesi</th>
+        <th class="p-3">Total Durasi</th>
+        <th class="p-3">Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="pasienBody"></tbody>
+  </table>
+</div>
+
+  </main>  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let dataPasien = [];
+
+    auth.onAuthStateChanged(async user => {
+      if (!user || user.email !== 'fisiokita@gmail.com') {
+        alert('Akses ditolak! Halaman ini hanya untuk superadmin.');
+        return location.href = '../login.html';
+      }
+      ambilDataPasien();
+    });
+
+    async function ambilDataPasien() {
+      const snapshot = await db.collection('users').get();
+      const sesiSnapshot = await db.collection('sessions').get();
+
+      dataPasien = snapshot.docs.map(doc => {
+        const pasien = doc.data();
+        const email = pasien.email || doc.id;
+        const sesiPasien = sesiSnapshot.docs.filter(s => s.data().email === email);
+        const jumlahSesi = sesiPasien.length;
+        const totalDurasi = sesiPasien.reduce((acc, s) => acc + (s.data().durasi || 0), 0);
+
+        return {
+          nama: pasien.nama || '-',
+          email: email,
+          jumlahSesi,
+          totalDurasi: `${Math.floor(totalDurasi / 60)}j ${totalDurasi % 60}m`
+        };
+      });
+      tampilkanPasien(dataPasien);
+    }
+
+    function tampilkanPasien(data) {
+      const tbody = document.getElementById('pasienBody');
+      tbody.innerHTML = '';
+      data.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-gray-50';
+        tr.innerHTML = `
+          <td class="p-3">${p.nama}</td>
+          <td class="p-3">${p.email}</td>
+          <td class="p-3">${p.jumlahSesi}</td>
+          <td class="p-3">${p.totalDurasi}</td>
+          <td class="p-3 space-x-2">
+            <button onclick="hapusPasien('${p.email}')" class="text-red-600 text-sm hover:underline">Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function hapusPasien(email) {
+      if (!confirm(`Yakin ingin menghapus akun pasien ${email}?`)) return;
+      db.collection('users').doc(email).delete().then(() => {
+        alert('Data pasien dihapus.');
+        ambilDataPasien();
+      });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const hasil = dataPasien.filter(p =>
+        p.nama.toLowerCase().includes(keyword) ||
+        p.email.toLowerCase().includes(keyword)
+      );
+      tampilkanPasien(hasil);
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const csv = Papa.unparse(dataPasien);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'daftar_pasien.csv';
+      link.click();
+    });
+  </script></body>
+</html>

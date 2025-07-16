@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Pasien - Superadmin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-gray-100 font-['Inter'] min-h-screen">
+  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold">👤 Manajemen Pasien</h1>
+    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+  </header>
+
+  <main class="p-6 max-w-4xl mx-auto space-y-6">
+    <!-- Statistik Ringkas -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded shadow text-center">
+        <div class="text-xs text-gray-500">Jumlah Pasien</div>
+        <div id="totalPasien" class="text-lg font-bold">0</div>
+      </div>
+      <div class="bg-white p-4 rounded shadow text-center">
+        <div class="text-xs text-gray-500">Total Sesi</div>
+        <div id="totalSesiPasien" class="text-lg font-bold">0</div>
+      </div>
+    </div>
+
+    <!-- Daftar Pasien -->
+    <section class="bg-white rounded shadow p-4">
+      <h2 class="font-semibold mb-4">📋 Daftar Pasien</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border">
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="p-2 border">Nama</th>
+              <th class="p-2 border">Email</th>
+              <th class="p-2 border">Total Sesi</th>
+              <th class="p-2 border">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelPasien"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const totalPasien = document.getElementById("totalPasien");
+    const totalSesiPasien = document.getElementById("totalSesiPasien");
+    const tabelPasien = document.getElementById("tabelPasien");
+
+    let pasienMap = {};
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return (window.location.href = "../login.html");
+      db.collection("users").get().then(snapshot => {
+        totalPasien.textContent = snapshot.size;
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const email = doc.id;
+          pasienMap[email] = {
+            nama: data.nama || "Tanpa Nama",
+            email: email,
+            sesi: 0
+          };
+        });
+
+        db.collection("sessions").get().then(sessionSnap => {
+          totalSesiPasien.textContent = sessionSnap.size;
+
+          sessionSnap.forEach(doc => {
+            const sesi = doc.data();
+            const email = sesi.dari;
+            if (pasienMap[email]) {
+              pasienMap[email].sesi += 1;
+            }
+          });
+
+          renderTabel();
+        });
+      });
+    });
+
+    function renderTabel() {
+      tabelPasien.innerHTML = "";
+      Object.values(pasienMap).forEach(p => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2 border">${p.nama}</td>
+          <td class="p-2 border">${p.email}</td>
+          <td class="p-2 border text-center">${p.sesi}</td>
+          <td class="p-2 border text-center">
+            <button onclick="hapusPasien('${p.email}')" class="text-red-600 text-xs underline">Hapus</button>
+          </td>
+        `;
+        tabelPasien.appendChild(tr);
+      });
+    }
+
+    function hapusPasien(email) {
+      if (confirm(`Hapus akun pasien ${email}?`)) {
+        db.collection("users").doc(email).delete().then(() => {
+          alert("Akun dihapus");
+          location.reload();
+        });
+      }
+    }
+  </script>
+</body>
+</html>

@@ -26,19 +26,20 @@
     </div>
 
     <!-- Login Form -->
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium mb-1">Email</label>
-        <input type="email" id="loginEmail" class="w-full border rounded-lg px-4 py-2 text-sm" required />
-      </div>
-      <div>
-        <label class="block text-sm font-medium mb-1">Password</label>
-        <input type="password" id="loginPassword" class="w-full border rounded-lg px-4 py-2 text-sm" required />
-      </div>
-      <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
-        Masuk
-      </button>
-    </form>
+    <form id="loginForm" class="space-y-4" autocomplete="off">
+  <div>
+    <label class="block text-sm font-medium mb-1">Email</label>
+    <input type="email" id="loginEmail" class="w-full border rounded-lg px-4 py-2 text-sm" autocomplete="off" required />
+  </div>
+  <div>
+    <label class="block text-sm font-medium mb-1">Password</label>
+    <input type="password" id="loginPassword" class="w-full border rounded-lg px-4 py-2 text-sm" autocomplete="new-password" required />
+  </div>
+  <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
+    Masuk
+  </button>
+</form>
+
 
     <!-- Register Form -->
     <form id="registerForm" class="space-y-4 hidden">

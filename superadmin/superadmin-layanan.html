@@ -3,13 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manajemen Layanan & Jadwal - FisioKita</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <title>Akun Saya - FisioKita</title>
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+ 
 </head>
+<body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </div>
+    <button id="logoutBtn" class="bg-white text-[#4B6CC1] px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition">
+      Keluar
+    </button>
+  </header>
 <body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
 
   <header class="mb-6">

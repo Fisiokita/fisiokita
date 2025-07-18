@@ -37,7 +37,7 @@
     const db = firebase.firestore();
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user || user.email !== "fisiokita@gmail.com") {
+      if (!user || user.email !== "fisiokita.co.id@gmail.com") {
         window.location.href = "../login.html";
       }
     });

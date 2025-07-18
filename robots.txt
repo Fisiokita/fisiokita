@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fisiokita.netlify.app/sitemap.xml
+Sitemap: https://fisiokita.my.id/sitemap.xml

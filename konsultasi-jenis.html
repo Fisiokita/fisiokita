@@ -3,18 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Menu Konsultasi - Fisio Kita</title>
+  <title>Pilih Jenis Konsultasi Fisioterapi - Fisio Kita</title>
+
+  <!-- ✅ SEO TAGS -->
+  <meta name="description" content="Pilih konsultasi fisioterapi online atau langsung bersama Fisio Kita. Terhubung dengan terapis profesional dari rumah atau secara tatap muka.">
+  <meta name="keywords" content="konsultasi fisioterapi, konsultasi online fisioterapi, konsultasi langsung fisioterapi, layanan fisioterapi online, Fisio Kita, terapis profesional, fisioterapi rumah">
+  <meta name="author" content="Fisio Kita">
+
+  <!-- ✅ Open Graph (Sosial Media Preview) -->
+  <meta property="og:title" content="Konsultasi Fisioterapi Online & Offline - Fisio Kita" />
+  <meta property="og:description" content="Pilih konsultasi fisioterapi online atau langsung. Nyaman dan mudah bersama Fisio Kita." />
+  <meta property="og:image" content="https://fisiokita.netlify.app/img/logo.png" />
+  <meta property="og:url" content="https://fisiokita.netlify.app/konsultasi-jenis.html" />
+  <meta property="og:type" content="website" />
+
+  <!-- ✅ Favicon dan Fonts -->
   <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
-  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- ✅ Styling -->
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
+
+  <!-- ✅ Firebase Init -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -24,6 +44,7 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
+
 <body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header (tinggi & tebal) -->

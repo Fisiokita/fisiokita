@@ -4,17 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="google-site-verification" content="BU_TVJ4QtBd31G-bYTbOyfjQJ10KbvapqjbdRRJLf5U" />
-  <title>Fisio Kita</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- ✅ SEO Title & Description -->
+  <title>Fisio Kita | Layanan Fisioterapi Terpercaya di Indonesia</title>
+  <meta name="description" content="Fisio Kita adalah layanan fisioterapi terpercaya yang menyediakan konsultasi online dan offline, serta edukasi kesehatan yang bermanfaat untuk Anda dan keluarga.">
+
+  <!-- ✅ Open Graph Tags (untuk preview saat dibagikan di media sosial) -->
+  <meta property="og:title" content="Fisio Kita | Layanan Fisioterapi Terpercaya di Indonesia" />
+  <meta property="og:description" content="Konsultasi fisioterapi online & offline dengan terapis profesional. Temukan informasi kesehatan dan terapi di Fisio Kita." />
+  <meta property="og:url" content="https://fisiokita.netlify.app" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://fisiokita.netlify.app/img/logo.png" />
+
+  <!-- Fonts & Styles -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
     }
   </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -24,6 +38,7 @@
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
+
 <body class="bg-white text-black min-h-screen flex flex-col font-['Inter']">
 
   <!-- Header (tinggi & tebal) -->

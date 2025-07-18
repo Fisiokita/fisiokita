@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,58 +10,72 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-gray-50 text-[#1E2A44] font-['Inter'] min-h-screen">  <!-- Header -->  <header class="bg-gradient-to-r from-purple-700 to-blue-600 text-white px-6 py-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">Superadmin Dashboard</h1>
+<body class="bg-gray-50 text-[#1E2A44] font-['Inter'] min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg sm:text-xl font-semibold">🛡️ Superadmin Dashboard</h1>
     <button id="logoutBtn" class="text-sm underline">Logout</button>
-  </header>  <!-- Konten -->  <main class="p-6 max-w-5xl mx-auto"><!-- Ringkasan -->
-<section class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Jumlah Pasien</h2>
-    <p id="jumlahPasien" class="text-2xl font-bold">-</p>
-  </div>
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Jumlah Admin/Terapis</h2>
-    <p id="jumlahTerapis" class="text-2xl font-bold">-</p>
-  </div>
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Sesi Konsultasi</h2>
-    <p id="jumlahSesi" class="text-2xl font-bold">-</p>
-  </div>
-</section>
+  </header>
 
-<!-- Navigasi Tab -->
-<section class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-  <a href="superadmin-admin.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">👨‍⚕️</div>
-    <div class="font-semibold">Manajemen Admin/Terapis</div>
-  </a>
-  <a href="superadmin-pasien.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">🧑‍🤝‍🧑</div>
-    <div class="font-semibold">Manajemen Pasien</div>
-  </a>
-  <a href="superadmin-konsultasi.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">📋</div>
-    <div class="font-semibold">Manajemen Konsultasi</div>
-  </a>
-  <a href="superadmin-artikel.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">📰</div>
-    <div class="font-semibold">Artikel Edukasi</div>
-  </a>
-  <a href="superadmin-layanan.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">🛠️</div>
-    <div class="font-semibold">Layanan & Jadwal</div>
-  </a>
-  <a href="superadmin-monitoring.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">📈</div>
-    <div class="font-semibold">Monitoring Sistem</div>
-  </a>
-  <a href="superadmin-settings.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2">⚙️</div>
-    <div class="font-semibold">Pengaturan Akun</div>
-  </a>
-</section>
+  <!-- Konten -->
+  <main class="p-6 max-w-6xl mx-auto">
+    <!-- Ringkasan -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10 text-sm">
+      <div class="bg-white rounded-2xl shadow p-5 text-center">
+        <div class="text-2xl font-bold" id="jumlahPasien">-</div>
+        <p class="text-gray-500 mt-1">Jumlah Pasien</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow p-5 text-center">
+        <div class="text-2xl font-bold" id="jumlahTerapis">-</div>
+        <p class="text-gray-500 mt-1">Admin / Terapis</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow p-5 text-center">
+        <div class="text-2xl font-bold" id="jumlahSesi">-</div>
+        <p class="text-gray-500 mt-1">Sesi Konsultasi</p>
+      </div>
+    </section>
 
-  </main>  <script>
+    <!-- Navigasi -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-sm">
+      <a href="superadmin-admin.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">👨‍⚕️</div>
+        <div class="font-semibold">Manajemen Admin</div>
+      </a>
+      <a href="superadmin-pasien.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">🧑‍🤝‍🧑</div>
+        <div class="font-semibold">Manajemen Pasien</div>
+      </a>
+      <a href="superadmin-konsultasi.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">📋</div>
+        <div class="font-semibold">Konsultasi</div>
+      </a>
+      <a href="superadmin-artikel.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">📰</div>
+        <div class="font-semibold">Artikel Edukasi</div>
+      </a>
+      <a href="superadmin-layanan.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">📅</div>
+        <div class="font-semibold">Jadwal & Layanan</div>
+      </a>
+      <a href="superadmin-monitoring.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">📈</div>
+        <div class="font-semibold">Monitoring</div>
+      </a>
+      <a href="superadmin-settings.html" class="bg-white rounded-2xl shadow p-6 text-center hover:bg-blue-50 transition">
+        <div class="text-3xl mb-1">⚙️</div>
+        <div class="font-semibold">Pengaturan</div>
+      </a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-xs text-gray-500 mt-10 pb-6">
+    &copy; 2025 FisioKita. Panel Superadmin.
+  </footer>
+
+  <!-- Firebase Script -->
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -89,5 +104,6 @@
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => window.location.href = "../login.html");
     });
-  </script></body>
+  </script>
+</body>
 </html>

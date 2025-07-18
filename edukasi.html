@@ -4,9 +4,11 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Edukasi Kesehatan - Fisio Kita</title>
-  <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="/img/favicon.ico" type="image/x-icon" />
 
   <!-- ✅ SEO Meta Tags -->
   <meta name="description" content="Baca artikel edukasi seputar fisioterapi, kesehatan tulang, rehabilitasi, postur tubuh, dan layanan home visit dari Fisio Kita.">
@@ -18,27 +20,26 @@
   <meta property="og:title" content="Edukasi Kesehatan - Fisio Kita">
   <meta property="og:description" content="Kumpulan artikel kesehatan dan fisioterapi dari Fisio Kita untuk bantu Anda hidup lebih sehat dan aktif.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://fisio-kita.com/edukasi.html">
-  <meta property="og:image" content="https://fisio-kita.com/img/og-image.jpg">
+  <meta property="og:url" content="https://fisiokita.my.id/edukasi.html">
+  <meta property="og:image" content="https://fisiokita.my.id/img/og-image.jpg">
 
-  <!-- ✅ Canonical -->
-  <link rel="canonical" href="https://fisio-kita.com/edukasi.html" />
+  <!-- ✅ Twitter Card (opsional tambahan) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Edukasi Kesehatan - Fisio Kita">
+  <meta name="twitter:description" content="Artikel kesehatan dan fisioterapi dari Fisio Kita untuk bantu hidup sehat dan aktif.">
+  <meta name="twitter:image" content="https://fisiokita.my.id/img/og-image.jpg">
 
-  <!-- Fonts & CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- ✅ Canonical URL -->
+  <link rel="canonical" href="https://fisiokita.my.id/edukasi.html" />
+
+  <!-- ✅ Font & Tailwind -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Firebase -->
+  <!-- ✅ Firebase Setup -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -47,7 +48,15 @@
     };
     firebase.initializeApp(firebaseConfig);
   </script>
+
+  <!-- ✅ Base Styles -->
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
+
 
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
 

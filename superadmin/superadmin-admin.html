@@ -53,7 +53,7 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const superadminEmail = "fisiokita@gmail.com";
+    const superadminEmail = "fisiokita.co.id@gmail.com";
 
     auth.onAuthStateChanged(user => {
       if (!user || user.email !== superadminEmail) {

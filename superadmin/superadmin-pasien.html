@@ -1,40 +1,54 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manajemen Pasien - Superadmin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="../img/logo.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Panel Superadmin FisioKita untuk mengelola pasien dan sesi fisioterapi." />
+  <meta property="og:title" content="Manajemen Pasien - FisioKita" />
+  <meta property="og:image" content="/og-image.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-gray-100 font-['Inter'] min-h-screen">
-  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-lg font-semibold">👤 Manajemen Pasien</h1>
-    <div class="flex gap-4 items-center">
-      <button id="profilBtn" class="text-sm underline">Profil</button>
-      <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
     </div>
+    <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
   </header>
 
-  <main class="p-6 max-w-4xl mx-auto space-y-6">
-    <!-- Statistik Ringkas -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div class="bg-white p-4 rounded shadow text-center">
-        <div class="text-xs text-gray-500">Jumlah Pasien</div>
-        <div id="totalPasien" class="text-lg font-bold">0</div>
+  <main class="flex-1 px-6 py-10 max-w-6xl mx-auto space-y-10">
+    <section>
+      <h1 class="text-2xl font-bold mb-4">👤 Manajemen Pasien</h1>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white border rounded-2xl shadow p-4 text-center">
+          <div class="text-xs text-gray-500">Jumlah Pasien</div>
+          <div id="totalPasien" class="text-lg font-bold">0</div>
+        </div>
+        <div class="bg-white border rounded-2xl shadow p-4 text-center">
+          <div class="text-xs text-gray-500">Total Sesi</div>
+          <div id="totalSesiPasien" class="text-lg font-bold">0</div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded shadow text-center">
-        <div class="text-xs text-gray-500">Total Sesi</div>
-        <div id="totalSesiPasien" class="text-lg font-bold">0</div>
-      </div>
-    </div>
+    </section>
 
-    <!-- Daftar Pasien -->
-    <section class="bg-white rounded shadow p-4">
-      <h2 class="font-semibold mb-4">📋 Daftar Pasien</h2>
+    <section class="bg-white border rounded-2xl shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">📋 Daftar Pasien</h2>
       <div class="overflow-x-auto">
         <table class="w-full text-sm border">
           <thead>
@@ -51,21 +65,20 @@
     </section>
   </main>
 
-  <!-- Modal Profil -->
   <div id="profilModal" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50">
-    <div class="bg-white rounded-lg shadow p-6 w-full max-w-md relative">
+    <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
       <button onclick="tutupProfil()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500">✕</button>
       <h2 class="text-xl font-semibold mb-4">Profil Admin</h2>
       <form id="profilForm" class="space-y-4">
         <div>
           <label class="block text-sm font-medium">Email</label>
-          <input id="profilEmail" type="email" class="w-full border rounded p-2 bg-gray-100" readonly />
+          <input id="profilEmail" type="email" class="w-full border rounded-xl p-2 bg-gray-100" readonly />
         </div>
         <div>
           <label class="block text-sm font-medium">Nama</label>
-          <input id="profilNama" type="text" class="w-full border rounded p-2" />
+          <input id="profilNama" type="text" class="w-full border rounded-xl p-2" />
         </div>
-        <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded hover:bg-[#3a56a5]">Simpan</button>
+        <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded-full hover:bg-[#3a56a5]">Simpan</button>
       </form>
     </div>
   </div>
@@ -83,18 +96,20 @@
     const totalPasien = document.getElementById("totalPasien");
     const totalSesiPasien = document.getElementById("totalSesiPasien");
     const tabelPasien = document.getElementById("tabelPasien");
+    const userGreeting = document.getElementById("userGreeting");
 
     let pasienMap = {};
 
     auth.onAuthStateChanged(user => {
       if (!user) return (window.location.href = "../login.html");
 
-      // Ambil data admin dari koleksi "admin"
       db.collection("admin").doc(user.email).get().then(doc => {
         if (doc.exists) {
           const data = doc.data();
           document.getElementById("profilEmail").value = user.email;
           document.getElementById("profilNama").value = data.nama || "";
+          userGreeting.textContent = data.nama?.split(" ")[0] || "Admin";
+          userGreeting.onclick = () => document.getElementById("profilModal").classList.replace("hidden", "flex");
         }
       });
 
@@ -151,11 +166,6 @@
       }
     }
 
-    document.getElementById("profilBtn").addEventListener("click", () => {
-      document.getElementById("profilModal").classList.remove("hidden");
-      document.getElementById("profilModal").classList.add("flex");
-    });
-
     function tutupProfil() {
       document.getElementById("profilModal").classList.add("hidden");
       document.getElementById("profilModal").classList.remove("flex");
@@ -173,4 +183,5 @@
     });
   </script>
 </body>
+
 </html>

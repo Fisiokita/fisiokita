@@ -128,14 +128,14 @@
   // 1. Cek di koleksi 'admin'
   const adminDoc = await db.collection("admin").doc(email).get();
   if (adminDoc.exists) {
-    window.location.href = "superadmin-dashboard.html";
+    window.location.href = "superadmin/superadmin-dashboard.html";
     return;
   }
 
   // 2. Cek di koleksi 'terapis'
   const terapisDoc = await db.collection("terapis").doc(email).get();
   if (terapisDoc.exists) {
-    window.location.href = "dashboard-terapis.html";
+    window.location.href = "admin/dashboard.html";
     return;
   }
 

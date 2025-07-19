@@ -1,62 +1,26 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pengaturan Akun - Superadmin FisioKita</title>
-  <link rel="icon" href="/favicon.ico" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="../img/logo.png" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="description" content="Panel Superadmin FisioKita untuk mengelola akun dan informasi penting." />
   <meta property="og:title" content="Pengaturan Akun - FisioKita" />
   <meta property="og:image" content="/og-image.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-[#f9fafb] font-['Inter'] min-h-screen text-[#1E2A44]">
-
-  <!-- Navbar Selaras Index -->
-  <header class="bg-white shadow sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="/" class="text-lg font-bold text-blue-600">FisioKita</a>
-      <div id="userGreeting" class="cursor-pointer text-sm font-semibold text-[#4B6CC1] hover:underline"></div>
-    </div>
-  </header>
-
-  <main class="max-w-3xl mx-auto p-6">
-    <h1 class="text-xl font-semibold mb-6">⚙️ Pengaturan Akun Superadmin</h1>
-
-    <!-- Info Akun -->
-    <section class="bg-white p-4 rounded-xl shadow border mb-6">
-      <h2 class="text-sm font-semibold mb-1">Email Login Saat Ini:</h2>
-      <p id="currentEmail" class="text-base font-bold text-blue-600">-</p>
-    </section>
-
-    <!-- Detail Profil Admin -->
-    <section class="bg-white p-4 rounded-xl shadow border mb-6">
-      <h2 class="text-sm font-semibold mb-3">👤 Detail Profil</h2>
-      <label class="text-sm mb-1 block">Nama Lengkap:</label>
-      <input type="text" id="inputNama" class="border rounded px-3 py-2 w-full mb-3 text-sm" placeholder="Nama Anda" />
-      <button id="btnSimpanProfil" class="transition duration-200 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Simpan Perubahan</button>
-      <p id="pesanProfil" class="mt-2 text-sm"></p>
-    </section>
-
-    <!-- Ubah Password -->
-    <section class="bg-white p-4 rounded-xl shadow border mb-6">
-      <h2 class="text-sm font-semibold mb-3">🔒 Ganti Password</h2>
-      <input type="password" id="passwordBaru" placeholder="Password Baru" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
-      <input type="password" id="konfirmasiPassword" placeholder="Konfirmasi Password" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
-      <button id="btnGantiPassword" class="transition duration-200 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Update Password</button>
-      <p id="pesanPassword" class="mt-2 text-sm"></p>
-    </section>
-
-    <!-- Logout -->
-    <div class="text-center mt-8">
-      <button id="logoutBtn" class="text-red-600 text-sm underline hover:text-red-800">Logout</button>
-    </div>
-  </main>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -64,83 +28,92 @@
       projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </div>
+    <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
+  </header>
+
+  <main class="flex-1 px-6 py-10 max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">⚙️ Pengaturan Akun Superadmin</h1>
+    <form class="space-y-6">
+      <div>
+        <label class="block mb-1 font-semibold" for="nama">Nama Lengkap</label>
+        <input type="text" id="nama" class="w-full border rounded-xl px-4 py-2" placeholder="Nama Admin" />
+      </div>
+      <div>
+        <label class="block mb-1 font-semibold" for="email">Email</label>
+        <input type="email" id="email" class="w-full border rounded-xl px-4 py-2 bg-gray-100" disabled />
+      </div>
+      <div>
+        <label class="block mb-1 font-semibold" for="telepon">Telepon</label>
+        <input type="tel" id="telepon" class="w-full border rounded-xl px-4 py-2" placeholder="08xxxx" />
+      </div>
+      <button type="button" onclick="updateAdminData()" class="bg-[#4B6CC1] text-white font-semibold px-6 py-2 rounded-full hover:bg-[#3B57A0] transition">Simpan</button>
+    </form>
+
+    <div class="mt-10 border-t pt-6">
+      <h2 class="text-xl font-bold mb-4">🔒 Ubah Password</h2>
+      <button onclick="sendResetEmail()" class="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600 transition">Kirim Email Reset Password</button>
+    </div>
+
+    <div class="mt-10 border-t pt-6">
+      <button onclick="logout()" class="text-gray-600 hover:text-red-500 font-semibold">Logout</button>
+    </div>
+  </main>
+
+  <script>
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const currentEmail = document.getElementById("currentEmail");
-    const inputNama = document.getElementById("inputNama");
-    const btnSimpanProfil = document.getElementById("btnSimpanProfil");
-    const pesanProfil = document.getElementById("pesanProfil");
-    const passwordBaru = document.getElementById("passwordBaru");
-    const konfirmasiPassword = document.getElementById("konfirmasiPassword");
-    const pesanPassword = document.getElementById("pesanPassword");
-    const userGreeting = document.getElementById("userGreeting");
-
     auth.onAuthStateChanged(async (user) => {
-      if (!user) return window.location.href = "../login.html";
-      currentEmail.textContent = user.email;
-      userGreeting.textContent = "Akun";
+      if (!user) {
+        window.location.href = '../login.html';
+        return;
+      }
+      const email = user.email;
+      document.getElementById("email").value = email;
+
+      const userGreeting = document.getElementById("userGreeting");
+      userGreeting.textContent = "Admin";
       userGreeting.onclick = () => window.location.href = "akun.html";
 
-      try {
-        const doc = await db.collection("admin").doc(user.email).get();
-        if (doc.exists) {
-          const data = doc.data();
-          inputNama.value = data.nama || "";
-          userGreeting.textContent = data.nama?.split(" ")[0] || "Akun";
-        }
-      } catch (err) {
-        console.error("Gagal memuat profil:", err);
+      const adminDoc = await db.collection("admin").doc(email).get();
+      if (adminDoc.exists) {
+        const data = adminDoc.data();
+        document.getElementById("nama").value = data.nama || "";
+        document.getElementById("telepon").value = data.telepon || "";
+        userGreeting.textContent = data.nama?.split(" ")[0] || "Admin";
       }
     });
 
-    btnSimpanProfil.addEventListener("click", async () => {
-      const user = auth.currentUser;
-      const nama = inputNama.value.trim();
-      if (!nama) return;
+    function updateAdminData() {
+      const nama = document.getElementById("nama").value;
+      const telepon = document.getElementById("telepon").value;
+      const email = document.getElementById("email").value;
 
-      try {
-        await db.collection("admin").doc(user.email).set({ nama }, { merge: true });
-        pesanProfil.textContent = "✅ Profil berhasil diperbarui.";
-        pesanProfil.className = "text-green-600 text-sm mt-2";
-        userGreeting.textContent = nama.split(" ")[0];
-      } catch (err) {
-        pesanProfil.textContent = `❌ Gagal: ${err.message}`;
-        pesanProfil.className = "text-red-600 text-sm mt-2";
-      }
-    });
+      db.collection("admin").doc(email).set({ nama, telepon }, { merge: true })
+        .then(() => alert("✅ Data berhasil diperbarui."))
+        .catch((err) => alert("❌ Gagal memperbarui data: " + err.message));
+    }
 
-    document.getElementById("btnGantiPassword").addEventListener("click", () => {
-      const pw1 = passwordBaru.value.trim();
-      const pw2 = konfirmasiPassword.value.trim();
+    function sendResetEmail() {
+      const email = document.getElementById("email").value;
+      auth.sendPasswordResetEmail(email)
+        .then(() => alert("📧 Email reset password telah dikirim."))
+        .catch((err) => alert("❌ Gagal mengirim email: " + err.message));
+    }
 
-      if (pw1.length < 6) {
-        pesanPassword.textContent = "❌ Minimal 6 karakter.";
-        pesanPassword.className = "text-red-600 text-sm mt-2";
-        return;
-      }
-      if (pw1 !== pw2) {
-        pesanPassword.textContent = "❌ Password tidak cocok.";
-        pesanPassword.className = "text-red-600 text-sm mt-2";
-        return;
-      }
-
-      const user = auth.currentUser;
-      user.updatePassword(pw1).then(() => {
-        pesanPassword.textContent = "✅ Password berhasil diubah.";
-        pesanPassword.className = "text-green-600 text-sm mt-2";
-        passwordBaru.value = "";
-        konfirmasiPassword.value = "";
-      }).catch(err => {
-        pesanPassword.textContent = `❌ Gagal: ${err.message}`;
-        pesanPassword.className = "text-red-600 text-sm mt-2";
-      });
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
+    function logout() {
       auth.signOut().then(() => window.location.href = "../login.html");
-    });
+    }
   </script>
-
 </body>
+
 </html>

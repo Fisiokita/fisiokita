@@ -247,17 +247,27 @@
 
       if (user) {
     try {
-      const userDoc = await db.collection().doc(user.email).get();
+      const userDoc = await db.collection(users).doc(user.email).get();
       if (userDoc.exists) {
         const nama = userDoc.data().nama || user.email;
         el.textContent = nama.split(" ")[0];
         el.onclick = () => window.location.href = "akun.html";
+        
       } else {
         const terapisDoc = await db.collection("terapis").doc(user.email).get();
         if (terapisDoc.exists) {
           const nama = terapisDoc.data().nama || user.email;
           el.textContent = nama.split(" ")[0];
           el.onclick = () => window.location.href = "admin/dashboard.html";
+        } else {
+          el.textContent = user.email;
+          el.onclick = () => window.location.href = "akun.html";
+          
+          const adminDoc = await db.collection("admin").doc(user.email).get();
+        if (adminDoc.exists) {
+          const nama = adminDoc.data().nama || user.email;
+          el.textContent = nama.split(" ")[0];
+          el.onclick = () => window.location.href = "superadmin/superadmin-dashboard.html";
         } else {
           el.textContent = user.email;
           el.onclick = () => window.location.href = "akun.html";

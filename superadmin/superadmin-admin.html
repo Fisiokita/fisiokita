@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,40 +11,45 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-[#f8fafc] font-['Inter'] min-h-screen text-[#1E2A44]">
-  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white p-4">
-    <div class="flex justify-between items-center">
-      <h1 class="text-lg font-bold">👑 Superadmin - Manajemen Admin</h1>
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-lg font-semibold"> Manajemen Admin / Terapis</h1>
+    <div class="flex items-center gap-4">
+      <button id="tambahToggle" class="bg-white text-[#4B6CC1] text-sm font-semibold px-4 py-2 rounded-full hover:bg-gray-100">+ Tambah Admin</button>
       <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
     </div>
-  </header>  <main class="max-w-4xl mx-auto p-6 space-y-8"><!-- Form Tambah Admin -->
-<section class="bg-white rounded-xl shadow p-4">
-  <h2 class="font-semibold text-lg mb-3">➕ Tambah Admin / Terapis</h2>
-  <form id="formTambah" class="space-y-4">
-    <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full border border-gray-300 rounded px-4 py-2" />
-    <input type="email" id="email" placeholder="Email" required class="w-full border border-gray-300 rounded px-4 py-2" />
-    <input type="password" id="password" placeholder="Password" required class="w-full border border-gray-300 rounded px-4 py-2" />
-    <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded">Tambah Admin</button>
-  </form>
-</section>
+  </header>
 
-<!-- Daftar Admin -->
-<section class="bg-white rounded-xl shadow p-4">
-  <h2 class="font-semibold text-lg mb-4">📋 Daftar Admin / Terapis</h2>
-  <table class="w-full text-sm border">
-    <thead class="bg-gray-100">
-      <tr>
-        <th class="p-2 border">Nama</th>
-        <th class="p-2 border">Email</th>
-        <th class="p-2 border">Status</th>
-        <th class="p-2 border">Online</th>
-        <th class="p-2 border">Aksi</th>
-      </tr>
-    </thead>
-    <tbody id="tabelAdmin"></tbody>
-  </table>
-</section>
+  <main class="max-w-4xl mx-auto p-6 space-y-8">
+    <!-- Form Tambah Admin (disembunyikan awalnya) -->
+    <section id="formContainer" class="bg-white rounded-xl shadow p-4 hidden">
+      <h2 class="font-semibold text-lg mb-3"> Tambah Admin / Terapis</h2>
+      <form id="formTambah" class="space-y-4">
+        <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <input type="email" id="email" placeholder="Email" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <input type="password" id="password" placeholder="Password" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded hover:bg-[#3a56a5]">Tambah Admin</button>
+      </form>
+    </section>
 
-  </main>  <script>
+    <!-- Daftar Admin -->
+    <section class="bg-white rounded-xl shadow p-4">
+      <h2 class="font-semibold text-lg mb-4"> Daftar Admin / Terapis</h2>
+      <table class="w-full text-sm border">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-2 border">Nama</th>
+            <th class="p-2 border">Email</th>
+            <th class="p-2 border">Status</th>
+            <th class="p-2 border">Online</th>
+            <th class="p-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelAdmin"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
@@ -120,5 +126,11 @@
         db.collection("terapis").doc(email).delete();
       }
     }
-  </script></body>
+
+    document.getElementById("tambahToggle").addEventListener("click", () => {
+      const formSection = document.getElementById("formContainer");
+      formSection.classList.toggle("hidden");
+    });
+  </script>
+</body>
 </html>

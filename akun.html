@@ -180,10 +180,9 @@
         });
       });
 
-  } catch (err) {
-    console.error("Gagal memuat pengguna:", err);
-    alert("Terjadi kesalahan saat memuat akun.");
-    auth.signOut();
+   } else {
+    alert("Akun tidak ditemukan di database.");
+    location.href = "index.html";
   }
 });
 

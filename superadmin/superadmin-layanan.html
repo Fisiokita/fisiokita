@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Akun Saya - FisioKita</title>
+  <title>Manajemen Layanan & Jadwal - FisioKita</title>
   <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -11,10 +11,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>body { font-family: 'Inter', sans-serif; }</style>
- 
 </head>
 <body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
-
   <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
@@ -25,53 +23,62 @@
       Keluar
     </button>
   </header>
-<body class="bg-[#f8fafc] text-[#1E2A44] font-['Inter'] min-h-screen p-6">
 
-  <header class="mb-6">
-    <h1 class="text-2xl font-semibold mb-2">🛠️ Manajemen Layanan & Jadwal Terapis</h1>
-    <p class="text-sm text-gray-600">Atur layanan yang tersedia dan jadwal kerja para terapis.</p>
-  </header>
+  <main class="p-6 space-y-10">
+    <!-- Judul Halaman -->
+    <section>
+      <h1 class="text-2xl font-semibold mb-2"> Manajemen Layanan & Jadwal Terapis</h1>
+      <p class="text-sm text-gray-600">Atur layanan yang tersedia dan jadwal kerja para terapis.</p>
+    </section>
 
-  <!-- === LAYANAN === -->
-  <section class="mb-10">
-    <h2 class="text-lg font-semibold mb-3">📋 Daftar Layanan</h2>
-    <div class="space-y-3" id="daftarLayanan"></div>
-    <form id="formLayanan" class="mt-4 space-y-2">
-      <input required type="text" id="namaLayanan" placeholder="Nama Layanan" class="w-full px-4 py-2 border rounded" />
-      <textarea id="deskripsiLayanan" placeholder="Deskripsi Layanan" class="w-full px-4 py-2 border rounded"></textarea>
-      <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah Layanan</button>
-    </form>
-  </section>
-
-  <!-- === JADWAL === -->
-  <section>
-    <h2 class="text-lg font-semibold mb-3">🗓️ Jadwal Terapis</h2>
-    <table class="min-w-full text-sm border border-gray-300 mb-4">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="border p-2">Terapis</th>
-          <th class="border p-2">Hari</th>
-          <th class="border p-2">Jam</th>
-          <th class="border p-2">Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tabelJadwal"></tbody>
-    </table>
-
-    <form id="formJadwal" class="space-y-2">
-      <input required type="email" id="emailJadwal" placeholder="Email Terapis" class="w-full px-4 py-2 border rounded" />
-      <select required id="hariJadwal" class="w-full px-4 py-2 border rounded">
-        <option value="">Pilih Hari</option>
-        <option>Senin</option><option>Selasa</option><option>Rabu</option>
-        <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
-      </select>
-      <div class="flex gap-2">
-        <input required type="time" id="jamMulai" class="w-1/2 px-4 py-2 border rounded" />
-        <input required type="time" id="jamSelesai" class="w-1/2 px-4 py-2 border rounded" />
+    <!-- === LAYANAN === -->
+    <section>
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold"> Daftar Layanan</h2>
+        <button id="toggleLayananForm" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">+ Tambah Layanan</button>
       </div>
-      <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah Jadwal</button>
-    </form>
-  </section>
+      <div class="space-y-3" id="daftarLayanan"></div>
+      <form id="formLayanan" class="mt-4 space-y-2 hidden">
+        <input required type="text" id="namaLayanan" placeholder="Nama Layanan" class="w-full px-4 py-2 border rounded" />
+        <textarea id="deskripsiLayanan" placeholder="Deskripsi Layanan" class="w-full px-4 py-2 border rounded"></textarea>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah</button>
+      </form>
+    </section>
+
+    <!-- === JADWAL === -->
+    <section>
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-lg font-semibold"> Jadwal Terapis</h2>
+        <button id="toggleJadwalForm" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">+ Tambah Jadwal</button>
+      </div>
+
+      <table class="min-w-full text-sm border border-gray-300 mb-4">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border p-2">Terapis</th>
+            <th class="border p-2">Hari</th>
+            <th class="border p-2">Jam</th>
+            <th class="border p-2">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelJadwal"></tbody>
+      </table>
+
+      <form id="formJadwal" class="space-y-2 hidden">
+        <input required type="email" id="emailJadwal" placeholder="Email Terapis" class="w-full px-4 py-2 border rounded" />
+        <select required id="hariJadwal" class="w-full px-4 py-2 border rounded">
+          <option value="">Pilih Hari</option>
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+        </select>
+        <div class="flex gap-2">
+          <input required type="time" id="jamMulai" class="w-1/2 px-4 py-2 border rounded" />
+          <input required type="time" id="jamSelesai" class="w-1/2 px-4 py-2 border rounded" />
+        </div>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah Jadwal</button>
+      </form>
+    </section>
+  </main>
 
   <script>
     const firebaseConfig = {
@@ -87,6 +94,7 @@
     const formLayanan = document.getElementById("formLayanan");
     const namaLayanan = document.getElementById("namaLayanan");
     const deskripsiLayanan = document.getElementById("deskripsiLayanan");
+    const toggleLayananBtn = document.getElementById("toggleLayananForm");
 
     const tabelJadwal = document.getElementById("tabelJadwal");
     const formJadwal = document.getElementById("formJadwal");
@@ -94,6 +102,10 @@
     const hariJadwal = document.getElementById("hariJadwal");
     const jamMulai = document.getElementById("jamMulai");
     const jamSelesai = document.getElementById("jamSelesai");
+    const toggleJadwalBtn = document.getElementById("toggleJadwalForm");
+
+    toggleLayananBtn.onclick = () => formLayanan.classList.toggle("hidden");
+    toggleJadwalBtn.onclick = () => formJadwal.classList.toggle("hidden");
 
     auth.onAuthStateChanged(user => {
       if (!user) return window.location.href = "../login.html";
@@ -101,7 +113,6 @@
       muatJadwal();
     });
 
-    // === LAYANAN ===
     function muatLayanan() {
       db.collection("layanan").onSnapshot(snapshot => {
         daftarLayanan.innerHTML = "";
@@ -130,9 +141,7 @@
       if (!nama) return;
       const id = nama.toLowerCase().replace(/\s+/g, "-");
 
-      db.collection("layanan").doc(id).set({
-        id, nama, deskripsi, aktif: true
-      }).then(() => {
+      db.collection("layanan").doc(id).set({ id, nama, deskripsi, aktif: true }).then(() => {
         namaLayanan.value = "";
         deskripsiLayanan.value = "";
       });
@@ -142,9 +151,8 @@
       db.collection("layanan").doc(id).update({ aktif: status });
     }
 
-    // === JADWAL ===
     function muatJadwal() {
-      db.collection("jadwalTerapis").onSnapshot(snapshot => {
+      db.collection("jadwal").onSnapshot(snapshot => {
         tabelJadwal.innerHTML = "";
         snapshot.forEach(doc => {
           const data = doc.data();
@@ -170,14 +178,12 @@
         jamMulai: jamMulai.value,
         jamSelesai: jamSelesai.value
       };
-      db.collection("jadwalTerapis").add(data).then(() => {
-        formJadwal.reset();
-      });
+      db.collection("jadwal").add(data).then(() => formJadwal.reset());
     });
 
     function hapusJadwal(id) {
       if (confirm("Hapus jadwal ini?")) {
-        db.collection("jadwalTerapis").doc(id).delete();
+        db.collection("jadwal").doc(id).delete();
       }
     }
   </script>

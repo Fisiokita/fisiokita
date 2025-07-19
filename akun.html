@@ -121,57 +121,70 @@
     let wilayahData = {};
 
     auth.onAuthStateChanged(async user => {
-      if (!user) return location.href = "login.html";
+  if (!user) return location.href = "login.html";
 
-      const email = user.email;
-      const doc = await db.collection("users").doc(email).get();
-      const d = doc.data();
+  try {
+    const email = user.email.toLowerCase();
+    const doc = await db.collection("users").doc(email).get();
 
-      // Arahkan pengguna ke dashboard sesuai perannya
-if (d?.role === "terapis") {
-  window.location.href = "dashboard-terapis.html";
-  return;
-}
-if (d?.role === "admin") {
-  window.location.href = "superadmin-dashboard.html";
-  return;
-}
+    if (!doc.exists) {
+      alert("Data pengguna tidak ditemukan.");
+      return auth.signOut();
+    }
 
+    const d = doc.data();
+    const role = d?.role;
 
-      document.getElementById("profilEmail").textContent = email;
-      document.getElementById("profilNama").textContent = d?.nama || "-";
-      document.getElementById("profilHP").textContent = d?.hp || "-";
-      document.getElementById("profilGender").textContent = d?.jenis_kelamin || "-";
-      document.getElementById("profilLahir").textContent = d?.tanggal_lahir || "-";
-      document.getElementById("profilLokasi").textContent = `${d?.kabupaten || "-"}, ${d?.provinsi || "-"}`;
+    // Redirect jika bukan user umum
+    if (role === "admin") {
+      return window.location.replace("superadmin-dashboard.html");
+    }
+    if (role === "terapis") {
+      return window.location.replace("dashboard-terapis.html");
+    }
 
-      isiFormEdit(d);
+    // Jika bukan admin atau terapis, lanjutkan menampilkan halaman akun
+    document.getElementById("profilEmail").textContent = email;
+    document.getElementById("profilNama").textContent = d?.nama || "-";
+    document.getElementById("profilHP").textContent = d?.hp || "-";
+    document.getElementById("profilGender").textContent = d?.jenis_kelamin || "-";
+    document.getElementById("profilLahir").textContent = d?.tanggal_lahir || "-";
+    document.getElementById("profilLokasi").textContent = `${d?.kabupaten || "-"}, ${d?.provinsi || "-"}`;
 
-      db.collection("sessions")
-        .where("kontak", "==", email)
-        .orderBy("dibuat", "desc")
-        .onSnapshot(snapshot => {
-          const list = document.getElementById("daftarRiwayat");
-          list.innerHTML = "";
-          if (snapshot.empty) {
-            list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
-            return;
-          }
-          snapshot.forEach(doc => {
-            const d = doc.data();
-            const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
-            list.innerHTML += `
-              <li class="bg-white p-3 rounded shadow border">
-                <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
-                <div class="text-xs text-gray-500 mb-1">${tgl}</div>
-                <div class="text-sm mb-1">${d.keluhan || "-"}</div>
-                <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
-                  ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
-                </div>
-              </li>`;
-          });
+    isiFormEdit(d);
+
+    db.collection("sessions")
+      .where("kontak", "==", email)
+      .orderBy("dibuat", "desc")
+      .onSnapshot(snapshot => {
+        const list = document.getElementById("daftarRiwayat");
+        list.innerHTML = "";
+        if (snapshot.empty) {
+          list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
+          return;
+        }
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
+          list.innerHTML += `
+            <li class="bg-white p-3 rounded shadow border">
+              <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
+              <div class="text-xs text-gray-500 mb-1">${tgl}</div>
+              <div class="text-sm mb-1">${d.keluhan || "-"}</div>
+              <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
+                ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
+              </div>
+            </li>`;
         });
-    });
+      });
+
+  } catch (err) {
+    console.error("Gagal memuat pengguna:", err);
+    alert("Terjadi kesalahan saat memuat akun.");
+    auth.signOut();
+  }
+});
+
 
     function isiFormEdit(d) {
       document.getElementById("editNama").value = d.nama || "";

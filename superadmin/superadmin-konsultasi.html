@@ -74,10 +74,18 @@
     const isiTabel = document.getElementById("isiTabelSesi");
     const filterStatus = document.getElementById("filterStatus");
 
-    auth.onAuthStateChanged(user => {
-      if (!user) return location.href = "../login.html";
-      tampilkanSemuaSesi();
-    });
+     auth.onAuthStateChanged(user => {
+      if (!user) return (window.location.href = "../login.html");
+
+      db.collection("admin").doc(user.email).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("profilEmail").value = user.email;
+          document.getElementById("profilNama").value = data.nama || "";
+          userGreeting.textContent = data.nama?.split(" ")[0] || "Admin";
+          userGreeting.onclick = () => document.getElementById("profilModal").classList.replace("hidden", "flex");
+        }
+      });
 
     function tampilkanSemuaSesi() {
       db.collection("sessions")

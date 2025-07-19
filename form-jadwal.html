@@ -113,41 +113,52 @@
   </footer>
 
   <!-- Script Firebase & Auth -->
-  <script>
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+<script>
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const el = document.getElementById("userGreeting");
+  window.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("userGreeting");
 
-      auth.onAuthStateChanged(async (user) => {
-        if (!el) return;
+    auth.onAuthStateChanged(async (user) => {
+      if (!el) return;
 
-        if (user) {
-          try {
-            const userDoc = await db.collection("users").doc(user.email).get();
-            if (userDoc.exists) {
-              el.textContent = (userDoc.data().nama || user.email).split(" ")[0];
-              el.onclick = () => window.location.href = "akun.html";
-            } else {
-              const terapisDoc = await db.collection("terapis").doc(user.email).get();
-              if (terapisDoc.exists) {
-                el.textContent = (terapisDoc.data().nama || user.email).split(" ")[0];
-                el.onclick = () => window.location.href = "admin/dashboard.html";
-              } else {
-                el.textContent = "Pengguna";
-                el.onclick = () => window.location.href = "akun.html";
-              }
-            }
-          } catch (err) {
-            el.textContent = "Pengguna";
-            el.onclick = () => window.location.href = "akun.html";
-          }
-        } else {
-          el.textContent = "Masuk";
-          el.onclick = () => window.location.href = "login.html";
+      if (!user) {
+        el.textContent = "Masuk";
+        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+        el.onclick = () => window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const email = user.email;
+        const [adminDoc, terapisDoc, userDoc] = await Promise.all([
+          db.collection("admin").doc(email).get(),
+          db.collection("terapis").doc(email).get(),
+          db.collection("users").doc(email).get()
+        ]);
+
+        let nama = email;
+        let tujuan = "akun.html";
+
+        if (adminDoc.exists) {
+          nama = adminDoc.data().nama || email;
+          tujuan = "superadmin/superadmin-dashboard.html";
+        } else if (terapisDoc.exists) {
+          nama = terapisDoc.data().nama || email;
+          tujuan = "admin/dashboard.html";
+        } else if (userDoc.exists) {
+          nama = userDoc.data().nama || email;
+          tujuan = "akun.html";
         }
-      });
+
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = tujuan;
+      } catch (err) {
+        console.error("Gagal memuat data pengguna:", err);
+        el.textContent = "Pengguna";
+        el.onclick = () => window.location.href = "akun.html";
+      }
     });
 
     // Parameter URL dan pengisian nama terapis
@@ -163,6 +174,7 @@
       document.getElementById("lokasiSpan").textContent = `${kab}, ${prov}`;
     }
 
+    // Handle submit form
     document.getElementById("jadwalForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -189,6 +201,8 @@
         console.error(err);
       }
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>

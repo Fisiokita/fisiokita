@@ -121,10 +121,8 @@
       const infoLangsung = document.getElementById("infoLangsung");
       const popup = document.getElementById("queuePopup");
 
-     auth.onAuthStateChanged(async (user) => {
-  if (!userGreeting) return;
-
-  auth.onAuthStateChanged(async (user) => {
+     
+      auth.onAuthStateChanged(async (user) => {
   const el = document.getElementById("userGreeting");
   if (!el) return;
 

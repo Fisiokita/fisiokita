@@ -1,45 +1,26 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Monitoring Sistem - FisioKita</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <title>Monitoring Sistem - Superadmin FisioKita</title>
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="../img/logo.png" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Monitoring sistem dan aktivitas untuk panel Superadmin FisioKita." />
+  <meta property="og:title" content="Monitoring Sistem - FisioKita" />
+  <meta property="og:image" content="/og-image.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-[#f9fafb] font-['Inter'] p-6 min-h-screen text-[#1E2A44]">
-
-  <h1 class="text-2xl font-bold mb-4">📈 Monitoring Sistem & Log Aktivitas</h1>
-
-  <!-- Statistik Ringkas -->
-  <section class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-    <div class="bg-white p-4 rounded shadow border">
-      <h2 class="font-semibold text-sm mb-1">👥 Jumlah Pengguna</h2>
-      <p id="jumlahPengguna" class="text-xl font-bold">0</p>
-    </div>
-    <div class="bg-white p-4 rounded shadow border">
-      <h2 class="font-semibold text-sm mb-1">💼 Jumlah Terapis</h2>
-      <p id="jumlahTerapis" class="text-xl font-bold">0</p>
-    </div>
-    <div class="bg-white p-4 rounded shadow border">
-      <h2 class="font-semibold text-sm mb-1">🟢 Sesi Aktif</h2>
-      <p id="jumlahAktif" class="text-xl font-bold">0</p>
-    </div>
-    <div class="bg-white p-4 rounded shadow border">
-      <h2 class="font-semibold text-sm mb-1">✅ Sesi Selesai</h2>
-      <p id="jumlahSelesai" class="text-xl font-bold">0</p>
-    </div>
-  </section>
-
-  <!-- Log Aktivitas -->
-  <section>
-    <h2 class="text-lg font-semibold mb-2">📝 Log Aktivitas Admin</h2>
-    <div id="logAktivitas" class="space-y-2 text-sm"></div>
-  </section>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -47,32 +28,77 @@
       projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </div>
+    <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
+  </header>
+
+  <main class="flex-1 px-6 py-10 max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">📈 Monitoring Sistem & Log Aktivitas</h1>
+
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div class="bg-white p-5 rounded-xl shadow border">
+        <h2 class="text-sm font-semibold text-gray-500 mb-1"> Jumlah Pengguna</h2>
+        <p id="jumlahPengguna" class="text-2xl font-bold">0</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow border">
+        <h2 class="text-sm font-semibold text-gray-500 mb-1"> Jumlah Terapis</h2>
+        <p id="jumlahTerapis" class="text-2xl font-bold">0</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow border">
+        <h2 class="text-sm font-semibold text-gray-500 mb-1"> Sesi Aktif</h2>
+        <p id="jumlahAktif" class="text-2xl font-bold">0</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl shadow border">
+        <h2 class="text-sm font-semibold text-gray-500 mb-1"> Sesi Selesai</h2>
+        <p id="jumlahSelesai" class="text-2xl font-bold">0</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold mb-4"> Log Aktivitas Admin</h2>
+      <div id="logAktivitas" class="space-y-3 text-sm"></div>
+    </section>
+  </main>
+
+  <script>
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
       if (!user) return window.location.href = "../login.html";
+
+      const userGreeting = document.getElementById("userGreeting");
+      userGreeting.textContent = "Admin";
+      userGreeting.onclick = () => window.location.href = "akun.html";
+
+      const adminDoc = await db.collection("admin").doc(user.email).get();
+      if (adminDoc.exists) {
+        const data = adminDoc.data();
+        userGreeting.textContent = data.nama?.split(" ")[0] || "Admin";
+      }
+
       hitungStatistik();
       tampilkanLog();
     });
 
     function hitungStatistik() {
-      // Hitung pengguna
       db.collection("users").get().then(snap => {
         document.getElementById("jumlahPengguna").innerText = snap.size;
       });
-
-      // Hitung terapis
       db.collection("terapis").get().then(snap => {
         document.getElementById("jumlahTerapis").innerText = snap.size;
       });
-
-      // Hitung sesi aktif
       db.collection("sessions").where("selesai", "==", false).get().then(snap => {
         document.getElementById("jumlahAktif").innerText = snap.size;
       });
-
-      // Hitung sesi selesai
       db.collection("sessions").where("selesai", "==", true).get().then(snap => {
         document.getElementById("jumlahSelesai").innerText = snap.size;
       });
@@ -86,13 +112,13 @@
           const log = doc.data();
           const waktu = log.waktu?.toDate().toLocaleString("id-ID") || "-";
           const item = document.createElement("div");
-          item.className = "bg-white p-3 border rounded shadow-sm";
+          item.className = "bg-white p-4 border rounded-xl shadow-sm";
           item.innerHTML = `<strong>${log.email}</strong> – ${log.aksi} <br/><span class="text-xs text-gray-500">${waktu}</span>`;
           logContainer.appendChild(item);
         });
       });
     }
   </script>
-
 </body>
+
 </html>

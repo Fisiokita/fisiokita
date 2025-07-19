@@ -121,36 +121,39 @@
       const infoLangsung = document.getElementById("infoLangsung");
       const popup = document.getElementById("queuePopup");
 
-      auth.onAuthStateChanged(async (user) => {
-        if (!userGreeting) return;
-        if (user) {
+     auth.onAuthStateChanged(async (user) => {
+  if (!userGreeting) return;
+
+  if (user) {
     try {
       const userDoc = await db.collection("users").doc(user.email).get();
       if (userDoc.exists) {
         const nama = userDoc.data().nama || user.email;
-        el.textContent = nama.split(" ")[0];
-        el.onclick = () => window.location.href = "akun.html";
+        userGreeting.textContent = nama.split(" ")[0];
+        userGreeting.onclick = () => window.location.href = "akun.html";
       } else {
         const terapisDoc = await db.collection("terapis").doc(user.email).get();
         if (terapisDoc.exists) {
           const nama = terapisDoc.data().nama || user.email;
-          el.textContent = nama.split(" ")[0];
-          el.onclick = () => window.location.href = "admin/dashboard.html";
+          userGreeting.textContent = nama.split(" ")[0];
+          userGreeting.onclick = () => window.location.href = "admin/dashboard.html";
         } else {
-          el.textContent = user.email;
-          el.onclick = () => window.location.href = "akun.html";
+          userGreeting.textContent = user.email;
+          userGreeting.onclick = () => window.location.href = "akun.html";
         }
       }
     } catch (err) {
-      el.textContent = "Pengguna";
-      el.onclick = () => window.location.href = "akun.html";
+      console.error(err);
+      userGreeting.textContent = "Pengguna";
+      userGreeting.onclick = () => window.location.href = "akun.html";
     }
   } else {
-    el.textContent = "Masuk";
-    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
-    el.onclick = () => window.location.href = "login.html";
+    userGreeting.textContent = "Masuk";
+    userGreeting.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+    userGreeting.onclick = () => window.location.href = "login.html";
   }
 });
+
 
       let terapisTersedia = [];
 

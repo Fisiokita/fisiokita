@@ -120,36 +120,38 @@
     const db = firebase.firestore();
     let wilayahData = {};
 
-    auth.onAuthStateChanged(async user => {
+  auth.onAuthStateChanged(async user => {
   if (!user) return location.href = "login.html";
 
-  try {
-    const email = user.email.toLowerCase();
-    const doc = await db.collection("users").doc(email).get();
+  const email = user.email.toLowerCase();
 
-    if (!doc.exists) {
-      alert("Data pengguna tidak ditemukan.");
-      return auth.signOut();
-    }
+  // 1. Cek di koleksi 'admin'
+  const adminDoc = await db.collection("admin").doc(email).get();
+  if (adminDoc.exists) {
+    window.location.href = "superadmin-dashboard.html";
+    return;
+  }
 
-    const d = doc.data();
-    const role = d?.role;
+  // 2. Cek di koleksi 'terapis'
+  const terapisDoc = await db.collection("terapis").doc(email).get();
+  if (terapisDoc.exists) {
+    window.location.href = "dashboard-terapis.html";
+    return;
+  }
 
-    // Redirect jika bukan user umum
-    if (role === "admin") {
-      return window.location.replace("superadmin-dashboard.html");
-    }
-    if (role === "terapis") {
-      return window.location.replace("dashboard-terapis.html");
-    }
+  // 3. Cek di koleksi 'users'
+  const userDoc = await db.collection("users").doc(email).get();
+  const data = userDoc.data();
 
-    // Jika bukan admin atau terapis, lanjutkan menampilkan halaman akun
+  if (data) {
+    // Tampilkan data profil di halaman akun
     document.getElementById("profilEmail").textContent = email;
-    document.getElementById("profilNama").textContent = d?.nama || "-";
-    document.getElementById("profilHP").textContent = d?.hp || "-";
-    document.getElementById("profilGender").textContent = d?.jenis_kelamin || "-";
-    document.getElementById("profilLahir").textContent = d?.tanggal_lahir || "-";
-    document.getElementById("profilLokasi").textContent = `${d?.kabupaten || "-"}, ${d?.provinsi || "-"}`;
+    document.getElementById("profilNama").textContent = data.nama || "-";
+    document.getElementById("profilHP").textContent = data.hp || "-";
+    document.getElementById("profilGender").textContent = data.jenis_kelamin || "-";
+    document.getElementById("profilLahir").textContent = data.tanggal_lahir || "-";
+    document.getElementById("profilLokasi").textContent = `${data.kabupaten || "-"}, ${data.provinsi || "-"}`;
+    
 
     isiFormEdit(d);
 

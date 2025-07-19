@@ -127,6 +127,17 @@
       const doc = await db.collection("users").doc(email).get();
       const d = doc.data();
 
+      // Arahkan pengguna ke dashboard sesuai perannya
+if (d?.role === "terapis") {
+  window.location.href = "dashboard-terapis.html";
+  return;
+}
+if (d?.role === "superadmin") {
+  window.location.href = "superadmin-dashboard.html";
+  return;
+}
+
+
       document.getElementById("profilEmail").textContent = email;
       document.getElementById("profilNama").textContent = d?.nama || "-";
       document.getElementById("profilHP").textContent = d?.hp || "-";

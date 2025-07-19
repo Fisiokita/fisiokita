@@ -2,27 +2,44 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Log Aktivitas - Superadmin</title>
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="bg-gray-100 font-['Inter'] min-h-screen">
-  <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-lg font-semibold"> Log Aktivitas Sistem</h1>
-    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+<body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita</span>
+    </div>
+    <button id="logoutBtn" class="bg-white text-[#4B6CC1] px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-100 transition">
+      Keluar
+    </button>
   </header>
 
-  <main class="p-6 max-w-5xl mx-auto space-y-6">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-base">Daftar Log</h2>
-      <button onclick="exportLog()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"> Export CSV</button>
-    </div>
+  <main class="p-6 max-w-5xl mx-auto w-full">
+    <header class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-semibold mb-1"> Log Aktivitas Sistem</h1>
+        <p class="text-sm text-gray-600">Riwayat aktivitas yang terekam di sistem FisioKita.</p>
+      </div>
+      <a href="superadmin-dashboard.html" class="text-sm text-blue-700 underline">← Kembali ke Dashboard</a>
+    </header>
 
-    <div class="bg-white shadow rounded p-4 overflow-x-auto">
+    <section class="bg-white shadow rounded p-4 overflow-x-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-semibold text-base">Daftar Log</h2>
+        <button onclick="exportLog()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded">Export CSV</button>
+      </div>
+
       <table class="w-full text-sm border" id="tabelLog">
         <thead>
           <tr class="bg-gray-100 text-left">
@@ -34,7 +51,7 @@
         </thead>
         <tbody id="isiLog"></tbody>
       </table>
-    </div>
+    </section>
   </main>
 
   <script>
@@ -48,6 +65,11 @@
     const db = firebase.firestore();
 
     const isiLog = document.getElementById("isiLog");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut().then(() => location.href = "../login.html");
+    });
 
     auth.onAuthStateChanged(user => {
       if (!user) return location.href = "../login.html";

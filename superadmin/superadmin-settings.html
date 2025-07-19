@@ -4,34 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pengaturan Akun - Superadmin FisioKita</title>
+  <link rel="icon" href="/favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="description" content="Panel Superadmin FisioKita untuk mengelola akun dan informasi penting." />
+  <meta property="og:title" content="Pengaturan Akun - FisioKita" />
+  <meta property="og:image" content="/og-image.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="bg-[#f9fafb] font-['Inter'] p-6 min-h-screen text-[#1E2A44]">
+<body class="bg-[#f9fafb] font-['Inter'] min-h-screen text-[#1E2A44]">
 
-  <h1 class="text-2xl font-bold mb-4">⚙️ Pengaturan Akun Superadmin</h1>
+  <!-- Navbar Selaras Index -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="text-lg font-bold text-blue-600">FisioKita</a>
+      <div id="userGreeting" class="cursor-pointer text-sm font-semibold text-[#4B6CC1] hover:underline"></div>
+    </div>
+  </header>
 
-  <!-- Info Akun -->
-  <section class="bg-white p-4 rounded shadow border mb-6">
-    <h2 class="text-sm font-semibold mb-1">Email Login Saat Ini:</h2>
-    <p id="currentEmail" class="text-base font-bold text-blue-600">-</p>
-  </section>
+  <main class="max-w-3xl mx-auto p-6">
+    <h1 class="text-xl font-semibold mb-6">⚙️ Pengaturan Akun Superadmin</h1>
 
-  <!-- Ubah Password -->
-  <section class="bg-white p-4 rounded shadow border mb-6">
-    <h2 class="text-sm font-semibold mb-3">🔒 Ganti Password</h2>
-    <input type="password" id="passwordBaru" placeholder="Password Baru" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
-    <input type="password" id="konfirmasiPassword" placeholder="Konfirmasi Password" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
-    <button id="btnGantiPassword" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Update Password</button>
-    <p id="pesanPassword" class="mt-2 text-sm"></p>
-  </section>
+    <!-- Info Akun -->
+    <section class="bg-white p-4 rounded-xl shadow border mb-6">
+      <h2 class="text-sm font-semibold mb-1">Email Login Saat Ini:</h2>
+      <p id="currentEmail" class="text-base font-bold text-blue-600">-</p>
+    </section>
 
-  <!-- Logout -->
-  <section class="text-center mt-10">
-    <button id="logoutBtn" class="text-red-600 text-sm underline hover:text-red-800">Logout</button>
-  </section>
+    <!-- Detail Profil Admin -->
+    <section class="bg-white p-4 rounded-xl shadow border mb-6">
+      <h2 class="text-sm font-semibold mb-3">👤 Detail Profil</h2>
+      <label class="text-sm mb-1 block">Nama Lengkap:</label>
+      <input type="text" id="inputNama" class="border rounded px-3 py-2 w-full mb-3 text-sm" placeholder="Nama Anda" />
+      <button id="btnSimpanProfil" class="transition duration-200 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Simpan Perubahan</button>
+      <p id="pesanProfil" class="mt-2 text-sm"></p>
+    </section>
+
+    <!-- Ubah Password -->
+    <section class="bg-white p-4 rounded-xl shadow border mb-6">
+      <h2 class="text-sm font-semibold mb-3">🔒 Ganti Password</h2>
+      <input type="password" id="passwordBaru" placeholder="Password Baru" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
+      <input type="password" id="konfirmasiPassword" placeholder="Konfirmasi Password" class="border rounded px-3 py-2 w-full mb-2 text-sm" />
+      <button id="btnGantiPassword" class="transition duration-200 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Update Password</button>
+      <p id="pesanPassword" class="mt-2 text-sm"></p>
+    </section>
+
+    <!-- Logout -->
+    <div class="text-center mt-8">
+      <button id="logoutBtn" class="text-red-600 text-sm underline hover:text-red-800">Logout</button>
+    </div>
+  </main>
 
   <script>
     const firebaseConfig = {
@@ -41,21 +65,55 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
     const currentEmail = document.getElementById("currentEmail");
-    const btnGantiPassword = document.getElementById("btnGantiPassword");
+    const inputNama = document.getElementById("inputNama");
+    const btnSimpanProfil = document.getElementById("btnSimpanProfil");
+    const pesanProfil = document.getElementById("pesanProfil");
     const passwordBaru = document.getElementById("passwordBaru");
     const konfirmasiPassword = document.getElementById("konfirmasiPassword");
     const pesanPassword = document.getElementById("pesanPassword");
+    const userGreeting = document.getElementById("userGreeting");
 
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async (user) => {
       if (!user) return window.location.href = "../login.html";
       currentEmail.textContent = user.email;
+      userGreeting.textContent = "Akun";
+      userGreeting.onclick = () => window.location.href = "akun.html";
+
+      try {
+        const doc = await db.collection("admin").doc(user.email).get();
+        if (doc.exists) {
+          const data = doc.data();
+          inputNama.value = data.nama || "";
+          userGreeting.textContent = data.nama?.split(" ")[0] || "Akun";
+        }
+      } catch (err) {
+        console.error("Gagal memuat profil:", err);
+      }
     });
 
-    btnGantiPassword.addEventListener("click", () => {
+    btnSimpanProfil.addEventListener("click", async () => {
+      const user = auth.currentUser;
+      const nama = inputNama.value.trim();
+      if (!nama) return;
+
+      try {
+        await db.collection("admin").doc(user.email).set({ nama }, { merge: true });
+        pesanProfil.textContent = "✅ Profil berhasil diperbarui.";
+        pesanProfil.className = "text-green-600 text-sm mt-2";
+        userGreeting.textContent = nama.split(" ")[0];
+      } catch (err) {
+        pesanProfil.textContent = `❌ Gagal: ${err.message}`;
+        pesanProfil.className = "text-red-600 text-sm mt-2";
+      }
+    });
+
+    document.getElementById("btnGantiPassword").addEventListener("click", () => {
       const pw1 = passwordBaru.value.trim();
       const pw2 = konfirmasiPassword.value.trim();
+
       if (pw1.length < 6) {
         pesanPassword.textContent = "❌ Minimal 6 karakter.";
         pesanPassword.className = "text-red-600 text-sm mt-2";

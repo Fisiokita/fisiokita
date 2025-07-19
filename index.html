@@ -239,51 +239,52 @@
   
 <script>
   const auth = firebase.auth();
-    const db = firebase.firestore();
+  const db = firebase.firestore();
 
-    auth.onAuthStateChanged(async (user) => {
-      const el = document.getElementById("userGreeting");
-      if (!el) return;
+  auth.onAuthStateChanged(async (user) => {
+    const el = document.getElementById("userGreeting");
+    if (!el) return;
 
-      if (user) {
+    if (!user) {
+      el.textContent = "Masuk";
+      el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+      el.onclick = () => window.location.href = "login.html";
+      return;
+    }
+
     try {
-      const userDoc = await db.collection(users).doc(user.email).get();
-      if (userDoc.exists) {
-        const nama = userDoc.data().nama || user.email;
+      const email = user.email;
+      const [adminDoc, terapisDoc, userDoc] = await Promise.all([
+        db.collection("admin").doc(email).get(),
+        db.collection("terapis").doc(email).get(),
+        db.collection("users").doc(email).get()
+      ]);
+
+      if (adminDoc.exists) {
+        const nama = adminDoc.data().nama || email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "superadmin/superadmin-dashboard.html";
+      } else if (terapisDoc.exists) {
+        const nama = terapisDoc.data().nama || email;
+        el.textContent = nama.split(" ")[0];
+        el.onclick = () => window.location.href = "admin/dashboard.html";
+      } else if (userDoc.exists) {
+        const nama = userDoc.data().nama || email;
         el.textContent = nama.split(" ")[0];
         el.onclick = () => window.location.href = "akun.html";
-        
       } else {
-        const terapisDoc = await db.collection("terapis").doc(user.email).get();
-        if (terapisDoc.exists) {
-          const nama = terapisDoc.data().nama || user.email;
-          el.textContent = nama.split(" ")[0];
-          el.onclick = () => window.location.href = "admin/dashboard.html";
-        } else {
-          el.textContent = user.email;
-          el.onclick = () => window.location.href = "akun.html";
-          
-          const adminDoc = await db.collection("admin").doc(user.email).get();
-        if (adminDoc.exists) {
-          const nama = adminDoc.data().nama || user.email;
-          el.textContent = nama.split(" ")[0];
-          el.onclick = () => window.location.href = "superadmin/superadmin-dashboard.html";
-        } else {
-          el.textContent = user.email;
-          el.onclick = () => window.location.href = "akun.html";
-        }
+        // Jika akun tidak ditemukan di koleksi manapun
+        el.textContent = email;
+        el.onclick = () => window.location.href = "akun.html";
       }
     } catch (err) {
+      console.error("Gagal memuat info pengguna:", err);
       el.textContent = "Pengguna";
       el.onclick = () => window.location.href = "akun.html";
     }
-  } else {
-    el.textContent = "Masuk";
-    el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
-    el.onclick = () => window.location.href = "login.html";
-  }
-});
-          </script>
+  });
+</script>
+
   
         
 </body>

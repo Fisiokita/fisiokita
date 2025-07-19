@@ -1,93 +1,133 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Superadmin - FisioKita</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Fonts & Tailwind -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-</head>
-<body class="bg-gray-50 text-[#1E2A44] font-['Inter'] min-h-screen">  <!-- Header -->  <header class="bg-gradient-to-r from-purple-700 to-blue-600 text-white px-6 py-4 flex justify-between items-center shadow">
-    <h1 class="text-xl font-bold">Superadmin Dashboard</h1>
-    <button id="logoutBtn" class="text-sm underline">Logout</button>
-  </header>  <!-- Konten -->  <main class="p-6 max-w-5xl mx-auto"><!-- Ringkasan -->
-<section class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Jumlah Pasien</h2>
-    <p id="jumlahPasien" class="text-2xl font-bold">-</p>
-  </div>
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Jumlah Admin/Terapis</h2>
-    <p id="jumlahTerapis" class="text-2xl font-bold">-</p>
-  </div>
-  <div class="bg-white rounded-xl shadow p-4">
-    <h2 class="text-sm text-gray-500">Sesi Konsultasi</h2>
-    <p id="jumlahSesi" class="text-2xl font-bold">-</p>
-  </div>
-</section>
-
-<!-- Navigasi Tab -->
-<section class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-  <a href="superadmin-admin.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Manajemen Admin/Terapis</div>
-  </a>
-  <a href="superadmin-pasien.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Manajemen Pasien</div>
-  </a>
-  <a href="superadmin-konsultasi.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Manajemen Konsultasi</div>
-  </a>
-  <a href="superadmin-artikel.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Artikel Edukasi</div>
-  </a>
-  <a href="superadmin-layanan.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Layanan & Jadwal</div>
-  </a>
-  <a href="superadmin-monitoring.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Monitoring Sistem</div>
-  </a>
-  <a href="superadmin-settings.html" class="bg-white rounded-xl shadow p-6 text-center hover:bg-blue-50 transition">
-    <div class="text-2xl mb-2"></div>
-    <div class="font-semibold">Pengaturan Akun</div>
-  </a>
-</section>
-
-  </main>  <script>
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
       projectId: "fisiosehat-af9f1"
     };
     firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body class="bg-white text-[#1E2A44] min-h-screen flex flex-col">
+
+  <!-- Header Sesuai Homepage -->
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="../img/logo.png" alt="FisioKita logo" class="w-8 h-8" />
+      <span class="font-semibold text-xl sm:text-2xl">Fisio Kita - Superadmin</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span id="userGreeting" class="cursor-pointer text-sm font-semibold px-4 py-2 rounded-full bg-white text-[#4B6CC1] hover:bg-gray-100 transition">Masuk</span>
+      <button id="logoutBtn" class="text-sm font-medium underline">Logout</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow p-6 max-w-6xl mx-auto">
+
+    <!-- Statistik -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-sm text-gray-500 mb-1">Jumlah Pasien</h2>
+        <p id="jumlahPasien" class="text-3xl font-bold">-</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-sm text-gray-500 mb-1">Jumlah Admin/Terapis</h2>
+        <p id="jumlahTerapis" class="text-3xl font-bold">-</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-sm text-gray-500 mb-1">Sesi Konsultasi</h2>
+        <p id="jumlahSesi" class="text-3xl font-bold">-</p>
+      </div>
+    </section>
+
+    <!-- Navigasi Superadmin -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+      <a href="superadmin-admin.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">👥 Manajemen Admin/Terapis</div>
+      </a>
+      <a href="superadmin-pasien.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">🧑‍⚕️ Manajemen Pasien</div>
+      </a>
+      <a href="superadmin-konsultasi.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">💬 Manajemen Konsultasi</div>
+      </a>
+      <a href="superadmin-artikel.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">📚 Artikel Edukasi</div>
+      </a>
+      <a href="superadmin-layanan.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">🗓️ Layanan & Jadwal</div>
+      </a>
+      <a href="superadmin-monitoring.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">📈 Monitoring Sistem</div>
+      </a>
+      <a href="superadmin-settings.html" class="bg-white rounded-xl shadow-md p-6 text-center hover:bg-gray-50 transition">
+        <div class="font-semibold">⚙️ Pengaturan Akun</div>
+      </a>
+    </section>
+  </main>
+
+  <!-- Script Autentikasi & Logout -->
+  <script>
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    auth.onAuthStateChanged(user => {
-      if (!user || user.email !== "fisiokita.co.id@gmail.com") {
-        window.location.href = "../login.html";
+    auth.onAuthStateChanged(async (user) => {
+      const el = document.getElementById("userGreeting");
+      if (!el) return;
+
+      if (user) {
+        if (user.email !== "fisiokita.co.id@gmail.com") {
+          window.location.href = "../login.html";
+        }
+
+        try {
+          const nama = user.email;
+          el.textContent = nama.split("@")[0];
+          el.onclick = () => window.location.href = "../akun.html";
+
+          // Data statistik
+          const pasien = await db.collection("pasien").get();
+          const terapis = await db.collection("terapis").get();
+          const sesi = await db.collection("sessions").get();
+
+          document.getElementById("jumlahPasien").textContent = pasien.size;
+          document.getElementById("jumlahTerapis").textContent = terapis.size;
+          document.getElementById("jumlahSesi").textContent = sesi.size;
+
+        } catch (err) {
+          console.error("Gagal mengambil data:", err);
+        }
+
       } else {
-        db.collection("pasien").get().then(snap => {
-          document.getElementById("jumlahPasien").textContent = snap.size;
-        });
-        db.collection("terapis").get().then(snap => {
-          document.getElementById("jumlahTerapis").textContent = snap.size;
-        });
-        db.collection("sessions").get().then(snap => {
-          document.getElementById("jumlahSesi").textContent = snap.size;
-        });
+        el.textContent = "Masuk";
+        el.classList.add("bg-white", "text-[#4B6CC1]", "px-4", "py-2", "rounded-full", "text-sm", "font-semibold", "hover:bg-gray-100");
+        el.onclick = () => window.location.href = "../login.html";
       }
     });
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
       auth.signOut().then(() => window.location.href = "../login.html");
     });
-  </script></body>
+  </script>
+</body>
 </html>

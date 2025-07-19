@@ -247,7 +247,7 @@
 
       if (user) {
     try {
-      const userDoc = await db.collection("users").doc(user.email).get();
+      const userDoc = await db.collection().doc(user.email).get();
       if (userDoc.exists) {
         const nama = userDoc.data().nama || user.email;
         el.textContent = nama.split(" ")[0];

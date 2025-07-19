@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manajemen Layanan dan Jadwal - FisioKita</title>
-  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <title>Akun Saya - FisioKita</title>
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -150,17 +150,18 @@
       db.collection("jadwal").get().then(snapshot => {
         snapshot.forEach(userDoc => {
           const email = userDoc.id;
-          db.collection("jadwal").doc(email).get().then(() => {
-            db.collection("jadwal").doc(email).collection("senin").get().then(hariSnap => {
-              hariSnap.forEach(jadwalDoc => {
+          const hariList = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"];
+          hariList.forEach(hari => {
+            db.collection("jadwal").doc(email).collection(hari).get().then(jadwalSnap => {
+              jadwalSnap.forEach(jadwalDoc => {
                 const waktu = jadwalDoc.id;
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                   <td class="border p-2">${email}</td>
-                  <td class="border p-2">Senin</td>
+                  <td class="border p-2">${hari.charAt(0).toUpperCase() + hari.slice(1)}</td>
                   <td class="border p-2">${waktu.replace('-', ' : ')}</td>
                   <td class="border p-2 text-red-600 text-center">
-                    <button onclick="hapusJadwal('${email}', 'senin', '${waktu}')">Hapus</button>
+                    <button onclick="hapusJadwal('${email}', '${hari}', '${waktu}')">Hapus</button>
                   </td>
                 `;
                 tabelJadwal.appendChild(tr);
@@ -180,6 +181,7 @@
       const waktu = `${jamMulai.value}-${jamSelesai.value}`;
       db.collection("jadwal").doc(emailJadwal.value).collection(hariJadwal.value.toLowerCase()).doc(waktu).set(data).then(() => {
         formJadwal.reset();
+        formJadwal.classList.add("hidden");
         muatJadwal();
       });
     });

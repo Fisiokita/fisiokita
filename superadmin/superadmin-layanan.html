@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Manajemen Layanan & Jadwal - FisioKita</title>
-  <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
+  <title>Manajemen Layanan dan Jadwal - FisioKita</title>
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -13,6 +13,7 @@
   <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
 <body class="bg-[#f8fafc] text-black min-h-screen flex flex-col">
+
   <!-- Header -->
   <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-5 flex justify-between items-center shadow-md">
     <div class="flex items-center gap-3">
@@ -24,34 +25,26 @@
     </button>
   </header>
 
-  <main class="p-6 space-y-10">
-    <!-- Judul Halaman -->
-    <section>
+  <main class="p-6">
+    <header class="mb-6">
       <h1 class="text-2xl font-semibold mb-2"> Manajemen Layanan & Jadwal Terapis</h1>
       <p class="text-sm text-gray-600">Atur layanan yang tersedia dan jadwal kerja para terapis.</p>
-    </section>
+    </header>
 
     <!-- === LAYANAN === -->
-    <section>
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-lg font-semibold"> Daftar Layanan</h2>
-        <button id="toggleLayananForm" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">+ Tambah Layanan</button>
-      </div>
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3"> Daftar Layanan</h2>
       <div class="space-y-3" id="daftarLayanan"></div>
-      <form id="formLayanan" class="mt-4 space-y-2 hidden">
+      <form id="formLayanan" class="mt-4 space-y-2">
         <input required type="text" id="namaLayanan" placeholder="Nama Layanan" class="w-full px-4 py-2 border rounded" />
         <textarea id="deskripsiLayanan" placeholder="Deskripsi Layanan" class="w-full px-4 py-2 border rounded"></textarea>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah</button>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah Layanan</button>
       </form>
     </section>
 
     <!-- === JADWAL === -->
     <section>
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-lg font-semibold"> Jadwal Terapis</h2>
-        <button id="toggleJadwalForm" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm">+ Tambah Jadwal</button>
-      </div>
-
+      <h2 class="text-lg font-semibold mb-3"> Jadwal Terapis</h2>
       <table class="min-w-full text-sm border border-gray-300 mb-4">
         <thead class="bg-gray-200">
           <tr>
@@ -64,6 +57,8 @@
         <tbody id="tabelJadwal"></tbody>
       </table>
 
+      <button id="toggleFormJadwal" class="bg-blue-600 text-white px-4 py-2 rounded mb-4">+ Tambah Jadwal</button>
+
       <form id="formJadwal" class="space-y-2 hidden">
         <input required type="email" id="emailJadwal" placeholder="Email Terapis" class="w-full px-4 py-2 border rounded" />
         <select required id="hariJadwal" class="w-full px-4 py-2 border rounded">
@@ -75,7 +70,7 @@
           <input required type="time" id="jamMulai" class="w-1/2 px-4 py-2 border rounded" />
           <input required type="time" id="jamSelesai" class="w-1/2 px-4 py-2 border rounded" />
         </div>
-        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Tambah Jadwal</button>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">+ Simpan Jadwal</button>
       </form>
     </section>
   </main>
@@ -94,7 +89,6 @@
     const formLayanan = document.getElementById("formLayanan");
     const namaLayanan = document.getElementById("namaLayanan");
     const deskripsiLayanan = document.getElementById("deskripsiLayanan");
-    const toggleLayananBtn = document.getElementById("toggleLayananForm");
 
     const tabelJadwal = document.getElementById("tabelJadwal");
     const formJadwal = document.getElementById("formJadwal");
@@ -102,10 +96,10 @@
     const hariJadwal = document.getElementById("hariJadwal");
     const jamMulai = document.getElementById("jamMulai");
     const jamSelesai = document.getElementById("jamSelesai");
-    const toggleJadwalBtn = document.getElementById("toggleJadwalForm");
 
-    toggleLayananBtn.onclick = () => formLayanan.classList.toggle("hidden");
-    toggleJadwalBtn.onclick = () => formJadwal.classList.toggle("hidden");
+    document.getElementById("toggleFormJadwal").addEventListener("click", () => {
+      formJadwal.classList.toggle("hidden");
+    });
 
     auth.onAuthStateChanged(user => {
       if (!user) return window.location.href = "../login.html";
@@ -152,20 +146,27 @@
     }
 
     function muatJadwal() {
-      db.collection("jadwal").onSnapshot(snapshot => {
-        tabelJadwal.innerHTML = "";
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td class="border p-2">${data.email}</td>
-            <td class="border p-2">${data.hari}</td>
-            <td class="border p-2">${data.jamMulai} - ${data.jamSelesai}</td>
-            <td class="border p-2 text-red-600 text-center">
-              <button onclick="hapusJadwal('${doc.id}')">Hapus</button>
-            </td>
-          `;
-          tabelJadwal.appendChild(tr);
+      tabelJadwal.innerHTML = "";
+      db.collection("jadwal").get().then(snapshot => {
+        snapshot.forEach(userDoc => {
+          const email = userDoc.id;
+          db.collection("jadwal").doc(email).get().then(() => {
+            db.collection("jadwal").doc(email).collection("senin").get().then(hariSnap => {
+              hariSnap.forEach(jadwalDoc => {
+                const waktu = jadwalDoc.id;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                  <td class="border p-2">${email}</td>
+                  <td class="border p-2">Senin</td>
+                  <td class="border p-2">${waktu.replace('-', ' : ')}</td>
+                  <td class="border p-2 text-red-600 text-center">
+                    <button onclick="hapusJadwal('${email}', 'senin', '${waktu}')">Hapus</button>
+                  </td>
+                `;
+                tabelJadwal.appendChild(tr);
+              });
+            });
+          });
         });
       });
     }
@@ -173,17 +174,19 @@
     formJadwal.addEventListener("submit", e => {
       e.preventDefault();
       const data = {
-        email: emailJadwal.value,
-        hari: hariJadwal.value,
         jamMulai: jamMulai.value,
         jamSelesai: jamSelesai.value
       };
-      db.collection("jadwal").add(data).then(() => formJadwal.reset());
+      const waktu = `${jamMulai.value}-${jamSelesai.value}`;
+      db.collection("jadwal").doc(emailJadwal.value).collection(hariJadwal.value.toLowerCase()).doc(waktu).set(data).then(() => {
+        formJadwal.reset();
+        muatJadwal();
+      });
     });
 
-    function hapusJadwal(id) {
+    function hapusJadwal(email, hari, waktu) {
       if (confirm("Hapus jadwal ini?")) {
-        db.collection("jadwal").doc(id).delete();
+        db.collection("jadwal").doc(email).collection(hari).doc(waktu).delete().then(() => muatJadwal());
       }
     }
   </script>

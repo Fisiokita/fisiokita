@@ -119,15 +119,40 @@
       pesan.textContent = text;
     }
 
-    async function cekDanRedirect(user) {
-      const email = user.email.toLowerCase();
-      if (email === "fisiokita.co.id@gmail.com") {
-        location.href = "superadmin/superadmin-dashboard.html";
-      } else {
-        const doc = await db.collection("terapis").doc(email).get();
-        location.href = doc.exists ? "admin/dashboard.html" : "akun.html";
-      }
+   async function cekDanRedirect(user) {
+  try {
+    const email = user.email.toLowerCase();
+
+    const adminSnap = await db.collection("admin").doc(email).get();
+    if (adminSnap.exists) {
+      location.href = "superadmin/superadmin-dashboard.html";
+      return;
     }
+
+    const terapisSnap = await db.collection("terapis").doc(email).get();
+    if (terapisSnap.exists) {
+      location.href = "admin/dashboard.html";
+      return;
+    }
+
+    // Jika tidak admin dan bukan terapis, arahkan ke halaman user biasa
+    const userSnap = await db.collection("users").doc(email).get();
+    if (userSnap.exists) {
+      location.href = "akun.html";
+      return;
+    }
+
+    // Jika tidak terdaftar di ketiganya (sangat jarang)
+    alert("Akun Anda belum terdaftar.");
+    location.href = "login.html";
+
+  } catch (err) {
+    console.error("Gagal memeriksa peran pengguna:", err);
+    alert("Terjadi kesalahan. Coba lagi.");
+    location.href = "login.html";
+  }
+}
+
     
 
     loginForm.onsubmit = (e) => {

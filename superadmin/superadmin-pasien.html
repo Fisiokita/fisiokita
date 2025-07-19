@@ -13,7 +13,10 @@
 <body class="bg-gray-100 font-['Inter'] min-h-screen">
   <header class="bg-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center">
     <h1 class="text-lg font-semibold">👤 Manajemen Pasien</h1>
-    <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+    <div class="flex gap-4 items-center">
+      <button id="profilBtn" class="text-sm underline">Profil</button>
+      <a href="superadmin-dashboard.html" class="text-sm underline">Kembali</a>
+    </div>
   </header>
 
   <main class="p-6 max-w-4xl mx-auto space-y-6">
@@ -48,6 +51,25 @@
     </section>
   </main>
 
+  <!-- Modal Profil -->
+  <div id="profilModal" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-lg shadow p-6 w-full max-w-md relative">
+      <button onclick="tutupProfil()" class="absolute top-2 right-2 text-gray-500 hover:text-red-500">✕</button>
+      <h2 class="text-xl font-semibold mb-4">Profil Admin</h2>
+      <form id="profilForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium">Email</label>
+          <input id="profilEmail" type="email" class="w-full border rounded p-2 bg-gray-100" readonly />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Nama</label>
+          <input id="profilNama" type="text" class="w-full border rounded p-2" />
+        </div>
+        <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded hover:bg-[#3a56a5]">Simpan</button>
+      </form>
+    </div>
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -66,6 +88,16 @@
 
     auth.onAuthStateChanged(user => {
       if (!user) return (window.location.href = "../login.html");
+
+      // Ambil data admin dari koleksi "admin"
+      db.collection("admin").doc(user.email).get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          document.getElementById("profilEmail").value = user.email;
+          document.getElementById("profilNama").value = data.nama || "";
+        }
+      });
+
       db.collection("users").get().then(snapshot => {
         totalPasien.textContent = snapshot.size;
         snapshot.forEach(doc => {
@@ -118,6 +150,27 @@
         });
       }
     }
+
+    document.getElementById("profilBtn").addEventListener("click", () => {
+      document.getElementById("profilModal").classList.remove("hidden");
+      document.getElementById("profilModal").classList.add("flex");
+    });
+
+    function tutupProfil() {
+      document.getElementById("profilModal").classList.add("hidden");
+      document.getElementById("profilModal").classList.remove("flex");
+    }
+
+    document.getElementById("profilForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nama = document.getElementById("profilNama").value;
+      const email = document.getElementById("profilEmail").value;
+
+      db.collection("admin").doc(email).update({ nama }).then(() => {
+        alert("Profil diperbarui");
+        tutupProfil();
+      });
+    });
   </script>
 </body>
 </html>

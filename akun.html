@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Akun Saya - FisioKita</title>
-  <link rel="canonical" href="http://fisiokita.my.id/akun.html" />
+  <link rel="canonical" href="https://fisiokita.my.id/akun.html" />
   <link rel="icon" href="img/favicon.ico" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -38,7 +38,6 @@
   <main class="flex-1 px-6 py-8 max-w-md w-full mx-auto space-y-8">
     <h2 class="text-2xl font-bold text-[#1E2A44] text-center">👤 Profil Saya</h2>
 
-    <!-- Profil -->
     <section class="bg-white p-4 rounded shadow text-sm space-y-2">
       <p><strong>Nama:</strong> <span id="profilNama">Memuat...</span></p>
       <p><strong>Email:</strong> <span id="profilEmail">-</span></p>
@@ -51,7 +50,6 @@
       </div>
     </section>
 
-    <!-- Form Edit & Password -->
     <section id="formEditWrapper" class="hidden space-y-6">
       <form id="formEditProfil" class="bg-white p-4 rounded shadow space-y-3 text-sm">
         <h3 class="font-semibold mb-2">✏️ Edit Profil</h3>
@@ -69,7 +67,6 @@
         <p id="pesanEdit" class="text-sm text-center mt-2"></p>
       </form>
 
-      <!-- Ganti Password -->
       <form id="formGantiPassword" class="bg-white p-4 rounded shadow space-y-3 text-sm">
         <h3 class="font-semibold mb-2">🔐 Ganti Password</h3>
         <input type="password" id="passwordLama" placeholder="Password Lama" class="w-full border rounded px-3 py-2" required />
@@ -81,7 +78,6 @@
       </form>
     </section>
 
-    <!-- Riwayat -->
     <section>
       <h3 class="text-lg font-semibold mb-2">📁 Riwayat Konsultasi</h3>
       <ul id="daftarRiwayat" class="space-y-3 text-sm">
@@ -89,7 +85,6 @@
       </ul>
     </section>
 
-    <!-- Hapus Akun -->
     <section>
       <h3 class="text-lg font-semibold text-red-600 mb-2">⚠️ Hapus Akun</h3>
       <button id="hapusAkunBtn" class="text-sm text-red-600 underline">Hapus akun secara permanen</button>
@@ -115,78 +110,76 @@
     </div>
   </footer>
 
-  <!-- Script -->
   <script>
     const auth = firebase.auth();
     const db = firebase.firestore();
     let wilayahData = {};
 
-  auth.onAuthStateChanged(async user => {
-  if (!user) return location.href = "login.html";
+    auth.onAuthStateChanged(async user => {
+      if (!user) return location.href = "login.html";
 
-  const email = user.email.toLowerCase();
+      const loginTime = parseInt(localStorage.getItem("loginTime") || "0", 10);
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000;
 
-  // 1. Cek di koleksi 'admin'
-  const adminDoc = await db.collection("admin").doc(email).get();
-  if (adminDoc.exists) {
-    window.location.href = "superadmin/superadmin-dashboard.html";
-    return;
-  }
-
-  // 2. Cek di koleksi 'terapis'
-  const terapisDoc = await db.collection("terapis").doc(email).get();
-  if (terapisDoc.exists) {
-    window.location.href = "admin/dashboard.html";
-    return;
-  }
-
-  // 3. Cek di koleksi 'users'
-  const userDoc = await db.collection("users").doc(email).get();
-  const data = userDoc.data();
-
-  if (data) {
-    // Tampilkan data profil di halaman akun
-    document.getElementById("profilEmail").textContent = email;
-    document.getElementById("profilNama").textContent = data.nama || "-";
-    document.getElementById("profilHP").textContent = data.hp || "-";
-    document.getElementById("profilGender").textContent = data.jenis_kelamin || "-";
-    document.getElementById("profilLahir").textContent = data.tanggal_lahir || "-";
-    document.getElementById("profilLokasi").textContent = `${data.kabupaten || "-"}, ${data.provinsi || "-"}`;
-    
-
-    isiFormEdit(d);
-
-    db.collection("sessions")
-      .where("kontak", "==", email)
-      .orderBy("dibuat", "desc")
-      .onSnapshot(snapshot => {
-        const list = document.getElementById("daftarRiwayat");
-        list.innerHTML = "";
-        if (snapshot.empty) {
-          list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
-          return;
-        }
-        snapshot.forEach(doc => {
-          const d = doc.data();
-          const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
-          list.innerHTML += `
-            <li class="bg-white p-3 rounded shadow border">
-              <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
-              <div class="text-xs text-gray-500 mb-1">${tgl}</div>
-              <div class="text-sm mb-1">${d.keluhan || "-"}</div>
-              <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
-                ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
-              </div>
-            </li>`;
+      if (now - loginTime > twentyFourHours) {
+        auth.signOut().then(() => {
+          localStorage.removeItem("loginTime");
+          alert("Sesi Anda telah berakhir. Silakan login kembali.");
+          location.href = "login.html";
         });
-      });
+        return;
+      }
 
-   } else {
-    alert("Akun tidak ditemukan di database.");
-    location.href = "index.html";
-  }
-});
+      const email = user.email.toLowerCase();
 
+      const adminDoc = await db.collection("admin").doc(email).get();
+      if (adminDoc.exists) return window.location.href = "superadmin/superadmin-dashboard.html";
+
+      const terapisDoc = await db.collection("terapis").doc(email).get();
+      if (terapisDoc.exists) return window.location.href = "admin/dashboard.html";
+
+      const userDoc = await db.collection("users").doc(email).get();
+      const data = userDoc.data();
+
+      if (data) {
+        document.getElementById("profilEmail").textContent = email;
+        document.getElementById("profilNama").textContent = data.nama || "-";
+        document.getElementById("profilHP").textContent = data.hp || "-";
+        document.getElementById("profilGender").textContent = data.jenis_kelamin || "-";
+        document.getElementById("profilLahir").textContent = data.tanggal_lahir || "-";
+        document.getElementById("profilLokasi").textContent = `${data.kabupaten || "-"}, ${data.provinsi || "-"}`;
+        isiFormEdit(data);
+
+        db.collection("sessions")
+          .where("kontak", "==", email)
+          .orderBy("dibuat", "desc")
+          .onSnapshot(snapshot => {
+            const list = document.getElementById("daftarRiwayat");
+            list.innerHTML = "";
+            if (snapshot.empty) {
+              list.innerHTML = "<li class='italic text-gray-500'>Belum ada riwayat.</li>";
+              return;
+            }
+            snapshot.forEach(doc => {
+              const d = doc.data();
+              const tgl = d.dibuat?.toDate()?.toLocaleDateString() || "-";
+              list.innerHTML += `
+                <li class="bg-white p-3 rounded shadow border">
+                  <div class="font-semibold">${d.namaPasien || "Pasien"}</div>
+                  <div class="text-xs text-gray-500 mb-1">${tgl}</div>
+                  <div class="text-sm mb-1">${d.keluhan || "-"}</div>
+                  <div class="text-xs ${d.selesai ? 'text-green-600' : 'text-orange-600'} font-semibold">
+                    ${d.selesai ? "✅ Selesai" : "⏳ Sedang Berlangsung"}
+                  </div>
+                </li>`;
+            });
+          });
+      } else {
+        alert("Akun tidak ditemukan di database.");
+        location.href = "index.html";
+      }
+    });
 
     function isiFormEdit(d) {
       document.getElementById("editNama").value = d.nama || "";
@@ -274,7 +267,10 @@
     });
 
     document.getElementById("logoutBtn").addEventListener("click", () => {
-      auth.signOut().then(() => location.href = "index.html");
+      auth.signOut().then(() => {
+        localStorage.removeItem("loginTime");
+        location.href = "index.html";
+      });
     });
   </script>
 </body>

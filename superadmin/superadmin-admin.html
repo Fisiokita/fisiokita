@@ -29,6 +29,9 @@
         <input type="text" id="nama" placeholder="Nama Lengkap" required class="w-full border border-gray-300 rounded px-4 py-2" />
         <input type="email" id="email" placeholder="Email" required class="w-full border border-gray-300 rounded px-4 py-2" />
         <input type="password" id="password" placeholder="Password" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <input type="text" id="spesialis" placeholder="Spesialisasi" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <input type="text" id="provinsi" placeholder="Provinsi" required class="w-full border border-gray-300 rounded px-4 py-2" />
+        <input type="text" id="kabupaten" placeholder="Kabupaten" required class="w-full border border-gray-300 rounded px-4 py-2" />
         <button type="submit" class="bg-[#4B6CC1] text-white px-4 py-2 rounded hover:bg-[#3a56a5]">Tambah Admin</button>
       </form>
     </section>
@@ -51,6 +54,23 @@
     </section>
   </main>
 
+  <!-- Modal Edit -->
+  <div id="modalEdit" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white p-6 rounded-lg w-full max-w-md">
+      <h3 class="text-lg font-semibold mb-4">Edit Data Terapis</h3>
+      <form id="formEdit" class="space-y-4">
+        <input type="text" id="editNama" class="w-full border px-4 py-2 rounded" required />
+        <input type="text" id="editSpesialis" class="w-full border px-4 py-2 rounded" required />
+        <input type="text" id="editProvinsi" class="w-full border px-4 py-2 rounded" required />
+        <input type="text" id="editKabupaten" class="w-full border px-4 py-2 rounded" required />
+        <div class="flex justify-end gap-2">
+          <button type="button" id="batalEdit" class="px-4 py-2 bg-gray-300 rounded">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
@@ -62,6 +82,8 @@
     const db = firebase.firestore();
 
     const superadminEmail = "fisiokita.co.id@gmail.com";
+
+    let editEmail = null;
 
     auth.onAuthStateChanged(user => {
       if (!user || user.email !== superadminEmail) {
@@ -78,18 +100,25 @@
       const nama = document.getElementById("nama").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
+      const spesialis = document.getElementById("spesialis").value;
+      const provinsi = document.getElementById("provinsi").value;
+      const kabupaten = document.getElementById("kabupaten").value;
 
       auth.createUserWithEmailAndPassword(email, password)
-        .then(cred => {
-          db.collection("terapis").doc(email).set({
+        .then(() => {
+          return db.collection("terapis").doc(email).set({
             nama,
+            spesialis,
+            provinsi,
+            kabupaten,
             statusAktif: true,
             status: "tidak"
-          }).then(() => {
-            alert("Admin berhasil ditambahkan.");
-            formTambah.reset();
-            loadAdmin();
           });
+        })
+        .then(() => {
+          alert("Admin berhasil ditambahkan.");
+          formTambah.reset();
+          loadAdmin();
         })
         .catch(err => alert("Gagal: " + err.message));
     });
@@ -110,6 +139,7 @@
             <td class="border p-2 space-x-2">
               <button onclick="toggleStatus('${doc.id}', ${d.statusAktif})" class="text-blue-600 underline text-xs">Toggle</button>
               <button onclick="hapusAdmin('${doc.id}')" class="text-red-600 underline text-xs">Hapus</button>
+              <button onclick="bukaEdit('${doc.id}', '${d.nama}', '${d.spesialis}', '${d.provinsi}', '${d.kabupaten}')" class="text-green-600 underline text-xs">Edit</button>
             </td>
           `;
           tabel.appendChild(tr);
@@ -125,9 +155,36 @@
 
     function hapusAdmin(email) {
       if (confirm("Yakin ingin menghapus admin ini?")) {
-        db.collection("terapis").doc(email).delete();
+        db.collection("terapis").doc(email).delete().then(loadAdmin);
       }
     }
+
+    function bukaEdit(email, nama, spesialis, provinsi, kabupaten) {
+      editEmail = email;
+      document.getElementById("editNama").value = nama;
+      document.getElementById("editSpesialis").value = spesialis;
+      document.getElementById("editProvinsi").value = provinsi;
+      document.getElementById("editKabupaten").value = kabupaten;
+      document.getElementById("modalEdit").classList.remove("hidden");
+    }
+
+    document.getElementById("batalEdit").addEventListener("click", () => {
+      document.getElementById("modalEdit").classList.add("hidden");
+    });
+
+    document.getElementById("formEdit").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        nama: document.getElementById("editNama").value,
+        spesialis: document.getElementById("editSpesialis").value,
+        provinsi: document.getElementById("editProvinsi").value,
+        kabupaten: document.getElementById("editKabupaten").value
+      };
+      db.collection("terapis").doc(editEmail).update(data).then(() => {
+        document.getElementById("modalEdit").classList.add("hidden");
+        loadAdmin();
+      });
+    });
 
     document.getElementById("tambahToggle").addEventListener("click", () => {
       const formSection = document.getElementById("formContainer");

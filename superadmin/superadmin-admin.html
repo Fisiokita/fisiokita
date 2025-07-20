@@ -92,34 +92,36 @@
     let wilayah = {};
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
-      wilayah = data;
-      isiDropdown(Object.keys(data), document.getElementById("provinsi"));
-      isiDropdown(Object.keys(data), document.getElementById("editProvinsi"));
+      wilayah = data["Sumatera Barat"] || {}; // khusus Sumatera Barat
+      isiDropdown(Object.keys(wilayah), document.getElementById("provinsi"));
+      isiDropdown(Object.keys(wilayah), document.getElementById("editProvinsi"));
     });
 
     document.getElementById("provinsi").addEventListener("change", (e) => {
-      isiDropdown(wilayah[e.target.value], document.getElementById("kabupaten"));
+      isiDropdown(wilayah[e.target.value] || [], document.getElementById("kabupaten"));
     });
     document.getElementById("editProvinsi").addEventListener("change", (e) => {
-      isiDropdown(wilayah[e.target.value], document.getElementById("editKabupaten"));
+      isiDropdown(wilayah[e.target.value] || [], document.getElementById("editKabupaten"));
     });
 
     function isiDropdown(data, el) {
       el.innerHTML = "<option value=''>Pilih</option>";
       if (Array.isArray(data)) {
         data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
+      } else if (typeof data === 'object') {
+        Object.keys(data).forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
       }
     }
 
     formTambah.addEventListener("submit", e => {
       e.preventDefault();
-      const nama = nama.value;
-      const email = email.value;
-      const password = password.value;
-      const role = role.value;
-      const spesialis = spesialis.value;
-      const provinsi = provinsi.value;
-      const kabupaten = kabupaten.value;
+      const nama = formTambah.nama.value;
+      const email = formTambah.email.value;
+      const password = formTambah.password.value;
+      const role = formTambah.role.value;
+      const spesialis = formTambah.spesialis.value;
+      const provinsi = formTambah.provinsi.value;
+      const kabupaten = formTambah.kabupaten.value;
 
       auth.createUserWithEmailAndPassword(email, password)
         .then(() => {
@@ -138,7 +140,7 @@
 
     function load() {
       tabel.innerHTML = "";
-      db.collection("terapis").get().then(snapshot => {
+      db.collection("terapis").orderBy("role").get().then(snapshot => {
         snapshot.forEach(doc => {
           const d = doc.data();
           const tr = document.createElement("tr");
@@ -147,7 +149,7 @@
             <td class="border p-2">${doc.id}</td>
             <td class="border p-2">${d.role || '-'}</td>
             <td class="border p-2">${d.spesialis || '-'}</td>
-            <td class="border p-2">${(d.provinsi || '-') + ", " + (d.kabupaten || '-')}</td>
+            <td class="border p-2">${(d.provinsi || '-')}, ${(d.kabupaten || '-')}</td>
             <td class="border p-2 space-x-2">
               <button onclick="bukaEdit('${doc.id}')" class="text-blue-600 underline text-xs">Edit</button>
               <button onclick="hapus('${doc.id}')" class="text-red-600 underline text-xs">Hapus</button>
@@ -165,7 +167,7 @@
         document.getElementById("editNama").value = d.nama || "";
         document.getElementById("editSpesialis").value = d.spesialis || "";
         document.getElementById("editProvinsi").value = d.provinsi || "";
-        isiDropdown(wilayah[d.provinsi], document.getElementById("editKabupaten"));
+        isiDropdown(wilayah[d.provinsi] || [], document.getElementById("editKabupaten"));
         document.getElementById("editKabupaten").value = d.kabupaten || "";
         document.getElementById("editModal").classList.remove("hidden");
         document.getElementById("editModal").classList.add("flex");

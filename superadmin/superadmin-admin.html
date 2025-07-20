@@ -92,23 +92,23 @@
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
   wilayah = data;
-  const provinsiList = Object.keys(data); // ["Sumatera Barat"]
+  const provinsiList = Object.keys(data);
   isiDropdown(provinsiList, document.getElementById("provinsi"));
   isiDropdown(provinsiList, document.getElementById("editProvinsi"));
-});
 
-document.getElementById("provinsi").addEventListener("change", (e) => {
-  const prov = e.target.value;
-  const kabList = Object.keys(wilayah[prov] || {});
-  isiDropdown(kabList, document.getElementById("kabupaten"));
-});
+  // ⬇ Tempatkan listener di dalam blok ini
+  document.getElementById("provinsi").addEventListener("change", (e) => {
+    const prov = e.target.value;
+    const kabList = Object.keys(wilayah[prov] || {});
+    isiDropdown(kabList, document.getElementById("kabupaten"));
+  });
 
-document.getElementById("editProvinsi").addEventListener("change", (e) => {
-  const prov = e.target.value;
-  const kabList = Object.keys(wilayah[prov] || {});
-  isiDropdown(kabList, document.getElementById("editKabupaten"));
+  document.getElementById("editProvinsi").addEventListener("change", (e) => {
+    const prov = e.target.value;
+    const kabList = Object.keys(wilayah[prov] || {});
+    isiDropdown(kabList, document.getElementById("editKabupaten"));
+  });
 });
-
 
     });
 

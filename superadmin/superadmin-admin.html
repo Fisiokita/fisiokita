@@ -127,20 +127,23 @@
       const provinsi = provinsi.value;
       const kabupaten = kabupaten.value;
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          db.collection("terapis").doc(email).set({
-            nama, role, spesialis, provinsi, kabupaten,
-            statusAktif: true,
-            status: "tidak"
-          }).then(() => {
-            alert("Berhasil ditambahkan.");
-            e.target.reset();
-            load();
-          });
-        })
-        .catch(err => alert("Gagal: " + err.message));
-    });
+      auth.onAuthStateChanged(async user => {
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  const snap = await db.collection("terapis").doc(user.email).get();
+  const data = snap.data();
+
+  if (!data || data.role !== "admin") {
+    alert("Akses hanya untuk superadmin.");
+    window.location.href = "../login.html";
+    return;
+  }
+
+  load(); // Aman
+});
 
     function load() {
       tabel.innerHTML = "";

@@ -57,7 +57,6 @@
       </table>
     </section>
 
-    <!-- Modal Edit -->
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
       <div class="bg-white p-6 rounded shadow max-w-md w-full">
         <h2 class="text-lg font-semibold mb-4">Edit Terapis</h2>
@@ -88,7 +87,7 @@
 
     const formTambah = document.getElementById("formTambah");
     const tabel = document.getElementById("tabelAdmin");
-    const wilayahJSON = "../data/wilayah.json";
+    const wilayahJSON = "../wilayah.json";
     let wilayah = {};
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
@@ -97,18 +96,23 @@
       isiDropdown(Object.keys(data), document.getElementById("editProvinsi"));
     });
 
-    document.getElementById("provinsi").addEventListener("change", (e) => {
-      isiDropdown(wilayah[e.target.value], document.getElementById("kabupaten"));
+   document.getElementById("provinsi").addEventListener("change", (e) => {
+  const prov = e.target.value;
+  const kabList = Object.keys(wilayah[prov] || {});
+  isiDropdown(kabList, document.getElementById("kabupaten"));
+  
     });
     document.getElementById("editProvinsi").addEventListener("change", (e) => {
-      isiDropdown(wilayah[e.target.value], document.getElementById("editKabupaten"));
+  const prov = e.target.value;
+  const kabList = Object.keys(wilayah[prov] || {});
+  isiDropdown(kabList, document.getElementById("editKabupaten"));
+});
+
     });
 
     function isiDropdown(data, el) {
       el.innerHTML = "<option value=''>Pilih</option>";
-      if (Array.isArray(data)) {
-        data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
-      }
+      data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
     }
 
     formTambah.addEventListener("submit", e => {
@@ -165,7 +169,8 @@
         document.getElementById("editNama").value = d.nama || "";
         document.getElementById("editSpesialis").value = d.spesialis || "";
         document.getElementById("editProvinsi").value = d.provinsi || "";
-        isiDropdown(wilayah[d.provinsi], document.getElementById("editKabupaten"));
+        const kabList = Object.keys(wilayah[d.provinsi] || {});
+        isiDropdown(kabList, document.getElementById("editKabupaten"));
         document.getElementById("editKabupaten").value = d.kabupaten || "";
         document.getElementById("editModal").classList.remove("hidden");
         document.getElementById("editModal").classList.add("flex");

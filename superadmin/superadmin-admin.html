@@ -60,7 +60,7 @@
     <!-- Modal Edit -->
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
       <div class="bg-white p-6 rounded shadow max-w-md w-full">
-        <h2 class="text-lg font-semibold mb-4">Edit Terapis</h2>
+        <h2 class="text-lg font-semibold mb-4">Edit Admin / Terapis</h2>
         <form id="formEdit" class="space-y-4">
           <input type="hidden" id="editEmail">
           <input type="text" id="editNama" class="w-full border px-4 py-2 rounded" placeholder="Nama Lengkap">
@@ -80,7 +80,10 @@
     const firebaseConfig = {
       apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
       authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
+      projectId: "fisiosehat-af9f1",
+      storageBucket: "fisiosehat-af9f1.appspot.com",
+      messagingSenderId: "463210312917",
+      appId: "1:463210312917:web:088f9f5f54a44f44e65477"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -92,7 +95,7 @@
     let wilayah = {};
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
-      wilayah = data["Sumatera Barat"] || {}; // khusus Sumatera Barat
+      wilayah = data;
       isiDropdown(Object.keys(wilayah), document.getElementById("provinsi"));
       isiDropdown(Object.keys(wilayah), document.getElementById("editProvinsi"));
     });
@@ -106,11 +109,9 @@
 
     function isiDropdown(data, el) {
       el.innerHTML = "<option value=''>Pilih</option>";
-      if (Array.isArray(data)) {
-        data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
-      } else if (typeof data === 'object') {
-        Object.keys(data).forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
-      }
+      (Array.isArray(data) ? data : Object.keys(data)).forEach(d => {
+        el.innerHTML += `<option value="${d}">${d}</option>`;
+      });
     }
 
     formTambah.addEventListener("submit", e => {

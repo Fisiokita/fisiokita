@@ -1,2 +1,3 @@
-https://fisiokita.netlify.app/*
-https://fisiokita.my.id/:splat 301!
+https://fisiokita.netlify.app/*  https://fisiokita.my.id/:splat  301!
+https://www.fisiokita.my.id/*    https://fisiokita.my.id/:splat  301!
+http://fisiokita.my.id/*         https://fisiokita.my.id/:splat  301!

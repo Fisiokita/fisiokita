@@ -91,22 +91,24 @@
     let wilayah = {};
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
-      wilayah = data;
-      isiDropdown(Object.keys(data), document.getElementById("provinsi"));
-      isiDropdown(Object.keys(data), document.getElementById("editProvinsi"));
-    });
+  wilayah = data;
+  const provinsiList = Object.keys(data); // ["Sumatera Barat"]
+  isiDropdown(provinsiList, document.getElementById("provinsi"));
+  isiDropdown(provinsiList, document.getElementById("editProvinsi"));
+});
 
-   document.getElementById("provinsi").addEventListener("change", (e) => {
+document.getElementById("provinsi").addEventListener("change", (e) => {
   const prov = e.target.value;
   const kabList = Object.keys(wilayah[prov] || {});
   isiDropdown(kabList, document.getElementById("kabupaten"));
-  
-    });
-    document.getElementById("editProvinsi").addEventListener("change", (e) => {
+});
+
+document.getElementById("editProvinsi").addEventListener("change", (e) => {
   const prov = e.target.value;
   const kabList = Object.keys(wilayah[prov] || {});
   isiDropdown(kabList, document.getElementById("editKabupaten"));
 });
+
 
     });
 

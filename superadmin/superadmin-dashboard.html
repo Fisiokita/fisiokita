@@ -111,7 +111,7 @@
           el.onclick = () => window.location.href = "../akun.html";
 
           // Data statistik
-          const pasien = await db.collection("pasien").get();
+          const pasien = await db.collection("users").get();
           const terapis = await db.collection("terapis").get();
           const sesi = await db.collection("sessions").get();
 

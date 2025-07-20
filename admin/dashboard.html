@@ -124,30 +124,48 @@
 
     let currentEmail = "";
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        currentEmail = user.email;
-        db.collection("terapis").doc(currentEmail).get().then(doc => {
-          if (doc.exists) {
-            const data = doc.data();
-            document.getElementById("terapisNama").textContent = data.nama || user.email;
-            if (data.status) {
-              document.getElementById("statusSelect").value = data.status;
-            }
+   auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
 
-            if (currentEmail.toLowerCase() === "fisiokita.co.id@gmail.com") {
-              document.getElementById("menuTambahTerapis").classList.remove("hidden");
-            }
+  currentEmail = user.email;
 
-            tampilkanNotifikasiBelumDijawab(currentEmail);
-          } else {
-            document.getElementById("terapisNama").textContent = user.email;
-          }
-        });
-      } else {
-        window.location.href = "../login.html";
+  try {
+    const [adminDoc, terapisDoc] = await Promise.all([
+      db.collection("admin").doc(currentEmail).get(),
+      db.collection("terapis").doc(currentEmail).get()
+    ]);
+
+    if (adminDoc.exists) {
+      // Jika admin, arahkan ke dashboard superadmin
+      window.location.href = "../superadmin/superadmin-dashboard.html";
+      return;
+    }
+
+    if (terapisDoc.exists) {
+      const data = terapisDoc.data();
+      document.getElementById("terapisNama").textContent = data.nama || currentEmail;
+      if (data.status) {
+        document.getElementById("statusSelect").value = data.status;
       }
-    });
+
+      if (currentEmail.toLowerCase() === "fisiokita.co.id@gmail.com") {
+        document.getElementById("menuTambahTerapis").classList.remove("hidden");
+      }
+
+      tampilkanNotifikasiBelumDijawab(currentEmail);
+    } else {
+      // Bukan admin & bukan terapis
+      window.location.href = "../index.html";
+    }
+  } catch (err) {
+    console.error("Gagal memuat info pengguna:", err);
+    window.location.href = "../index.html";
+  }
+});
+
 
     document.getElementById("statusSelect").addEventListener("change", (e) => {
       if (!currentEmail) return;

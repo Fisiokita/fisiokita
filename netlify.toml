@@ -1,5 +1,11 @@
 [[redirects]]
-from = "https://fisiokita.netlify.app*/"
-to = "https://fisiokita.my.id/:splat"
-status = 301
-force = true
+  from = "https://fisiokita.netlify.app/*"
+  to = "https://fisiokita.my.id/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://fisiokita.my.id/*"
+  to = "https://fisiokita.my.id/:splat"
+  status = 301
+  force = true

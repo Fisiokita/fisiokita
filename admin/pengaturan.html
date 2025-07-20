@@ -120,7 +120,7 @@
   const pesanHapus = document.getElementById("pesanHapus");
 
   auth.onAuthStateChanged(user => {
-    if (!user) return window.location.href = "login.html";
+    if (!user) return window.location.href = "../login.html";
 
     emailTerapis.textContent = user.email;
     db.collection("terapis").doc(user.email).get().then(doc => {

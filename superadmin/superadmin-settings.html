@@ -82,7 +82,7 @@
 
       const userGreeting = document.getElementById("userGreeting");
       userGreeting.textContent = "Admin";
-      userGreeting.onclick = () => window.location.href = "akun.html";
+      userGreeting.onclick = () => document.getElementById("profilModal").classList.replace("hidden", "flex");
 
       const adminDoc = await db.collection("admin").doc(email).get();
       if (adminDoc.exists) {

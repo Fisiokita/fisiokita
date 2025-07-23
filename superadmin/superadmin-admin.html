@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manajemen Admin - FisioKita Superadmin</title>
-  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="../img/favicon.ico" />
   <link rel="apple-touch-icon" href="../img/logo.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -57,6 +57,7 @@
       </table>
     </section>
 
+    <!-- Modal Edit -->
     <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
       <div class="bg-white p-6 rounded shadow max-w-md w-full">
         <h2 class="text-lg font-semibold mb-4">Edit Terapis</h2>
@@ -85,65 +86,56 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    const formTambah = document.getElementById("formTambah");
-    const tabel = document.getElementById("tabelAdmin");
     const wilayahJSON = "../wilayah.json";
+    const tabel = document.getElementById("tabelAdmin");
+    const formTambah = document.getElementById("formTambah");
+
     let wilayah = {};
 
     fetch(wilayahJSON).then(res => res.json()).then(data => {
-  wilayah = data;
-  const provinsiList = Object.keys(data);
-  isiDropdown(provinsiList, document.getElementById("provinsi"));
-  isiDropdown(provinsiList, document.getElementById("editProvinsi"));
+      wilayah = data["Sumatera Barat"] || {};
+      const provinsiList = Object.keys(wilayah);
+      isiDropdown(provinsiList, document.getElementById("provinsi"));
+      isiDropdown(provinsiList, document.getElementById("editProvinsi"));
 
-  // ⬇ Tempatkan listener di dalam blok ini
-  document.getElementById("provinsi").addEventListener("change", (e) => {
-    const prov = e.target.value;
-    const kabList = Object.keys(wilayah[prov] || {});
-    isiDropdown(kabList, document.getElementById("kabupaten"));
-  });
+      document.getElementById("provinsi").addEventListener("change", e => {
+        const kabList = Object.keys(wilayah[e.target.value] || {});
+        isiDropdown(kabList, document.getElementById("kabupaten"));
+      });
 
-  document.getElementById("editProvinsi").addEventListener("change", (e) => {
-    const prov = e.target.value;
-    const kabList = Object.keys(wilayah[prov] || {});
-    isiDropdown(kabList, document.getElementById("editKabupaten"));
-  });
-});
-
-  
+      document.getElementById("editProvinsi").addEventListener("change", e => {
+        const kabList = Object.keys(wilayah[e.target.value] || {});
+        isiDropdown(kabList, document.getElementById("editKabupaten"));
+      });
+    });
 
     function isiDropdown(data, el) {
       el.innerHTML = "<option value=''>Pilih</option>";
       data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
     }
 
-    formTambah.addEventListener("submit", e => {
+    formTambah.addEventListener("submit", async e => {
       e.preventDefault();
-      const nama = nama.value;
-      const email = email.value;
-      const password = password.value;
-      const role = role.value;
-      const spesialis = spesialis.value;
-      const provinsi = provinsi.value;
-      const kabupaten = kabupaten.value;
+      const data = {
+        nama: nama.value,
+        role: role.value,
+        spesialis: spesialis.value,
+        provinsi: provinsi.value,
+        kabupaten: kabupaten.value
+      };
+      const emailVal = email.value;
+      const passVal = password.value;
 
-      auth.onAuthStateChanged(async user => {
-  if (!user) {
-    window.location.href = "../login.html";
-    return;
-  }
-
-  const snap = await db.collection("terapis").doc(user.email).get();
-  const data = snap.data();
-
-  if (!data || data.role !== "admin") {
-    alert("Akses hanya untuk superadmin.");
-    window.location.href = "../login.html";
-    return;
-  }
-
-  load(); // Aman
-});
+      try {
+        await auth.createUserWithEmailAndPassword(emailVal, passVal);
+        await db.collection("terapis").doc(emailVal).set(data);
+        alert("Berhasil ditambahkan!");
+        load();
+        formTambah.reset();
+      } catch (err) {
+        alert("Gagal: " + err.message);
+      }
+    });
 
     function load() {
       tabel.innerHTML = "";
@@ -174,8 +166,7 @@
         document.getElementById("editNama").value = d.nama || "";
         document.getElementById("editSpesialis").value = d.spesialis || "";
         document.getElementById("editProvinsi").value = d.provinsi || "";
-        const kabList = Object.keys(wilayah[d.provinsi] || {});
-        isiDropdown(kabList, document.getElementById("editKabupaten"));
+        isiDropdown(Object.keys(wilayah[d.provinsi] || {}), document.getElementById("editKabupaten"));
         document.getElementById("editKabupaten").value = d.kabupaten || "";
         document.getElementById("editModal").classList.remove("hidden");
         document.getElementById("editModal").classList.add("flex");
@@ -215,7 +206,7 @@
         alert("Akses ditolak.");
         window.location.href = "../login.html";
       } else {
-        load();
+        load(); // ⬅ load data terapis hanya setelah autentikasi sukses
       }
     });
   </script>

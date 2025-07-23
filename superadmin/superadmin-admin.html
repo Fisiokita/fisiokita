@@ -76,139 +76,170 @@
     </div>
   </main>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
-      authDomain: "fisiosehat-af9f1.firebaseapp.com",
-      projectId: "fisiosehat-af9f1"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+ <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+    authDomain: "fisiosehat-af9f1.firebaseapp.com",
+    projectId: "fisiosehat-af9f1"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    const wilayahJSON = "../data/wilayah.json";
-    const tabel = document.getElementById("tabelAdmin");
-    const formTambah = document.getElementById("formTambah");
+  const wilayahJSON = "../data/wilayah.json";
+  const tabel = document.getElementById("tabelAdmin");
+  const formTambah = document.getElementById("formTambah");
 
-    let wilayah = {};
+  let wilayahData = {};
 
-    fetch(wilayahJSON).then(res => res.json()).then(data => {
-      wilayah = data["Sumatera Barat"] || {};
-      const provinsiList = Object.keys(wilayah);
+  // Ambil JSON Wilayah
+  fetch(wilayahJSON)
+    .then(res => res.json())
+    .then(data => {
+      wilayahData = data || {};
+      const provinsiList = Object.keys(wilayahData);
+
+      // Isi dropdown provinsi
       isiDropdown(provinsiList, document.getElementById("provinsi"));
       isiDropdown(provinsiList, document.getElementById("editProvinsi"));
 
+      // Event saat provinsi dipilih
       document.getElementById("provinsi").addEventListener("change", e => {
-        const kabList = Object.keys(wilayah[e.target.value] || {});
+        const kabList = Object.keys(wilayahData[e.target.value] || {});
         isiDropdown(kabList, document.getElementById("kabupaten"));
       });
 
       document.getElementById("editProvinsi").addEventListener("change", e => {
-        const kabList = Object.keys(wilayah[e.target.value] || {});
+        const kabList = Object.keys(wilayahData[e.target.value] || {});
         isiDropdown(kabList, document.getElementById("editKabupaten"));
       });
     });
 
-    function isiDropdown(data, el) {
-      el.innerHTML = "<option value=''>Pilih</option>";
-      data.forEach(d => el.innerHTML += `<option value="${d}">${d}</option>`);
-    }
-
-    formTambah.addEventListener("submit", async e => {
-      e.preventDefault();
-      const data = {
-        nama: nama.value,
-        role: role.value,
-        spesialis: spesialis.value,
-        provinsi: provinsi.value,
-        kabupaten: kabupaten.value
-      };
-      const emailVal = email.value;
-      const passVal = password.value;
-
-      try {
-        await auth.createUserWithEmailAndPassword(emailVal, passVal);
-        await db.collection("terapis").doc(emailVal).set(data);
-        alert("Berhasil ditambahkan!");
-        load();
-        formTambah.reset();
-      } catch (err) {
-        alert("Gagal: " + err.message);
-      }
+  function isiDropdown(list, el) {
+    el.innerHTML = "<option value=''>Pilih</option>";
+    list.forEach(item => {
+      el.innerHTML += `<option value="${item}">${item}</option>`;
     });
+  }
 
-    function load() {
-      tabel.innerHTML = "";
-      db.collection("terapis").get().then(snapshot => {
+  // TAMBAH TERAPIS/ADMIN
+  formTambah.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const emailVal = email.value.trim();
+    const passVal = password.value.trim();
+    const roleVal = role.value;
+
+    const data = {
+      nama: nama.value.trim(),
+      role: roleVal,
+      spesialis: spesialis.value.trim(),
+      provinsi: provinsi.value,
+      kabupaten: kabupaten.value
+    };
+
+    try {
+      // Gunakan createUserWithEmailAndPassword di context terpisah
+      const tempAuth = firebase.app().auth(); // auth instance
+      const cred = await tempAuth.createUserWithEmailAndPassword(emailVal, passVal);
+      await db.collection(roleVal === "admin" ? "admin" : "terapis").doc(emailVal).set(data);
+      await cred.user.delete(); // hapus user yang baru dibuat dari auth (agar tidak login)
+
+      alert("Akun berhasil dibuat tanpa login ke akun baru.");
+      formTambah.reset();
+      load();
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Gagal menambahkan: " + err.message);
+    }
+  });
+
+  function load() {
+    tabel.innerHTML = "";
+
+    const roles = ["admin", "terapis"];
+
+    roles.forEach(role => {
+      db.collection(role).get().then(snapshot => {
         snapshot.forEach(doc => {
           const d = doc.data();
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td class="border p-2">${d.nama}</td>
             <td class="border p-2">${doc.id}</td>
-            <td class="border p-2">${d.role || '-'}</td>
-            <td class="border p-2">${d.spesialis || '-'}</td>
-            <td class="border p-2">${(d.provinsi || '-') + ", " + (d.kabupaten || '-')}</td>
+            <td class="border p-2">${role}</td>
+            <td class="border p-2">${d.spesialis || "-"}</td>
+            <td class="border p-2">${(d.provinsi || "-") + ", " + (d.kabupaten || "-")}</td>
             <td class="border p-2 space-x-2">
-              <button onclick="bukaEdit('${doc.id}')" class="text-blue-600 underline text-xs">Edit</button>
-              <button onclick="hapus('${doc.id}')" class="text-red-600 underline text-xs">Hapus</button>
+              <button onclick="bukaEdit('${doc.id}', '${role}')" class="text-blue-600 underline text-xs">Edit</button>
+              <button onclick="hapus('${doc.id}', '${role}')" class="text-red-600 underline text-xs">Hapus</button>
             </td>`;
           tabel.appendChild(tr);
         });
       });
-    }
-
-    function bukaEdit(email) {
-      db.collection("terapis").doc(email).get().then(doc => {
-        if (!doc.exists) return;
-        const d = doc.data();
-        document.getElementById("editEmail").value = email;
-        document.getElementById("editNama").value = d.nama || "";
-        document.getElementById("editSpesialis").value = d.spesialis || "";
-        document.getElementById("editProvinsi").value = d.provinsi || "";
-        isiDropdown(Object.keys(wilayah[d.provinsi] || {}), document.getElementById("editKabupaten"));
-        document.getElementById("editKabupaten").value = d.kabupaten || "";
-        document.getElementById("editModal").classList.remove("hidden");
-        document.getElementById("editModal").classList.add("flex");
-      });
-    }
-
-    document.getElementById("formEdit").addEventListener("submit", e => {
-      e.preventDefault();
-      const email = editEmail.value;
-      db.collection("terapis").doc(email).update({
-        nama: editNama.value,
-        spesialis: editSpesialis.value,
-        provinsi: editProvinsi.value,
-        kabupaten: editKabupaten.value
-      }).then(() => {
-        tutupEdit();
-        load();
-      });
     });
+  }
 
-    function tutupEdit() {
-      document.getElementById("editModal").classList.add("hidden");
-    }
+  function bukaEdit(email, role) {
+    db.collection(role).doc(email).get().then(doc => {
+      if (!doc.exists) return;
+      const d = doc.data();
 
-    function hapus(email) {
-      if (confirm("Hapus data ini?")) {
-        db.collection("terapis").doc(email).delete().then(load);
-      }
-    }
+      document.getElementById("editEmail").value = email;
+      document.getElementById("editNama").value = d.nama || "";
+      document.getElementById("editSpesialis").value = d.spesialis || "";
+      document.getElementById("editProvinsi").value = d.provinsi || "";
 
-    document.getElementById("tambahToggle").addEventListener("click", () => {
-      document.getElementById("formContainer").classList.toggle("hidden");
+      const kabList = Object.keys(wilayahData[d.provinsi] || {});
+      isiDropdown(kabList, document.getElementById("editKabupaten"));
+      document.getElementById("editKabupaten").value = d.kabupaten || "";
+
+      document.getElementById("editModal").setAttribute("data-role", role);
+      document.getElementById("editModal").classList.remove("hidden");
+      document.getElementById("editModal").classList.add("flex");
     });
+  }
 
-    auth.onAuthStateChanged(user => {
-      if (!user || user.email !== "fisiokita.co.id@gmail.com") {
-        alert("Akses ditolak.");
-        window.location.href = "../login.html";
-      } else {
-        load(); // ⬅ load data terapis hanya setelah autentikasi sukses
-      }
+  document.getElementById("formEdit").addEventListener("submit", e => {
+    e.preventDefault();
+    const email = editEmail.value;
+    const role = document.getElementById("editModal").getAttribute("data-role");
+
+    db.collection(role).doc(email).update({
+      nama: editNama.value,
+      spesialis: editSpesialis.value,
+      provinsi: editProvinsi.value,
+      kabupaten: editKabupaten.value
+    }).then(() => {
+      tutupEdit();
+      load();
     });
-  </script>
+  });
+
+  function hapus(email, role) {
+    if (confirm("Hapus data ini?")) {
+      db.collection(role).doc(email).delete().then(load);
+    }
+  }
+
+  function tutupEdit() {
+    document.getElementById("editModal").classList.add("hidden");
+  }
+
+  document.getElementById("tambahToggle").addEventListener("click", () => {
+    document.getElementById("formContainer").classList.toggle("hidden");
+  });
+
+  // Superadmin auth check
+  auth.onAuthStateChanged(user => {
+    if (!user || user.email !== "fisiokita.co.id@gmail.com") {
+      alert("Akses ditolak.");
+      window.location.href = "../login.html";
+    } else {
+      load();
+    }
+  });
+</script>
+
 </body>
 </html>

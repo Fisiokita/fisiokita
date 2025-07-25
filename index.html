@@ -299,9 +299,8 @@
   let beritaData = [];
   let currentIndex = 0;
 
-  // Ambil data dari Firestore
   db.collection("berita")
-    .orderBy("tanggal", "desc")
+    .orderBy("waktu", "desc")
     .limit(10)
     .onSnapshot((snapshot) => {
       beritaData = [];
@@ -310,26 +309,24 @@
         beritaData.push({
           judul: data.judul,
           deskripsi: data.deskripsi,
-          tanggal: new Date(data.tanggal.toDate()).toLocaleDateString('id-ID')
+          tanggal: new Date(data.waktu.toDate()).toLocaleDateString('id-ID')
         });
       });
 
-      // Mulai rotasi setelah data diambil
       if (beritaData.length > 0) {
         tampilkanBerita(currentIndex);
         setInterval(() => {
           currentIndex = (currentIndex + 1) % beritaData.length;
           tampilkanBerita(currentIndex);
-        }, 5000); // Ganti berita setiap 5 detik
+        }, 5000); // Ganti tiap 5 detik
       }
     });
 
-  // Fungsi untuk menampilkan satu berita
   function tampilkanBerita(index) {
     const data = beritaData[index];
     container.innerHTML = `
-      <div class="bg-white rounded-xl shadow-lg p-4 border transition-opacity duration-500 ease-in-out">
-        <h3 class="font-semibold text-base text-[#1E2A44] mb-1">${data.judul}</h3>
+      <div class="bg-white rounded-xl shadow-md p-4 border text-[#1E2A44] transition-opacity duration-500 ease-in-out">
+        <h3 class="font-semibold text-base mb-1">${data.judul}</h3>
         <p class="text-sm text-gray-600 leading-snug">${data.deskripsi}</p>
         <p class="text-xs text-gray-400 mt-2">${data.tanggal}</p>
       </div>
@@ -337,12 +334,6 @@
   }
 </script>
 
-
-
-
-
-
-  
         
 </body>
 </html>

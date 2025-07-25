@@ -65,11 +65,16 @@
 
     simpanBtn.addEventListener("click", () => {
       const data = {
-        judul: judul.value.trim(),
-        penulis: penulis.value.trim(),
-        konten: konten.value.trim(),
-        waktu: firebase.firestore.Timestamp.now()
-      };
+  judul: judul.value.trim(),
+  penulis: penulis.value.trim(),
+  konten: konten.value.trim(),
+  waktu: firebase.firestore.Timestamp.now(),
+  deskripsi: konten.value.trim().slice(0, 100), // otomatis 100 karakter awal
+  icon: "img/icon-default.png", // bisa ganti dengan input kalau mau
+  link: "", // bisa diisi manual atau otomatis
+  status: "publish" // agar ditampilkan di index
+};
+
       if (!data.judul || !data.konten) return alert("Judul dan konten wajib diisi.");
 
       if (artikelId.value) {

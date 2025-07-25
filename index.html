@@ -181,8 +181,17 @@
         </a>
       </div>
     </article>
-  
 </section>
+  <!-- SEKILAS BERITA -->
+  <section id="berita" class="bg-[#F3F4F6] py-10 px-6">
+    <div class="max-w-md mx-auto">
+      <h2 class="text-2xl font-bold text-[#1E2A44] text-center mb-6">Sekilas Berita</h2>
+
+      <div id="beritaSwiper" class="overflow-x-auto space-x-4 flex pb-4 scrollbar-hide">
+        <!-- Kartu berita akan di-render melalui JavaScript -->
+      </div>
+    </div>
+  </section>
 
   </main>
 
@@ -283,6 +292,27 @@
       el.onclick = () => window.location.href = "akun.html";
     }
   });
+  </script>
+  <script>
+   db.collection("berita")
+      .orderBy("tanggal", "desc")
+      .limit(10)
+      .onSnapshot((snapshot) => {
+        const container = document.getElementById("beritaSwiper");
+        container.innerHTML = "";
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const card = document.createElement("div");
+          card.className = "min-w-[240px] bg-white rounded-xl shadow-md p-4 border flex-shrink-0";
+          card.innerHTML = `
+            <h3 class="font-semibold text-base text-[#1E2A44] mb-1 truncate">${data.judul}</h3>
+            <p class="text-sm text-gray-600 leading-snug line-clamp-3">${data.deskripsi}</p>
+            <p class="text-xs text-gray-400 mt-2">${new Date(data.tanggal.toDate()).toLocaleDateString('id-ID')}</p>
+          `;
+          container.appendChild(card);
+        });
+      });
   </script>
 
 

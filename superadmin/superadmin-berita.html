@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superadmin - Manajemen Berita</title>
+  <link rel="icon" href="../img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="../img/logo.png" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    textarea { resize: vertical; }
+  </style>
+</head>
+<body class="bg-gray-50 text-[#1E2A44] min-h-screen">
+  <header class="bg-gradient-to-r from-purple-700 to-indigo-600 text-white px-6 py-4 flex justify-between items-center shadow">
+    <h1 class="text-lg font-semibold">Manajemen Berita</h1>
+    <a href="superadmin-dashboard.html" class="btn-white text-sm">Kembali</a>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-6 py-6 space-y-6">
+    <!-- Form Tambah/Edit -->
+    <section class="bg-white rounded-xl shadow p-4 space-y-3">
+      <h2 class="font-semibold text-base">Tambah / Edit Berita</h2>
+      <input type="hidden" id="beritaId" />
+      <input type="text" id="judul" class="form-input w-full" placeholder="Judul Berita" />
+      <input type="text" id="penulis" class="form-input w-full" placeholder="Nama Penulis" />
+      <textarea id="deskripsi" rows="3" class="form-textarea w-full" placeholder="Deskripsi singkat berita..."></textarea>
+      <input type="text" id="link" class="form-input w-full" placeholder="Link berita (opsional)" />
+      <button id="simpanBerita" class="btn-primary w-full">Simpan Berita</button>
+    </section>
+
+    <!-- Daftar Berita -->
+    <section class="bg-white rounded-xl shadow p-4">
+      <h2 class="font-semibold text-base mb-3">Daftar Berita</h2>
+      <ul id="daftarBerita" class="space-y-3 text-sm"></ul>
+    </section>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDng3ugBylPgzuxZA1YRPavo5br5jjlodo",
+      authDomain: "fisiosehat-af9f1.firebaseapp.com",
+      projectId: "fisiosehat-af9f1"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const judul = document.getElementById("judul");
+    const penulis = document.getElementById("penulis");
+    const deskripsi = document.getElementById("deskripsi");
+    const link = document.getElementById("link");
+    const beritaId = document.getElementById("beritaId");
+    const simpanBtn = document.getElementById("simpanBerita");
+    const daftarBerita = document.getElementById("daftarBerita");
+
+    function resetForm() {
+      beritaId.value = "";
+      judul.value = "";
+      penulis.value = "";
+      deskripsi.value = "";
+      link.value = "";
+    }
+
+    simpanBtn.addEventListener("click", () => {
+      const data = {
+        judul: judul.value.trim(),
+        penulis: penulis.value.trim(),
+        deskripsi: deskripsi.value.trim(),
+        link: link.value.trim(),
+        waktu: firebase.firestore.Timestamp.now(),
+        icon: "img/icon-default.png", // bisa diubah manual jika ingin
+        status: "publish" // agar ditampilkan di halaman utama
+      };
+
+      if (!data.judul || !data.deskripsi)
+        return alert("Judul dan deskripsi wajib diisi.");
+
+      if (beritaId.value) {
+        db.collection("berita").doc(beritaId.value).set(data).then(() => {
+          resetForm();
+        });
+      } else {
+        db.collection("berita").add(data).then(() => {
+          resetForm();
+        });
+      }
+    });
+
+    function tampilkanBerita() {
+      db.collection("berita")
+        .orderBy("waktu", "desc")
+        .onSnapshot((snapshot) => {
+          daftarBerita.innerHTML = "";
+          snapshot.forEach((doc) => {
+            const d = doc.data();
+            const li = document.createElement("li");
+            li.className = "border p-3 rounded-xl flex justify-between items-start";
+            li.innerHTML = `
+              <div>
+                <div class="font-bold">${d.judul}</div>
+                <div class="text-xs text-gray-500">🖋️ ${d.penulis || "Tidak diketahui"}</div>
+                <div class="text-xs mt-1">${d.deskripsi.slice(0, 100)}...</div>
+                ${d.link ? `<a href="${d.link}" target="_blank" class="text-blue-600 hover:underline text-xs">Baca Selengkapnya</a>` : ""}
+              </div>
+              <div class="flex flex-col gap-1 items-end text-sm">
+                <button onclick="editBerita('${doc.id}', ${JSON.stringify(d).replace(/"/g, "&quot;")})" class="text-blue-600 hover:underline">Edit</button>
+                <button onclick="hapusBerita('${doc.id}')" class="text-red-600 hover:underline">Hapus</button>
+              </div>
+            `;
+            daftarBerita.appendChild(li);
+          });
+        });
+    }
+
+    function editBerita(id, data) {
+      beritaId.value = id;
+      judul.value = data.judul;
+      penulis.value = data.penulis;
+      deskripsi.value = data.deskripsi;
+      link.value = data.link;
+    }
+
+    function hapusBerita(id) {
+      if (confirm("Yakin ingin menghapus berita ini?")) {
+        db.collection("berita").doc(id).delete();
+      }
+    }
+
+    tampilkanBerita();
+  </script>
+</body>
+</html>

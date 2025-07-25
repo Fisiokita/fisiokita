@@ -181,18 +181,6 @@
         </a>
       </div>
     </article>
-<!-- SEKILAS BERITA -->
-<section id="berita" class="bg-[#F3F4F6] py-10 px-6">
-  <div class="max-w-md mx-auto">
-    <h2 class="text-2xl font-bold text-[#1E2A44] text-center mb-6">Sekilas Berita</h2>
-
-    <!-- Hanya satu berita ditampilkan, berganti otomatis -->
-    <div id="beritaSwiper" class="relative w-full transition-all duration-500 ease-in-out">
-      <!-- Berita akan di-render melalui JavaScript -->
-    </div>
-  </div>
-</section>
-
 
   </main>
 
@@ -294,46 +282,7 @@
     }
   });
   </script>
-  <script>
- const container = document.getElementById("beritaSwiper");
-let beritaData = [];
-let currentIndex = 0;
-
-db.collection("berita")
-  .orderBy("waktu", "desc")
-  .limit(10)
-  .onSnapshot((snapshot) => {
-    beritaData = [];
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      beritaData.push({
-        judul: data.judul,
-        deskripsi: data.deskripsi,
-        tanggal: new Date(data.waktu.toDate()).toLocaleDateString('id-ID')
-      });
-    });
-
-    if (beritaData.length > 0) {
-      tampilkanBerita(currentIndex);
-      setInterval(() => {
-        currentIndex = (currentIndex + 1) % beritaData.length;
-        tampilkanBerita(currentIndex);
-      }, 15000);
-    }
-  });
-
-function tampilkanBerita(index) {
-  const data = beritaData[index];
-  container.innerHTML = `
-    <div class="bg-white rounded-xl shadow-md p-4 border text-[#1E2A44] transition-opacity duration-500 ease-in-out">
-      <h3 class="font-semibold text-base mb-1">${data.judul}</h3>
-      <p class="text-sm text-gray-600 leading-snug">${data.deskripsi}</p>
-      <p class="text-xs text-gray-400 mt-2">${data.tanggal}</p>
-    </div>
-  `;
-}
-
-</script>
+ 
 
         
 </body>

@@ -286,48 +286,43 @@
     }
   });
   
-</script>
-  <script>
+<script>
   const artikelContainer = document.getElementById("artikelDinamis");
 
   db.collection("artikel")
-    .where("status", "==", "publish")
-    .orderBy("waktu", "desc")
-    .limit(10)
     .get()
     .then((querySnapshot) => {
+      console.log("Jumlah artikel ditemukan:", querySnapshot.size); // LOG UTAMA
+
       if (querySnapshot.empty) {
-        artikelContainer.innerHTML = '<p class="text-center text-gray-500">Belum ada artikel dari admin atau terapis.</p>';
+        artikelContainer.innerHTML = '<p class="text-center text-gray-500">Belum ada artikel tersedia.</p>';
         return;
       }
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        const judul = data.judul || "Tanpa Judul";
-        const deskripsi = data.deskripsi || data.konten?.slice(0, 100) || "";
-        const gambar = data.icon || "img/icon-default.png";
-        const link = data.link || "#";
+        console.log("Data artikel:", data); // LOG UTAMA
 
         const artikelCard = `
           <article class="bg-white rounded-xl shadow-md p-6 flex gap-4 items-start mb-6 border">
             <div class="w-12 h-12 min-w-[48px] min-h-[48px] bg-[#E0E7FF] rounded-full flex items-center justify-center overflow-hidden">
-              <img src="${gambar}" class="w-12 h-12 object-contain" />
+              <img src="${data.icon || 'img/icon-default.png'}" class="w-12 h-12 object-contain" />
             </div>
             <div>
-              <h3 class="font-semibold text-base text-[#1E2A44] mb-1">${judul}</h3>
-              <p class="text-sm text-gray-600 mb-2 leading-relaxed">${deskripsi}</p>
-              <a href="${link}" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
+              <h3 class="font-semibold text-base text-[#1E2A44] mb-1">${data.judul || 'Tanpa Judul'}</h3>
+              <p class="text-sm text-gray-600 mb-2 leading-relaxed">${data.deskripsi || data.konten?.slice(0, 100) || ''}</p>
+              <a href="${data.link || '#'}" class="text-[#2970F2] text-sm font-medium hover:underline">Baca Selengkapnya →</a>
             </div>
           </article>`;
-        
         artikelContainer.insertAdjacentHTML('beforeend', artikelCard);
       });
     })
     .catch((error) => {
-      console.error("Gagal memuat artikel:", error);
-      artikelContainer.innerHTML = '<p class="text-center text-red-500">Terjadi kesalahan saat memuat artikel.</p>';
+      console.error("🔥 Gagal memuat artikel:", error); // LOG ERROR
+      artikelContainer.innerHTML = '<p class="text-center text-red-500">Gagal memuat artikel.</p>';
     });
 </script>
+
 
 
 

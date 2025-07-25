@@ -295,7 +295,7 @@
   </script>
   <script>
    db.collection("berita")
-      .orderBy("tanggal", "desc")
+      .orderBy("waktu", "desc")
       .limit(10)
       .onSnapshot((snapshot) => {
         const container = document.getElementById("beritaSwiper");
@@ -308,7 +308,7 @@
           card.innerHTML = `
             <h3 class="font-semibold text-base text-[#1E2A44] mb-1 truncate">${data.judul}</h3>
             <p class="text-sm text-gray-600 leading-snug line-clamp-3">${data.deskripsi}</p>
-            <p class="text-xs text-gray-400 mt-2">${new Date(data.tanggal.toDate()).toLocaleDateString('id-ID')}</p>
+            <p class="text-xs text-gray-400 mt-2">${new Date(data.waktu.toDate()).toLocaleDateString('id-ID')}</p>
           `;
           container.appendChild(card);
         });

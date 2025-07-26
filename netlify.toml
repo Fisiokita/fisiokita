@@ -9,3 +9,9 @@
   to = "https://fisiokita.my.id/:splat"
   status = 301
   force = true
+
+[[redirects]]
+  from = "http://ww2.fisiokita.my.id/*"
+  to = "https://ww2.fisiokita.my.id/:splat"
+  status = 301
+  force = true

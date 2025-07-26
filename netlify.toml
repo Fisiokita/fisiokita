@@ -10,6 +10,13 @@
   status = 301
   force = true
 
+
+[[redirects]]
+  from = "https://ww2.fisiokita.netlify.app/*"
+  to = "https://fisiokitaufdk.my.id/:splat"
+  status = 301
+  force = true
+  
 [[redirects]]
   from = "http://ww2.fisiokita.my.id/*"
   to = "https://ww2.fisiokita.my.id/:splat"

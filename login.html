@@ -11,7 +11,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>body { font-family: 'Inter', sans-serif; }</style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 <body class="bg-gradient-to-b from-[#7F3CE0] to-[#4B6CC1] min-h-screen flex items-center justify-center px-4">
 
@@ -29,19 +31,21 @@
 
     <!-- Login Form -->
     <form id="loginForm" class="space-y-4" autocomplete="off">
-  <div>
-    <label class="block text-sm font-medium mb-1">Email</label>
-    <input type="email" id="loginEmail" class="w-full border rounded-lg px-4 py-2 text-sm" autocomplete="off" required />
-  </div>
-  <div>
-    <label class="block text-sm font-medium mb-1">Password</label>
-    <input type="password" id="loginPassword" class="w-full border rounded-lg px-4 py-2 text-sm" autocomplete="new-password" required />
-  </div>
-  <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
-    Masuk
-  </button>
-</form>
-
+      <div>
+        <label class="block text-sm font-medium mb-1">Email</label>
+        <input type="email" id="loginEmail" class="w-full border rounded-lg px-4 py-2 text-sm" required autofocus />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Password</label>
+        <input type="password" id="loginPassword" class="w-full border rounded-lg px-4 py-2 text-sm" required />
+      </div>
+      <button type="submit" class="bg-[#4B6CC1] hover:bg-[#3a57b0] text-white font-semibold rounded-full w-full py-2 transition">
+        Masuk
+      </button>
+      <p class="text-sm text-right">
+        <button type="button" onclick="resetPassword()" class="text-[#4B6CC1] hover:underline">Lupa Password?</button>
+      </p>
+    </form>
 
     <!-- Register Form -->
     <form id="registerForm" class="space-y-4 hidden">
@@ -120,50 +124,72 @@
       pesan.textContent = text;
     }
 
-   async function cekDanRedirect(user) {
-  try {
-    const email = user.email.toLowerCase();
-
-    const adminSnap = await db.collection("admin").doc(email).get();
-    if (adminSnap.exists) {
-      location.href = "superadmin/superadmin-dashboard.html";
-      return;
+    async function cekDanRedirect(user) {
+      try {
+        const email = user.email.toLowerCase();
+        const adminSnap = await db.collection("admin").doc(email).get();
+        if (adminSnap.exists) {
+          location.href = "superadmin/superadmin-dashboard.html";
+          return;
+        }
+        const terapisSnap = await db.collection("terapis").doc(email).get();
+        if (terapisSnap.exists) {
+          location.href = "admin/dashboard.html";
+          return;
+        }
+        const userSnap = await db.collection("users").doc(email).get();
+        if (userSnap.exists) {
+          location.href = "akun.html";
+          return;
+        }
+        alert("Akun Anda belum terdaftar.");
+        location.href = "login.html";
+      } catch (err) {
+        console.error("Gagal memeriksa peran pengguna:", err);
+        alert("Terjadi kesalahan. Coba lagi.");
+        location.href = "login.html";
+      }
     }
-
-    const terapisSnap = await db.collection("terapis").doc(email).get();
-    if (terapisSnap.exists) {
-      location.href = "admin/dashboard.html";
-      return;
-    }
-
-    // Jika tidak admin dan bukan terapis, arahkan ke halaman user biasa
-    const userSnap = await db.collection("users").doc(email).get();
-    if (userSnap.exists) {
-      location.href = "akun.html";
-      return;
-    }
-
-    // Jika tidak terdaftar di ketiganya (sangat jarang)
-    alert("Akun Anda belum terdaftar.");
-    location.href = "login.html";
-
-  } catch (err) {
-    console.error("Gagal memeriksa peran pengguna:", err);
-    alert("Terjadi kesalahan. Coba lagi.");
-    location.href = "login.html";
-  }
-}
-
-    
 
     loginForm.onsubmit = (e) => {
-  e.preventDefault();
-  const email = loginEmail.value;
-  const pass = loginPassword.value;
-  auth.signInWithEmailAndPassword(email, pass)
-    .then(res => cekDanRedirect(res.user))
-    .catch(err => tampilkanPesan("❌ " + err.message));
-};
+      e.preventDefault();
+      const email = loginEmail.value.trim();
+      const pass = loginPassword.value.trim();
+      auth.signInWithEmailAndPassword(email, pass)
+        .then(res => cekDanRedirect(res.user))
+        .catch(err => {
+          if (err.code === 'auth/user-not-found') {
+            tampilkanPesan("❌ Email belum terdaftar.");
+          } else if (err.code === 'auth/wrong-password') {
+            tampilkanPesan("❌ Password salah.");
+          } else if (err.code === 'auth/invalid-email') {
+            tampilkanPesan("❌ Format email tidak valid.");
+          } else {
+            tampilkanPesan("❌ Terjadi kesalahan: " + err.message);
+          }
+        });
+    };
+
+    function resetPassword() {
+      const email = loginEmail.value.trim();
+      if (!email) {
+        tampilkanPesan("Masukkan email terlebih dahulu untuk reset password.");
+        return;
+      }
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          tampilkanPesan("📧 Link reset password telah dikirim ke email kamu.");
+        })
+        .catch((error) => {
+          if (error.code === 'auth/user-not-found') {
+            tampilkanPesan("Email belum terdaftar.");
+          } else if (error.code === 'auth/invalid-email') {
+            tampilkanPesan("Format email tidak valid.");
+          } else {
+            tampilkanPesan("Terjadi kesalahan: " + error.message);
+          }
+        });
+    }
 
     registerForm.onsubmit = async (e) => {
       e.preventDefault();
@@ -173,7 +199,7 @@
       const gender = regGender.value;
       const prov = regProvinsi.value;
       const kab = regKabupaten.value;
-      const email = registerEmail.value;
+      const email = registerEmail.value.trim();
       const pass = registerPassword.value;
 
       if (!nama || !hp || !tglLahir || !gender || !prov || !kab || pass.length < 6) {
@@ -188,7 +214,11 @@
         });
         cekDanRedirect(result.user);
       } catch (err) {
-        tampilkanPesan("❌ " + err.message);
+        if (err.code === 'auth/email-already-in-use') {
+          tampilkanPesan("Email sudah terdaftar. Silakan login.");
+        } else {
+          tampilkanPesan("❌ " + err.message);
+        }
       }
     };
 
@@ -200,15 +230,13 @@
     };
 
     auth.onAuthStateChanged(user => {
-  if (user) cekDanRedirect(user);
-});
+      if (user) cekDanRedirect(user);
+    });
 
-
-    // Wilayah dropdown
+    // Wilayah
     const provinsiSelect = document.getElementById("regProvinsi");
     const kabupatenSelect = document.getElementById("regKabupaten");
     let wilayahData = {};
-
     fetch("data/wilayah.json")
       .then(res => res.json())
       .then(data => {
@@ -220,7 +248,6 @@
           provinsiSelect.appendChild(opt);
         });
       });
-
     provinsiSelect.addEventListener("change", () => {
       const prov = provinsiSelect.value;
       kabupatenSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';

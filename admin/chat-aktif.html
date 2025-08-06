@@ -12,8 +12,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-white text-[#1E2A44] min-h-screen flex flex-col font-['Inter']">
+
   <!-- Header -->
-  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow-md">
+  <header class="bg-gradient-to-r from-[#7F3CE0] to-[#4B6CC1] text-white px-6 py-4 flex justify-between items-center shadow-md z-10">
     <div class="flex items-center gap-2">
       <span class="text-lg font-semibold">💬 Chat Aktif</span>
     </div>
@@ -29,27 +30,28 @@
       <ul id="daftarSesi" class="space-y-2 text-sm"></ul>
     </section>
 
-    <!-- === Halaman Chat Fullscreen === -->
-    <section id="chatContainer" class="hidden absolute top-0 left-0 right-0 bottom-0 bg-white px-4 py-5 flex flex-col">
-      <!-- Header Chat -->
-      <div class="flex justify-between items-center mb-4">
-        <button id="btnKembali" class="text-sm text-[#4B6CC1] hover:underline">&larr; Kembali</button>
-        <span class="font-semibold text-sm text-gray-700">Live Chat</span>
-        <div></div>
-      </div>
-
-      <!-- Box Chat -->
-      <div id="chatBox" class="flex-1 overflow-y-auto space-y-3 px-1 pb-2"></div>
-
-      <!-- Input & Tombol -->
-      <form id="formChat" class="flex gap-2 pt-2">
-        <input type="text" id="inputPesan" class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm" placeholder="Ketik pesan..." />
-        <button type="submit" class="btn-primary text-sm px-4 py-2">Kirim</button>
-      </form>
-
-      <button id="btnAkhiri" class="text-xs text-red-600 mt-2 underline hover:text-red-800 text-center">Akhiri Chat</button>
-    </section>
   </main>
+
+  <!-- === Chat Fullscreen === -->
+  <section id="chatContainer" class="hidden fixed inset-0 bg-white px-4 py-5 flex flex-col z-50">
+    <!-- Header Chat -->
+    <div class="flex justify-between items-center mb-4">
+      <button id="btnKembali" class="text-sm text-[#4B6CC1] hover:underline">&larr; Kembali</button>
+      <span class="font-semibold text-sm text-gray-700">Live Chat</span>
+      <div></div>
+    </div>
+
+    <!-- Box Chat -->
+    <div id="chatBox" class="flex-1 overflow-y-auto space-y-3 px-1 pb-2"></div>
+
+    <!-- Input & Tombol -->
+    <form id="formChat" class="flex gap-2 pt-2">
+      <input type="text" id="inputPesan" class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm" placeholder="Ketik pesan..." />
+      <button type="submit" class="btn-primary text-sm px-4 py-2">Kirim</button>
+    </form>
+
+    <button id="btnAkhiri" class="text-xs text-red-600 mt-2 underline hover:text-red-800 text-center">Akhiri Chat</button>
+  </section>
 
   <!-- Footer -->
   <footer class="bg-[#141C2F] text-white text-base mt-12">
@@ -168,14 +170,14 @@
             const isAdmin = data.dari === "Admin";
 
             const div = document.createElement("div");
-div.className = isAdmin ? "flex justify-end" : "flex justify-start";
-div.innerHTML = `
-  <div class="${isAdmin ? 'bg-[#4B6CC1] text-white' : 'bg-white text-black'} rounded-xl ${isAdmin ? 'rounded-br-none' : 'rounded-tl-none'} px-4 py-2 shadow text-sm max-w-[75%]">
-    ${data.pesan}
-    <span class="text-xs ${isAdmin ? 'text-white/70' : 'text-gray-500'} ml-2">${jam}.${menit}</span>
-  </div>
-`;
-chatBox.appendChild(div);
+            div.className = isAdmin ? "flex justify-end" : "flex justify-start";
+            div.innerHTML = `
+              <div class="${isAdmin ? 'bg-[#4B6CC1] text-white' : 'bg-white text-black'} rounded-xl ${isAdmin ? 'rounded-br-none' : 'rounded-tl-none'} px-4 py-2 shadow text-sm max-w-[75%]">
+                ${data.pesan}
+                <span class="text-xs ${isAdmin ? 'text-white/70' : 'text-gray-500'} ml-2">${jam}.${menit}</span>
+              </div>
+            `;
+            chatBox.appendChild(div);
           });
           chatBox.scrollTop = chatBox.scrollHeight;
         });
@@ -217,4 +219,4 @@ chatBox.appendChild(div);
     });
   </script>
 </body>
-</html>
+      </html>
